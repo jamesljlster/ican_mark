@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.7.0)
 
 # Disable in-source builds to prevent source tree corruption.
 if(" ${CMAKE_SOURCE_DIR}" STREQUAL " ${CMAKE_BINARY_DIR}")
@@ -9,7 +9,7 @@ endif()
 
 # Set variables
 set(PROJECT_NAME ical_mark_project)
-set(PROJECT_LANGUAGE C CXX)
+set(PROJECT_LANGUAGE CXX)
 
 # Environment variables
 set(CMAKE_INSTALL_PREFIX "${CMAKE_BINARY_DIR}/install" CACHE PATH "Installation directory")
@@ -39,6 +39,7 @@ set(UTIL_PATHS
 
 if(${BUILD_TEST})
     set(UTIL_PATHS ${UTIL_PATHS} ${CMAKE_CURRENT_SOURCE_DIR}/test)
+    set(UTIL_PATHS ${UTIL_PATHS} ${CMAKE_CURRENT_SOURCE_DIR}/test/gui_test)
 endif()
 
 # Set project

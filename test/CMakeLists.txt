@@ -2,13 +2,10 @@ cmake_minimum_required(VERSION 2.8)
 
 # Set variables
 set(PROJECT_NAME ical_mark_test)
-set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS mark_action)
+set(PROJECT_LANGUAGE CXX)
 
 # Compile setting
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_C_FLAGS_RELEASE "-O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC -Wall")
 set(CMAKE_CXX_FLAGS_RELEASE "-O3")
 
 # Set project

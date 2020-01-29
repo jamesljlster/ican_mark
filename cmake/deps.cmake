@@ -1,9 +1,12 @@
 # Project Dependences Configuration
 
-# Find other dependences
-set(OpenCV_STATIC OFF CACHE BOOL "Using OpenCV static linking library")
-find_package(OpenCV REQUIRED)
-include_directories(${OpenCV_INCLUDE_DIRS})
+# Find Qt
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
+
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
@@ -26,3 +29,8 @@ if(NOT MSVC)
     set(CMAKE_BUILD_TYPE ${CMAKE_BUILD_TYPE_BAK})
 endif()
 
+# Set project global dependencies
+set(PROJECT_DEPS
+    mark_action
+    Qt5::Widgets
+    )
