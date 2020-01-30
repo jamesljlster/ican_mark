@@ -21,7 +21,7 @@ class MarkArea : public QWidget
    protected:
     bool event(QEvent* event);
 
-    ical_mark::ClickAction testAction;
+    ical_mark::TwiceClick testAction;
 };
 
 #endif  // MARKAREA_H

@@ -49,9 +49,14 @@ bool MarkArea::event(QEvent* event)
     cout << "state: " << static_cast<int>(this->testAction.state());
     if (this->testAction.finish())
     {
-        printf(" (%d, %d) (%d, %d)", this->testAction["press"].x(),
-               this->testAction["press"].y(), this->testAction["release"].x(),
-               this->testAction["release"].y());
+        printf(" [(%d, %d) (%d, %d)] ", this->testAction["pos1"]["press"].x(),
+               this->testAction["pos1"]["press"].y(),
+               this->testAction["pos1"]["release"].x(),
+               this->testAction["pos1"]["release"].y());
+        printf(" [(%d, %d) (%d, %d)] ", this->testAction["pos2"]["press"].x(),
+               this->testAction["pos2"]["press"].y(),
+               this->testAction["pos2"]["release"].x(),
+               this->testAction["pos2"]["release"].y());
     }
     cout << endl;
 

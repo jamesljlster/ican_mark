@@ -15,7 +15,7 @@ void ClickAction::run(QInputEvent* event)
 {
     QEvent::Type eventType = event->type();
 
-    switch ((State)this->s)
+    switch (static_cast<State>(this->s))
     {
         case State::MOVE:
             if (eventType == QEvent::MouseMove)
@@ -71,4 +71,5 @@ const QPoint& ClickAction::operator[](std::string key) const
 
     return it->second;
 }
+
 }  // namespace ical_mark
