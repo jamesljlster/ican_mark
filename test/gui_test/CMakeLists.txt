@@ -37,7 +37,11 @@ else()
   add_executable(gui_test ${PROJECT_SRCS})
 endif()
 
-target_link_libraries(gui_test PRIVATE Qt5::Widgets)
+target_link_libraries(gui_test PRIVATE
+    mark_action
+    Qt5::Widgets
+    )
+
 install(TARGETS gui_test
     RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
     )
