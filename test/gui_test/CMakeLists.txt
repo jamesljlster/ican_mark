@@ -25,21 +25,16 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #endif()
 
 find_package(Qt5 COMPONENTS Widgets REQUIRED)
+file(GLOB PROJECT_SRCS
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.ui
+    )
 
 if(ANDROID)
-  add_library(gui_test SHARED
-    main.cpp
-    guitest.cpp
-    guitest.h
-    guitest.ui
-  )
+  add_library(gui_test SHARED ${PROJECT_SRCS})
 else()
-  add_executable(gui_test
-    main.cpp
-    guitest.cpp
-    guitest.h
-    guitest.ui
-  )
+  add_executable(gui_test ${PROJECT_SRCS})
 endif()
 
 target_link_libraries(gui_test PRIVATE Qt5::Widgets)

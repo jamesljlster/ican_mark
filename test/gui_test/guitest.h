@@ -4,18 +4,21 @@
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class GuiTest; }
+namespace Ui
+{
+class GuiTest;
+}
 QT_END_NAMESPACE
 
 class GuiTest : public QMainWindow
 {
     Q_OBJECT
 
-public:
+   public:
     GuiTest(QWidget *parent = nullptr);
     ~GuiTest();
 
-private:
+   private:
     Ui::GuiTest *ui;
 };
-#endif // GUITEST_H
+#endif  // GUITEST_H
