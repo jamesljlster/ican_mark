@@ -17,8 +17,15 @@ file(GLOB PROJECT_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
     )
 
-file(DOWNLOAD "https://upload.wikimedia.org/wikipedia/commons/7/72/Color_map_fs.png"
-    ${CMAKE_INSTALL_PREFIX}/bin/color_map.png
+set(CMAP_IMG ${CMAKE_CURRENT_BINARY_DIR}/color_map.png)
+file(DOWNLOAD
+    "https://upload.wikimedia.org/wikipedia/commons/7/72/Color_map_fs.png"
+    ${CMAP_IMG}
+    EXPECTED_MD5 815e5a83f5cbd0a8c288b5c34c656d99
+    SHOW_PROGRESS
+    )
+install(FILES ${CMAP_IMG}
+    DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
     )
 
 # Build test

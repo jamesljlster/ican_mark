@@ -95,9 +95,17 @@ void MarkArea::paintEvent(QPaintEvent* paintEvent)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    QRectF target(0, 0, width, height);
-    QRectF source(0, 0, this->bgImage.width(), this->bgImage.height());
-    painter.drawImage(target, this->bgImage, source);
+    if (this->bgImage.isNull())
+    {
+        painter.setBrush(QBrush(QColor(128, 128, 128), Qt::SolidPattern));
+        painter.drawRect(0, 0, width, height);
+    }
+    else
+    {
+        QRectF target(0, 0, width, height);
+        QRectF source(0, 0, this->bgImage.width(), this->bgImage.height());
+        painter.drawImage(target, this->bgImage, source);
+    }
 
     painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
     painter.setPen(QColor(160, 160, 160));
