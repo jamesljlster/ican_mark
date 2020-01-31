@@ -41,7 +41,7 @@ bool MarkArea::event(QEvent* event)
         QKeyEvent* ke = static_cast<QKeyEvent*>(event);
         if (ke->key() == Qt::Key_Escape)
         {
-            this->testAction.reset();
+            this->testAction.revert();
             ret = true;
         }
     }

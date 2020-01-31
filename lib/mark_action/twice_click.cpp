@@ -43,6 +43,25 @@ void TwiceClick::run(QInputEvent* event)
     }
 }
 
+void TwiceClick::revert()
+{
+    switch (static_cast<State>(this->s))
+    {
+        case State::INIT:
+            break;
+
+        case State::POS1_FIN:
+            this->varMap["pos1"].reset();
+            this->s--;
+            break;
+
+        case State::POS2_FIN:
+            this->varMap["pos2"].reset();
+            this->s--;
+            break;
+    }
+}
+
 bool TwiceClick::finish() const
 {
     return (static_cast<State>(this->s) == State::POS2_FIN);

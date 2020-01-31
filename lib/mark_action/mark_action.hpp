@@ -15,6 +15,7 @@ class ActionBase
    public:
     virtual void reset() = 0;
     virtual void run(QInputEvent* event) = 0;
+    virtual void revert() = 0;
 
     virtual bool finish() const = 0;
     virtual int state() const = 0;
@@ -34,6 +35,7 @@ class ClickAction : public ActionBase<const QPoint&>
 
     void reset();
     void run(QInputEvent* event);
+    void revert();
 
     bool finish() const;
     int state() const;
@@ -58,6 +60,7 @@ class TwiceClick : public ActionBase<const ClickAction&>
 
     void reset();
     void run(QInputEvent* event);
+    void revert();
 
     bool finish() const;
     int state() const;

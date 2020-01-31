@@ -51,6 +51,8 @@ void ClickAction::run(QInputEvent* event)
     }
 }
 
+void ClickAction::revert() { this->reset(); }
+
 bool ClickAction::finish() const
 {
     return (this->s == static_cast<int>(State::RELEASE));
