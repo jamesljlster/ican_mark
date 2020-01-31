@@ -3,16 +3,24 @@
 #include <cstdio>
 #include <iostream>
 
+#include <QBrush>
 #include <QKeyEvent>
 #include <QMouseEvent>
+#include <QPaintEvent>
+#include <QPainter>
+#include <QRectF>
 #include <Qt>
 
 using namespace std;
+using namespace ical_mark;
 
 MarkArea::MarkArea(QWidget* parent) : QWidget(parent)
 {
     this->setMouseTracking(true);
     this->setFocus();
+
+    this->bgImage = QImage("color_map.png");
+    this->setCursor(Qt::BlankCursor);
 }
 
 bool MarkArea::event(QEvent* event)
@@ -23,6 +31,7 @@ bool MarkArea::event(QEvent* event)
     if (eventType == QEvent::MouseMove)
     {
         QMouseEvent* me = static_cast<QMouseEvent*>(event);
+        this->mousePos = me->pos();
         this->testAction.run(me);
         ret = true;
     }
@@ -44,6 +53,11 @@ bool MarkArea::event(QEvent* event)
             this->testAction.revert();
             ret = true;
         }
+        else if (ke->key() == Qt::Key_Backspace)
+        {
+            this->testAction.reset();
+            ret = true;
+        }
     }
 
     cout << "state: " << static_cast<int>(this->testAction.state());
@@ -61,7 +75,33 @@ bool MarkArea::event(QEvent* event)
     cout << endl;
 
     if (ret)
+    {
+        this->repaint();
         return ret;
+    }
     else
+    {
         return QWidget::event(event);
+    }
+}
+
+void MarkArea::paintEvent(QPaintEvent* paintEvent)
+{
+    int width = this->width();
+    int height = this->height();
+
+    QPoint center = this->mousePos;
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+
+    QRectF target(0, 0, width, height);
+    QRectF source(0, 0, this->bgImage.width(), this->bgImage.height());
+    painter.drawImage(target, this->bgImage, source);
+
+    painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+    painter.setPen(QColor(160, 160, 160));
+
+    painter.drawLine(QPoint(center.x(), 0), QPoint(center.x(), height));
+    painter.drawLine(QPoint(0, center.y()), QPoint(width, center.y()));
 }

@@ -17,6 +17,10 @@ file(GLOB PROJECT_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
     )
 
+file(DOWNLOAD "https://upload.wikimedia.org/wikipedia/commons/7/72/Color_map_fs.png"
+    ${CMAKE_INSTALL_PREFIX}/bin/color_map.png
+    )
+
 # Build test
 foreach(TEST_FILE_PATH ${PROJECT_SRCS})
     # Get each file name

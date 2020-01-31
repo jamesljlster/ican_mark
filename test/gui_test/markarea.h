@@ -5,6 +5,7 @@
 #include <string>
 
 #include <QEvent>
+#include <QImage>
 #include <QObject>
 #include <QWidget>
 
@@ -20,8 +21,12 @@ class MarkArea : public QWidget
 
    protected:
     bool event(QEvent* event);
+    void paintEvent(QPaintEvent* paintEvent);
 
     ical_mark::TwiceClick testAction;
+
+    QImage bgImage;
+    QPoint mousePos;
 };
 
 #endif  // MARKAREA_H
