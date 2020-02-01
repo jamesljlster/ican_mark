@@ -73,6 +73,31 @@ class TwiceClick : public ActionBase<const ClickAction&>
                                                  {"pos2", ClickAction()}};
 };
 
+class RBoxMark : public ActionBase<const TwiceClick&>
+{
+   public:
+    enum class State
+    {
+        INIT,
+        DEGREE_FIN,
+        BBOX_FIN
+    };
+
+    void reset();
+    void run(QInputEvent* event);
+    void revert();
+
+    bool finish() const;
+    int state() const;
+
+    const TwiceClick& operator[](std::string key) const;
+
+   protected:
+    int s = static_cast<int>(State::INIT);
+    std::map<std::string, TwiceClick> varMap = {{"degree", TwiceClick()},
+                                                {"bbox", TwiceClick()}};
+};
+
 }  // namespace ical_mark
 
 #endif

@@ -23,7 +23,7 @@ class MarkArea : public QWidget
     bool event(QEvent* event);
     void paintEvent(QPaintEvent* paintEvent);
 
-    ical_mark::TwiceClick testAction;
+    ical_mark::RBoxMark testAction;
 
     QImage bgImage;
     QPoint mousePos;

@@ -60,9 +60,24 @@ bool MarkArea::event(QEvent* event)
         }
     }
 
-    cout << "state: " << static_cast<int>(this->testAction.state());
+    cout << "state: " << this->testAction.state();
+    switch (static_cast<RBoxMark::State>(this->testAction.state()))
+    {
+        case RBoxMark::State::INIT:
+            cout << "-" << this->testAction["degree"].state();
+            break;
+
+        case RBoxMark::State::DEGREE_FIN:
+            cout << "-" << this->testAction["bbox"].state();
+            break;
+
+        case RBoxMark::State::BBOX_FIN:
+            break;
+    }
+
     if (this->testAction.finish())
     {
+        /*
         printf(" [(%d, %d) (%d, %d)] ", this->testAction["pos1"]["press"].x(),
                this->testAction["pos1"]["press"].y(),
                this->testAction["pos1"]["release"].x(),
@@ -71,6 +86,8 @@ bool MarkArea::event(QEvent* event)
                this->testAction["pos2"]["press"].y(),
                this->testAction["pos2"]["release"].x(),
                this->testAction["pos2"]["release"].y());
+       */
+        cout << " Finished";
     }
     cout << endl;
 
