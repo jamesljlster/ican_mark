@@ -16,26 +16,21 @@ void TwiceClick::run(QInputEvent* event)
     switch (static_cast<State>(this->s))
     {
         case State::INIT:
+            this->varMap["pos1"].run(event);
             if (this->varMap["pos1"].finish())
             {
                 this->s++;
-            }
-            else
-            {
-                this->varMap["pos1"].run(event);
             }
 
             break;
 
         case State::POS1_FIN:
+            this->varMap["pos2"].run(event);
             if (this->varMap["pos2"].finish())
             {
                 this->s++;
             }
-            else
-            {
-                this->varMap["pos2"].run(event);
-            }
+
             break;
 
         case State::POS2_FIN:

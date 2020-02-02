@@ -16,25 +16,19 @@ void RBoxMark::run(QInputEvent* event)
     switch (static_cast<State>(this->s))
     {
         case State::INIT:
+            this->varMap["degree"].run(event);
             if (this->varMap["degree"].finish())
             {
                 this->s++;
-            }
-            else
-            {
-                this->varMap["degree"].run(event);
             }
 
             break;
 
         case State::DEGREE_FIN:
+            this->varMap["bbox"].run(event);
             if (this->varMap["bbox"].finish())
             {
                 this->s++;
-            }
-            else
-            {
-                this->varMap["bbox"].run(event);
             }
 
             break;
