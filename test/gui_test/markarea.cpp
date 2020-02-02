@@ -31,7 +31,9 @@ vector<QLine> draw_aim_crosshair(QPaintDevice* widget, const QPoint& center,
     painter.setPen(penColor);
 
     // Find lines of crosshair
-    float shift = sin(degree * __M_PI / 180.0);
+    float shift = fmod(degree + 225, 90) - 45;
+    shift = tan(shift * __M_PI / 180.0);
+
     QLine line1(  //
         QPoint(center.x() - shift * center.y(), 0),
         QPoint(center.x() + shift * (height - center.y()), height));
@@ -99,8 +101,20 @@ bool MarkArea::event(QEvent* event)
     {
         case RBoxMark::State::INIT:
 
-            // Reset degree
-            this->degree = 0;
+            if (static_cast<TwiceClick::State>(
+                    this->markAction["degree"].state()) ==
+                TwiceClick::State::POS1_FIN)
+            {
+                // Calculate and set degree
+                this->degree = this->find_degree(
+                    this->markAction["degree"]["pos1"]["release"],
+                    this->markAction["degree"]["pos2"]["move"]);
+            }
+            else
+            {
+                // Reset degree
+                this->degree = 0;
+            }
 
             cout << "-" << this->markAction["degree"].state();
             break;
@@ -108,13 +122,9 @@ bool MarkArea::event(QEvent* event)
         case RBoxMark::State::DEGREE_FIN:
 
             // Calculate and set degree
-            do
-            {
-                QPoint from = this->markAction["degree"]["pos1"]["release"];
-                QPoint to = this->markAction["degree"]["pos2"]["release"];
-                double radTmp = atan2(from.y() - to.y(), to.x() - from.x());
-                this->degree = radTmp * 180.0 / __M_PI - 90.0;
-            } while (0);
+            this->degree = this->find_degree(
+                this->markAction["degree"]["pos1"]["release"],
+                this->markAction["degree"]["pos2"]["release"]);
 
             cout << "-" << this->markAction["bbox"].state();
             break;
@@ -201,4 +211,16 @@ void MarkArea::paintEvent(QPaintEvent* paintEvent)
         case RBoxMark::State::BBOX_FIN:
             break;
     }
+}
+
+float MarkArea::find_degree(const QPoint& from, const QPoint& to)
+{
+    double theta = atan2(from.y() - to.y(), to.x() - from.x());
+    theta = theta * 180.0 / __M_PI - 90.0;
+    if (theta < -180.0)
+    {
+        theta += 360.0;
+    }
+
+    return theta;
 }

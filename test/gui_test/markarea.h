@@ -27,6 +27,7 @@ class MarkArea : public QWidget
    signals:
 
    protected:
+    // Member variables
     bool event(QEvent* event);
     void paintEvent(QPaintEvent* paintEvent);
 
@@ -36,6 +37,9 @@ class MarkArea : public QWidget
     QPoint mousePos;
 
     float degree = 0;
+
+    // Member functions
+    float find_degree(const QPoint& from, const QPoint& to);
 };
 
 #endif  // MARKAREA_H
