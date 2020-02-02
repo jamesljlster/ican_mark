@@ -17,8 +17,8 @@
 using namespace std;
 using namespace ical_mark;
 
-void draw_aim_crosshair(QPaintDevice* widget, const QPoint& center,
-                        float degree, const QColor& penColor)
+vector<QLine> draw_aim_crosshair(QPaintDevice* widget, const QPoint& center,
+                                 float degree, const QColor& penColor)
 {
     int width = widget->width();
     int height = widget->height();
@@ -30,14 +30,20 @@ void draw_aim_crosshair(QPaintDevice* widget, const QPoint& center,
     painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
     painter.setPen(penColor);
 
-    // Draw aim crosshair
+    // Find lines of crosshair
     float shift = sin(degree * __M_PI / 180.0);
-    painter.drawLine(  //
+    QLine line1(  //
         QPoint(center.x() - shift * center.y(), 0),
         QPoint(center.x() + shift * (height - center.y()), height));
-    painter.drawLine(  //
+    QLine line2(  //
         QPoint(0, center.y() + shift * center.x()),
         QPoint(width, center.y() - shift * (width - center.x())));
+
+    // Draw aim crosshair
+    painter.drawLine(line1);
+    painter.drawLine(line2);
+
+    return {line1, line2};
 }
 
 MarkArea::MarkArea(QWidget* parent) : QWidget(parent)
@@ -92,14 +98,18 @@ bool MarkArea::event(QEvent* event)
     switch (static_cast<RBoxMark::State>(this->markAction.state()))
     {
         case RBoxMark::State::INIT:
+
+            // Reset degree
             this->degree = 0;
+
             cout << "-" << this->markAction["degree"].state();
             break;
 
         case RBoxMark::State::DEGREE_FIN:
+
+            // Calculate and set degree
             do
             {
-                // Calculate degree
                 QPoint from = this->markAction["degree"]["pos1"]["release"];
                 QPoint to = this->markAction["degree"]["pos2"]["release"];
                 double radTmp = atan2(from.y() - to.y(), to.x() - from.x());
@@ -107,7 +117,6 @@ bool MarkArea::event(QEvent* event)
             } while (0);
 
             cout << "-" << this->markAction["bbox"].state();
-
             break;
 
         case RBoxMark::State::BBOX_FIN:

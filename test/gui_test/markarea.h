@@ -3,18 +3,20 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 #include <QEvent>
 #include <QImage>
+#include <QLine>
 #include <QObject>
 #include <QPaintDevice>
 #include <QWidget>
 
 #include <mark_action.hpp>
 
-void draw_aim_crosshair(QPaintDevice* widget, const QPoint& center,
-                        float degree,
-                        const QColor& penColor = QColor(160, 160, 160));
+std::vector<QLine> draw_aim_crosshair(  //
+    QPaintDevice* widget, const QPoint& center, float degree,
+    const QColor& penColor = QColor(160, 160, 160));
 
 class MarkArea : public QWidget
 {
