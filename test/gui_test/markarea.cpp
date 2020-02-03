@@ -10,6 +10,7 @@
 #include <QPaintEvent>
 #include <QPainter>
 #include <QRectF>
+#include <QSize>
 #include <Qt>
 
 #define __M_PI 3.14159265359
@@ -171,15 +172,24 @@ void MarkArea::paintEvent(QPaintEvent* paintEvent)
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
 
-    if (this->bgImage.isNull())
+    painter.setBrush(QBrush(QColor(0, 0, 0), Qt::SolidPattern));
+    painter.drawRect(0, 0, width, height);
+
+    if (!this->bgImage.isNull())
     {
-        painter.setBrush(QBrush(QColor(128, 128, 128), Qt::SolidPattern));
-        painter.drawRect(0, 0, width, height);
-    }
-    else
-    {
-        QRectF bgRect(0, 0, width, height);
+        this->markSize =
+            this->bgImage.size().scaled(this->size(), Qt::KeepAspectRatio);
+
+        int markWidth = this->markSize.width();
+        int markHeight = this->markSize.height();
+
+        this->markBase =
+            QPoint((width - markWidth) / 2, (height - markHeight) / 2);
+
         QRectF srcRect(0, 0, this->bgImage.width(), this->bgImage.height());
+        QRectF bgRect(this->markBase.x(), this->markBase.y(), markWidth,
+                      markHeight);
+
         painter.drawImage(bgRect, this->bgImage, srcRect);
     }
 

@@ -35,6 +35,8 @@ class MarkArea : public QWidget
 
     QImage bgImage;
     QPoint mousePos;
+    QPoint markBase;
+    QSize markSize;
 
     float degree = 0;
 
