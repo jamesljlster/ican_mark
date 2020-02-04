@@ -12,8 +12,7 @@
 #include <QRectF>
 #include <QSize>
 #include <Qt>
-
-#define __M_PI 3.14159265359
+#include <QtMath>
 
 using namespace std;
 using namespace ical_mark;
@@ -32,8 +31,8 @@ vector<QLine> draw_aim_crosshair(QPaintDevice* widget, const QPoint& center,
     painter.setPen(penColor);
 
     // Find lines of crosshair
-    float shift = fmod(degree + 225, 90) - 45;
-    shift = tan(shift * __M_PI / 180.0);
+    qreal shift = fmod(degree + 225, 90) - 45;
+    shift = qTan(qDegreesToRadians(shift));
 
     QLine line1(  //
         QPoint(center.x() - shift * center.y(), 0),
@@ -122,10 +121,20 @@ bool MarkArea::event(QEvent* event)
 
         case RBoxMark::State::DEGREE_FIN:
 
-            // Calculate and set degree
-            this->degree = this->find_degree(
-                this->markAction["degree"]["pos1"]["release"],
-                this->markAction["degree"]["pos2"]["release"]);
+            if (static_cast<TwiceClick::State>(
+                    this->markAction["bbox"].state()) ==
+                TwiceClick::State::POS1_FIN)
+            {
+                // Find bounding box
+                this->bbox = this->find_bbox(
+                    this->markAction["bbox"]["pos1"]["release"],
+                    this->markAction["bbox"]["pos2"]["move"], this->degree);
+            }
+            else
+            {
+                // Reset bounding box
+                this->bbox = QRectF();
+            }
 
             cout << "-" << this->markAction["bbox"].state();
             break;
@@ -135,21 +144,16 @@ bool MarkArea::event(QEvent* event)
     }
 
     cout << " degree: " << this->degree;
+    cout << " x: " << this->bbox.x();
+    cout << " y: " << this->bbox.y();
+    cout << " w: " << this->bbox.width();
+    cout << " h: " << this->bbox.height();
 
     if (this->markAction.finish())
     {
-        /*
-        printf(" [(%d, %d) (%d, %d)] ", this->markAction["pos1"]["press"].x(),
-               this->markAction["pos1"]["press"].y(),
-               this->markAction["pos1"]["release"].x(),
-               this->markAction["pos1"]["release"].y());
-        printf(" [(%d, %d) (%d, %d)] ", this->markAction["pos2"]["press"].x(),
-               this->markAction["pos2"]["press"].y(),
-               this->markAction["pos2"]["release"].x(),
-               this->markAction["pos2"]["release"].y());
-       */
         cout << " Finished";
     }
+
     cout << endl;
 
     if (ret)
@@ -197,6 +201,16 @@ void MarkArea::paintEvent(QPaintEvent* paintEvent)
     draw_aim_crosshair(this, this->mousePos, this->degree);
 
     // Draw marking
+    if (static_cast<RBoxMark::State>(this->markAction.state()) ==
+        RBoxMark::State::DEGREE_FIN)
+    {
+        if (!this->bbox.isNull())
+        {
+            this->draw_rotated_bbox(this->bbox, this->degree);
+        }
+    }
+
+    /*
     switch (static_cast<RBoxMark::State>(this->markAction.state()))
     {
         case RBoxMark::State::INIT:
@@ -221,16 +235,95 @@ void MarkArea::paintEvent(QPaintEvent* paintEvent)
         case RBoxMark::State::BBOX_FIN:
             break;
     }
+    */
+}
+
+float MarkArea::find_distance(const QPointF& p1, const QPointF& p2)
+{
+    qreal pwrDist = qPow(p1.x() - p2.x(), 2) + qPow(p1.y() - p2.y(), 2);
+    if (pwrDist > 0)
+    {
+        return qSqrt(pwrDist);
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 float MarkArea::find_degree(const QPoint& from, const QPoint& to)
 {
-    double theta = atan2(from.y() - to.y(), to.x() - from.x());
-    theta = theta * 180.0 / __M_PI - 90.0;
+    qreal theta = qAtan2(from.y() - to.y(), to.x() - from.x());
+    theta = qRadiansToDegrees(theta) - 90.0;
     if (theta < -180.0)
     {
         theta += 360.0;
     }
 
     return theta;
+}
+
+QRectF MarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2, float degree)
+{
+    float x, y, w, h;
+    QLineF line1, line2;
+    QPointF pos1f(pos1), pos2f(pos2);
+    QPointF crossPt1, crossPt2, center;
+
+    // Set center point of lines
+    line1.setP1(pos1f);
+    line2.setP1(pos2f);
+
+    // Find cross point 1 and height
+    line1.setAngle(degree);
+    line2.setAngle(degree + 90);
+
+    line1.intersects(line2, &crossPt1);
+    h = this->find_distance(pos2f, crossPt1);
+
+    // Find cross point 2 and width
+    line1.setAngle(degree + 90);
+    line2.setAngle(degree);
+
+    line1.intersects(line2, &crossPt2);
+    w = this->find_distance(pos2f, crossPt2);
+
+    // Find center point
+    line1.setPoints(pos1f, pos2f);
+    line2.setPoints(crossPt1, crossPt2);
+    line1.intersects(line2, &center);
+
+    center = center - this->markBase;
+    x = center.x();
+    y = center.y();
+
+    return QRectF(x, y, w, h);
+}
+
+void MarkArea::draw_rotated_bbox(const QRectF& bbox, float degree, int ctrRad,
+                                 const QColor& penColor)
+{
+    // Setup painter and drawing style
+    QPainter painter(this);
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+    painter.setPen(penColor);
+
+    // Draw center point
+    QPointF center = this->markBase + QPointF(bbox.x(), bbox.y());
+    painter.drawEllipse(center, ctrRad, ctrRad);
+
+    // Draw rotated bounding box
+    float halfWidth = bbox.width() / 2;
+    float halfHeight = bbox.height() / 2;
+
+    QPointF topLeft = QPointF(-halfWidth, -halfHeight);
+    QPointF bottomRight = QPointF(halfWidth, halfHeight);
+
+    QTransform transform;
+    transform.translate(center.x(), center.y());
+    transform.rotate(-degree);
+    painter.setTransform(transform);
+    painter.drawRect(QRectF(topLeft, bottomRight));
 }
