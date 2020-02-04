@@ -7,19 +7,13 @@
 
 #include <QEvent>
 #include <QImage>
-#include <QLine>
 #include <QObject>
-#include <QPaintDevice>
 #include <QRectF>
 #include <QWidget>
 
 #include <mark_action.hpp>
 
 #define DEFAULT_PEN_COLOR QColor(160, 160, 160)
-
-std::vector<QLine> draw_aim_crosshair(  //
-    QPaintDevice* widget, const QPoint& center, float degree,
-    const QColor& penColor = DEFAULT_PEN_COLOR);
 
 class MarkArea : public QWidget
 {
@@ -49,6 +43,8 @@ class MarkArea : public QWidget
     float find_degree(const QPoint& from, const QPoint& to);
     QRectF find_bbox(const QPoint& pos1, const QPoint& pos2, float degree);
 
+    void draw_aim_crosshair(const QPoint& center, float degree,
+                            const QColor& penColor = DEFAULT_PEN_COLOR);
     void draw_rotated_bbox(const QRectF& bbox, float degree, int ctrRad = 2,
                            const QColor& penColor = DEFAULT_PEN_COLOR);
 };

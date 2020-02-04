@@ -17,37 +17,6 @@
 using namespace std;
 using namespace ical_mark;
 
-vector<QLine> draw_aim_crosshair(QPaintDevice* widget, const QPoint& center,
-                                 float degree, const QColor& penColor)
-{
-    int width = widget->width();
-    int height = widget->height();
-
-    // Setup painter and drawing style
-    QPainter painter(widget);
-
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
-    painter.setPen(penColor);
-
-    // Find lines of crosshair
-    qreal shift = fmod(degree + 225, 90) - 45;
-    shift = qTan(qDegreesToRadians(shift));
-
-    QLine line1(  //
-        QPoint(center.x() - shift * center.y(), 0),
-        QPoint(center.x() + shift * (height - center.y()), height));
-    QLine line2(  //
-        QPoint(0, center.y() + shift * center.x()),
-        QPoint(width, center.y() - shift * (width - center.x())));
-
-    // Draw aim crosshair
-    painter.drawLine(line1);
-    painter.drawLine(line2);
-
-    return {line1, line2};
-}
-
 MarkArea::MarkArea(QWidget* parent) : QWidget(parent)
 {
     this->setMouseTracking(true);
@@ -198,7 +167,7 @@ void MarkArea::paintEvent(QPaintEvent* paintEvent)
     }
 
     // Draw aim crosshair
-    draw_aim_crosshair(this, this->mousePos, this->degree);
+    this->draw_aim_crosshair(this->mousePos, this->degree);
 
     // Draw marking
     if (static_cast<RBoxMark::State>(this->markAction.state()) ==
@@ -209,33 +178,6 @@ void MarkArea::paintEvent(QPaintEvent* paintEvent)
             this->draw_rotated_bbox(this->bbox, this->degree);
         }
     }
-
-    /*
-    switch (static_cast<RBoxMark::State>(this->markAction.state()))
-    {
-        case RBoxMark::State::INIT:
-            switch (static_cast<TwiceClick::State>(
-                this->markAction["degree"].state()))
-            {
-                case TwiceClick::State::INIT:
-                    break;
-
-                case TwiceClick::State::POS1_FIN:
-                    break;
-
-                case TwiceClick::State::POS2_FIN:
-                    break;
-            }
-
-            break;
-
-        case RBoxMark::State::DEGREE_FIN:
-            break;
-
-        case RBoxMark::State::BBOX_FIN:
-            break;
-    }
-    */
 }
 
 float MarkArea::find_distance(const QPointF& p1, const QPointF& p2)
@@ -266,6 +208,7 @@ float MarkArea::find_degree(const QPoint& from, const QPoint& to)
 QRectF MarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2, float degree)
 {
     float x, y, w, h;
+
     QLineF line1, line2;
     QPointF pos1f(pos1), pos2f(pos2);
     QPointF crossPt1, crossPt2, center;
@@ -298,6 +241,35 @@ QRectF MarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2, float degree)
     y = center.y();
 
     return QRectF(x, y, w, h);
+}
+
+void MarkArea::draw_aim_crosshair(const QPoint& center, float degree,
+                                  const QColor& penColor)
+{
+    int width = this->width();
+    int height = this->height();
+
+    // Setup painter and drawing style
+    QPainter painter(this);
+
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
+    painter.setPen(penColor);
+
+    // Find lines of crosshair
+    qreal shift = fmod(degree + 225, 90) - 45;
+    shift = qTan(qDegreesToRadians(shift));
+
+    QLine line1(  //
+        QPoint(center.x() - shift * center.y(), 0),
+        QPoint(center.x() + shift * (height - center.y()), height));
+    QLine line2(  //
+        QPoint(0, center.y() + shift * center.x()),
+        QPoint(width, center.y() - shift * (width - center.x())));
+
+    // Draw aim crosshair
+    painter.drawLine(line1);
+    painter.drawLine(line2);
 }
 
 void MarkArea::draw_rotated_bbox(const QRectF& bbox, float degree, int ctrRad,
