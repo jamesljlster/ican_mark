@@ -77,7 +77,7 @@ bool MarkArea::event(QEvent* event)
                 // Calculate and set degree
                 this->degree = this->find_degree(
                     this->markAction["degree"]["pos1"]["release"],
-                    this->markAction["degree"]["pos2"]["move"]);
+                    this->mousePos);
             }
             else
             {
@@ -95,9 +95,9 @@ bool MarkArea::event(QEvent* event)
                 TwiceClick::State::POS1_FIN)
             {
                 // Find bounding box
-                this->bbox = this->find_bbox(
-                    this->markAction["bbox"]["pos1"]["release"],
-                    this->markAction["bbox"]["pos2"]["move"], this->degree);
+                this->bbox =
+                    this->find_bbox(this->markAction["bbox"]["pos1"]["release"],
+                                    this->mousePos, this->degree);
             }
             else
             {

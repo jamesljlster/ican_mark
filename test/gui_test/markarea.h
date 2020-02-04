@@ -18,6 +18,7 @@
 class MarkArea : public QWidget
 {
     Q_OBJECT
+
    public:
     explicit MarkArea(QWidget* parent = nullptr);
 
