@@ -17,13 +17,13 @@ int main()
     inst.h = 6.6;
 
     YAML::Node node;
-    node = inst;
+    node.push_back(inst);
 
     cout << "Yaml node:" << endl;
     cout << node << endl;
     cout << endl;
 
-    inst = node.as<Instance>();
+    inst = node[0].as<Instance>();
     cout << "Instance:" << endl;
     cout << "label: " << inst.label << endl;
     cout << "degree: " << inst.degree << endl;
