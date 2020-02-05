@@ -15,12 +15,12 @@
 
 #define DEFAULT_PEN_COLOR QColor(160, 160, 160)
 
-class MarkArea : public QWidget
+class RBoxMarkArea : public QWidget
 {
     Q_OBJECT
 
    public:
-    explicit MarkArea(QWidget* parent = nullptr);
+    explicit RBoxMarkArea(QWidget* parent = nullptr);
 
    signals:
 

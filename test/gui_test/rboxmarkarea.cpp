@@ -17,7 +17,7 @@
 using namespace std;
 using namespace ical_mark;
 
-MarkArea::MarkArea(QWidget* parent) : QWidget(parent)
+RBoxMarkArea::RBoxMarkArea(QWidget* parent) : QWidget(parent)
 {
     this->setMouseTracking(true);
     this->setFocus();
@@ -26,7 +26,7 @@ MarkArea::MarkArea(QWidget* parent) : QWidget(parent)
     // this->setCursor(Qt::BlankCursor);
 }
 
-bool MarkArea::event(QEvent* event)
+bool RBoxMarkArea::event(QEvent* event)
 {
     bool ret = false;
     QEvent::Type eventType = event->type();
@@ -136,7 +136,7 @@ bool MarkArea::event(QEvent* event)
     }
 }
 
-void MarkArea::paintEvent(QPaintEvent* paintEvent)
+void RBoxMarkArea::paintEvent(QPaintEvent* paintEvent)
 {
     int width = this->width();
     int height = this->height();
@@ -180,7 +180,7 @@ void MarkArea::paintEvent(QPaintEvent* paintEvent)
     }
 }
 
-double MarkArea::find_distance(const QPointF& p1, const QPointF& p2)
+double RBoxMarkArea::find_distance(const QPointF& p1, const QPointF& p2)
 {
     qreal pwrDist = qPow(p1.x() - p2.x(), 2) + qPow(p1.y() - p2.y(), 2);
     if (pwrDist > 0)
@@ -193,7 +193,7 @@ double MarkArea::find_distance(const QPointF& p1, const QPointF& p2)
     }
 }
 
-double MarkArea::find_degree(const QPoint& from, const QPoint& to)
+double RBoxMarkArea::find_degree(const QPoint& from, const QPoint& to)
 {
     qreal theta = qAtan2(from.y() - to.y(), to.x() - from.x());
     theta = qRadiansToDegrees(theta) - 90.0;
@@ -205,8 +205,8 @@ double MarkArea::find_degree(const QPoint& from, const QPoint& to)
     return theta;
 }
 
-QRectF MarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2,
-                           double degree)
+QRectF RBoxMarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2,
+                               double degree)
 {
     double x, y, w, h;
     double xScale =
@@ -248,8 +248,8 @@ QRectF MarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2,
     return QRectF(x, y, w, h);
 }
 
-void MarkArea::draw_aim_crosshair(const QPoint& center, double degree,
-                                  const QColor& penColor)
+void RBoxMarkArea::draw_aim_crosshair(const QPoint& center, double degree,
+                                      const QColor& penColor)
 {
     int width = this->width();
     int height = this->height();
@@ -277,8 +277,8 @@ void MarkArea::draw_aim_crosshair(const QPoint& center, double degree,
     painter.drawLine(line2);
 }
 
-void MarkArea::draw_rotated_bbox(const QRectF& bbox, double degree, int ctrRad,
-                                 const QColor& penColor)
+void RBoxMarkArea::draw_rotated_bbox(const QRectF& bbox, double degree,
+                                     int ctrRad, const QColor& penColor)
 {
     double xScale =
         (double)this->markSize.width() / (double)this->bgImage.width();
