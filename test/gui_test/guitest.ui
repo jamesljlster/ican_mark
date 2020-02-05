@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
-     <widget class="RBoxMarkArea" name="widget" native="true">
+     <widget class="RBoxMarkWidget" name="widget" native="true">
       <layout class="QGridLayout" name="gridLayout"/>
      </widget>
     </item>
@@ -36,9 +36,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RBoxMarkArea</class>
+   <class>RBoxMarkWidget</class>
    <extends>QWidget</extends>
-   <header>markarea.h</header>
+   <header>markwidget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

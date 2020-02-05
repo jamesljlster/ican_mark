@@ -1,4 +1,4 @@
-#include "markarea.h"
+#include "markwidget.h"
 
 #include <cmath>
 #include <cstdio>
@@ -17,7 +17,7 @@
 using namespace std;
 using namespace ical_mark;
 
-RBoxMarkArea::RBoxMarkArea(QWidget* parent) : QWidget(parent)
+RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : QWidget(parent)
 {
     this->setMouseTracking(true);
     this->setFocus();
@@ -26,7 +26,7 @@ RBoxMarkArea::RBoxMarkArea(QWidget* parent) : QWidget(parent)
     // this->setCursor(Qt::BlankCursor);
 }
 
-bool RBoxMarkArea::event(QEvent* event)
+bool RBoxMarkWidget::event(QEvent* event)
 {
     bool ret = false;
     QEvent::Type eventType = event->type();
@@ -142,7 +142,7 @@ bool RBoxMarkArea::event(QEvent* event)
     }
 }
 
-void RBoxMarkArea::paintEvent(QPaintEvent* paintEvent)
+void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
 {
     int width = this->width();
     int height = this->height();
@@ -192,7 +192,7 @@ void RBoxMarkArea::paintEvent(QPaintEvent* paintEvent)
     }
 }
 
-double RBoxMarkArea::find_distance(const QPointF& p1, const QPointF& p2)
+double RBoxMarkWidget::find_distance(const QPointF& p1, const QPointF& p2)
 {
     qreal pwrDist = qPow(p1.x() - p2.x(), 2) + qPow(p1.y() - p2.y(), 2);
     if (pwrDist > 0)
@@ -205,7 +205,7 @@ double RBoxMarkArea::find_distance(const QPointF& p1, const QPointF& p2)
     }
 }
 
-double RBoxMarkArea::find_degree(const QPoint& from, const QPoint& to)
+double RBoxMarkWidget::find_degree(const QPoint& from, const QPoint& to)
 {
     qreal theta = qAtan2(from.y() - to.y(), to.x() - from.x());
     theta = qRadiansToDegrees(theta) - 90.0;
@@ -217,8 +217,8 @@ double RBoxMarkArea::find_degree(const QPoint& from, const QPoint& to)
     return theta;
 }
 
-QRectF RBoxMarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2,
-                               double degree)
+QRectF RBoxMarkWidget::find_bbox(const QPoint& pos1, const QPoint& pos2,
+                                 double degree)
 {
     Instance inst;
     inst.degree = degree;
@@ -226,8 +226,8 @@ QRectF RBoxMarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2,
     return QRectF(inst.x, inst.y, inst.w, inst.h);
 }
 
-void RBoxMarkArea::fill_bbox(Instance& inst, const QPoint& pos1,
-                             const QPoint& pos2)
+void RBoxMarkWidget::fill_bbox(Instance& inst, const QPoint& pos1,
+                               const QPoint& pos2)
 {
     double x, y, w, h;
     double degree = inst.degree;
@@ -285,8 +285,8 @@ void RBoxMarkArea::fill_bbox(Instance& inst, const QPoint& pos1,
     inst.h = h;
 }
 
-void RBoxMarkArea::draw_aim_crosshair(const QPoint& center, double degree,
-                                      const QColor& penColor)
+void RBoxMarkWidget::draw_aim_crosshair(const QPoint& center, double degree,
+                                        const QColor& penColor)
 {
     int width = this->width();
     int height = this->height();
@@ -314,8 +314,8 @@ void RBoxMarkArea::draw_aim_crosshair(const QPoint& center, double degree,
     painter.drawLine(line2);
 }
 
-void RBoxMarkArea::draw_rotated_bbox(const Instance& inst, int ctrRad,
-                                     const QColor& penColor)
+void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst, int ctrRad,
+                                       const QColor& penColor)
 {
     double xScale =
         (double)this->markSize.width() / (double)this->bgImage.width();
@@ -347,8 +347,8 @@ void RBoxMarkArea::draw_rotated_bbox(const Instance& inst, int ctrRad,
     painter.drawRect(QRectF(topLeft, bottomRight));
 }
 
-void RBoxMarkArea::draw_rotated_bbox(const QRectF& bbox, double degree,
-                                     int ctrRad, const QColor& penColor)
+void RBoxMarkWidget::draw_rotated_bbox(const QRectF& bbox, double degree,
+                                       int ctrRad, const QColor& penColor)
 {
     Instance inst;
     inst.degree = degree;

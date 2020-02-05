@@ -35,6 +35,7 @@ endif()
 
 # Set project global dependencies
 set(PROJECT_DEPS
+    mark_widget
     mark_action
     mark_instance
     ${YAML_CPP_LIBRARIES}

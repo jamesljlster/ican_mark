@@ -1,5 +1,5 @@
-#ifndef MARKAREA_H
-#define MARKAREA_H
+#ifndef MARKWIDGET_H
+#define MARKWIDGET_H
 
 #include <map>
 #include <string>
@@ -16,12 +16,12 @@
 
 #define DEFAULT_PEN_COLOR QColor(160, 160, 160)
 
-class RBoxMarkArea : public QWidget
+class RBoxMarkWidget : public QWidget
 {
     Q_OBJECT
 
    public:
-    explicit RBoxMarkArea(QWidget* parent = nullptr);
+    explicit RBoxMarkWidget(QWidget* parent = nullptr);
 
    signals:
 
