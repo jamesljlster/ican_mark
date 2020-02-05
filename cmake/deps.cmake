@@ -36,5 +36,7 @@ endif()
 # Set project global dependencies
 set(PROJECT_DEPS
     mark_action
+    mark_instance
+    ${YAML_CPP_LIBRARIES}
     Qt5::Widgets
     )

@@ -17,27 +17,6 @@
 using namespace std;
 using namespace ical_mark;
 
-bool RBoxMarkArea::Instance::valid() const
-{
-    return (this->w > 0 && this->h > 0);
-}
-
-void RBoxMarkArea::Instance::reset()
-{
-    this->label = 0;
-    this->reset_degree();
-    this->reset_bbox();
-}
-
-void RBoxMarkArea::Instance::reset_degree() { this->degree = 0; }
-void RBoxMarkArea::Instance::reset_bbox()
-{
-    this->x = 0;
-    this->y = 0;
-    this->w = 0;
-    this->h = 0;
-}
-
 RBoxMarkArea::RBoxMarkArea(QWidget* parent) : QWidget(parent)
 {
     this->setMouseTracking(true);

@@ -30,6 +30,7 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
 # Library paths
 set(LIB_PATHS
     ${CMAKE_CURRENT_SOURCE_DIR}/lib/mark_action
+    ${CMAKE_CURRENT_SOURCE_DIR}/lib/mark_instance
     )
 
 # Utility paths
