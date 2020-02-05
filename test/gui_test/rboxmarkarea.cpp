@@ -269,20 +269,32 @@ void RBoxMarkArea::fill_bbox(Instance& inst, const QPoint& pos1,
     line1.setAngle(degree);
     line2.setAngle(degree + 90);
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+    line1.intersect(line2, &crossPt1);
+#else
     line1.intersects(line2, &crossPt1);
+#endif
     h = this->find_distance(pos2f, crossPt1) / xScale;
 
     // Find cross point 2 and width
     line1.setAngle(degree + 90);
     line2.setAngle(degree);
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+    line1.intersect(line2, &crossPt2);
+#else
     line1.intersects(line2, &crossPt2);
+#endif
     w = this->find_distance(pos2f, crossPt2) / yScale;
 
     // Find center point
     line1.setPoints(pos1f, pos2f);
     line2.setPoints(crossPt1, crossPt2);
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+    line1.intersect(line2, &center);
+#else
     line1.intersects(line2, &center);
+#endif
 
     center = center - this->markBase;
     x = center.x() / xScale;
