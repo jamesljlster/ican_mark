@@ -17,6 +17,27 @@
 using namespace std;
 using namespace ical_mark;
 
+bool RBoxMarkArea::Instance::valid() const
+{
+    return (this->w > 0 && this->h > 0);
+}
+
+void RBoxMarkArea::Instance::reset()
+{
+    this->label = 0;
+    this->reset_degree();
+    this->reset_bbox();
+}
+
+void RBoxMarkArea::Instance::reset_degree() { this->degree = 0; }
+void RBoxMarkArea::Instance::reset_bbox()
+{
+    this->x = 0;
+    this->y = 0;
+    this->w = 0;
+    this->h = 0;
+}
+
 RBoxMarkArea::RBoxMarkArea(QWidget* parent) : QWidget(parent)
 {
     this->setMouseTracking(true);
@@ -75,14 +96,14 @@ bool RBoxMarkArea::event(QEvent* event)
                 TwiceClick::State::POS1_FIN)
             {
                 // Calculate and set degree
-                this->degree = this->find_degree(
+                this->curInst.degree = this->find_degree(
                     this->markAction["degree"]["pos1"]["release"],
                     this->mousePos);
             }
             else
             {
                 // Reset degree
-                this->degree = 0;
+                this->curInst.degree = 0;
             }
 
             cout << "-" << this->markAction["degree"].state();
@@ -94,29 +115,35 @@ bool RBoxMarkArea::event(QEvent* event)
                     this->markAction["bbox"].state()) ==
                 TwiceClick::State::POS1_FIN)
             {
-                // Find bounding box
-                this->bbox =
-                    this->find_bbox(this->markAction["bbox"]["pos1"]["release"],
-                                    this->mousePos, this->degree);
+                // Fill bounding box
+                this->fill_bbox(this->curInst,
+                                this->markAction["bbox"]["pos1"]["release"],
+                                this->mousePos);
             }
             else
             {
                 // Reset bounding box
-                this->bbox = QRectF();
+                this->curInst.reset_bbox();
             }
 
             cout << "-" << this->markAction["bbox"].state();
             break;
 
         case RBoxMark::State::BBOX_FIN:
+
+            // Append instance to annotation list
+            this->annoList.push_back(this->curInst);
+            this->curInst.reset();
+            this->markAction.reset();
+
             break;
     }
 
-    cout << " degree: " << this->degree;
-    cout << " x: " << this->bbox.x();
-    cout << " y: " << this->bbox.y();
-    cout << " w: " << this->bbox.width();
-    cout << " h: " << this->bbox.height();
+    cout << " degree: " << this->curInst.degree;
+    cout << " x: " << this->curInst.x;
+    cout << " y: " << this->curInst.y;
+    cout << " w: " << this->curInst.w;
+    cout << " h: " << this->curInst.h;
 
     if (this->markAction.finish())
     {
@@ -167,15 +194,21 @@ void RBoxMarkArea::paintEvent(QPaintEvent* paintEvent)
     }
 
     // Draw aim crosshair
-    this->draw_aim_crosshair(this->mousePos, this->degree);
+    this->draw_aim_crosshair(this->mousePos, this->curInst.degree);
 
-    // Draw marking
+    // Draw marked instances
+    for (auto anno : this->annoList)
+    {
+        this->draw_rotated_bbox(anno);
+    }
+
+    // Draw rbox marking progress
     if (static_cast<RBoxMark::State>(this->markAction.state()) ==
         RBoxMark::State::DEGREE_FIN)
     {
-        if (!this->bbox.isNull())
+        if (this->curInst.valid())
         {
-            this->draw_rotated_bbox(this->bbox, this->degree);
+            this->draw_rotated_bbox(this->curInst);
         }
     }
 }
@@ -208,7 +241,17 @@ double RBoxMarkArea::find_degree(const QPoint& from, const QPoint& to)
 QRectF RBoxMarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2,
                                double degree)
 {
+    Instance inst;
+    inst.degree = degree;
+    this->fill_bbox(inst, pos1, pos2);
+    return QRectF(inst.x, inst.y, inst.w, inst.h);
+}
+
+void RBoxMarkArea::fill_bbox(Instance& inst, const QPoint& pos1,
+                             const QPoint& pos2)
+{
     double x, y, w, h;
+    double degree = inst.degree;
     double xScale =
         (double)this->markSize.width() / (double)this->bgImage.width();
     double yScale =
@@ -245,7 +288,10 @@ QRectF RBoxMarkArea::find_bbox(const QPoint& pos1, const QPoint& pos2,
     x = center.x() / xScale;
     y = center.y() / yScale;
 
-    return QRectF(x, y, w, h);
+    inst.x = x;
+    inst.y = y;
+    inst.w = w;
+    inst.h = h;
 }
 
 void RBoxMarkArea::draw_aim_crosshair(const QPoint& center, double degree,
@@ -277,8 +323,8 @@ void RBoxMarkArea::draw_aim_crosshair(const QPoint& center, double degree,
     painter.drawLine(line2);
 }
 
-void RBoxMarkArea::draw_rotated_bbox(const QRectF& bbox, double degree,
-                                     int ctrRad, const QColor& penColor)
+void RBoxMarkArea::draw_rotated_bbox(const Instance& inst, int ctrRad,
+                                     const QColor& penColor)
 {
     double xScale =
         (double)this->markSize.width() / (double)this->bgImage.width();
@@ -293,20 +339,32 @@ void RBoxMarkArea::draw_rotated_bbox(const QRectF& bbox, double degree,
     painter.setPen(penColor);
 
     // Draw center point
-    QPointF center =
-        this->markBase + QPointF(bbox.x() * xScale, bbox.y() * yScale);
+    QPointF center = this->markBase + QPointF(inst.x * xScale, inst.y * yScale);
     painter.drawEllipse(center, ctrRad, ctrRad);
 
     // Draw rotated bounding box
-    double halfWidth = bbox.width() * xScale / 2;
-    double halfHeight = bbox.height() * yScale / 2;
+    double halfWidth = inst.w * xScale / 2;
+    double halfHeight = inst.h * yScale / 2;
 
     QPointF topLeft = QPointF(-halfWidth, -halfHeight);
     QPointF bottomRight = QPointF(halfWidth, halfHeight);
 
     QTransform transform;
     transform.translate(center.x(), center.y());
-    transform.rotate(-degree);
+    transform.rotate(-inst.degree);
     painter.setTransform(transform);
     painter.drawRect(QRectF(topLeft, bottomRight));
+}
+
+void RBoxMarkArea::draw_rotated_bbox(const QRectF& bbox, double degree,
+                                     int ctrRad, const QColor& penColor)
+{
+    Instance inst;
+    inst.degree = degree;
+    inst.x = bbox.x();
+    inst.y = bbox.y();
+    inst.w = bbox.width();
+    inst.h = bbox.height();
+
+    this->draw_rotated_bbox(inst, ctrRad, penColor);
 }
