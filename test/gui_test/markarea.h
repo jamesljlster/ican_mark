@@ -36,17 +36,17 @@ class MarkArea : public QWidget
     QPoint markBase;
     QSize markSize;
 
-    float degree = 0;
+    double degree = 0;
     QRectF bbox;
 
     // Member functions
-    float find_distance(const QPointF& p1, const QPointF& p2);
-    float find_degree(const QPoint& from, const QPoint& to);
-    QRectF find_bbox(const QPoint& pos1, const QPoint& pos2, float degree);
+    double find_distance(const QPointF& p1, const QPointF& p2);
+    double find_degree(const QPoint& from, const QPoint& to);
+    QRectF find_bbox(const QPoint& pos1, const QPoint& pos2, double degree);
 
-    void draw_aim_crosshair(const QPoint& center, float degree,
+    void draw_aim_crosshair(const QPoint& center, double degree,
                             const QColor& penColor = DEFAULT_PEN_COLOR);
-    void draw_rotated_bbox(const QRectF& bbox, float degree, int ctrRad = 2,
+    void draw_rotated_bbox(const QRectF& bbox, double degree, int ctrRad = 2,
                            const QColor& penColor = DEFAULT_PEN_COLOR);
 };
 
