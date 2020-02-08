@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string>
 
 #include <mark_instance.hpp>
 
@@ -7,6 +8,7 @@ using namespace ical_mark;
 
 int main()
 {
+    YAML::Node node;
     Instance inst;
 
     inst.label = 1;
@@ -16,21 +18,14 @@ int main()
     inst.w = 5.5;
     inst.h = 6.6;
 
-    YAML::Node node;
     node = inst;
-
     cout << "Yaml node:" << endl;
     cout << node << endl;
     cout << endl;
 
     inst = node.as<Instance>();
     cout << "Instance:" << endl;
-    cout << "label: " << inst.label << endl;
-    cout << "degree: " << inst.degree << endl;
-    cout << "x: " << inst.x << endl;
-    cout << "y: " << inst.y << endl;
-    cout << "w: " << inst.w << endl;
-    cout << "h: " << inst.h << endl;
+    cout << string(inst) << endl;
     cout << endl;
 
     return 0;

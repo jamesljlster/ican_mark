@@ -23,7 +23,11 @@ class RBoxMarkWidget : public QWidget
    public:
     explicit RBoxMarkWidget(QWidget* parent = nullptr);
 
+    /** Data handling */
+    const std::vector<ical_mark::Instance>& annotation_list();
+
    signals:
+    void stateChanged(const std::vector<ical_mark::Instance>& annoList);
 
    protected:
     /** Member variables */

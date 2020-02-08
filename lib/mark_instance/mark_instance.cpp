@@ -1,4 +1,4 @@
-#include <mark_instance.hpp>
+#include "mark_instance.hpp"
 
 using namespace std;
 using namespace ical_mark;
@@ -19,4 +19,15 @@ void Instance::reset_bbox()
     this->y = 0;
     this->w = 0;
     this->h = 0;
+}
+
+Instance::operator string() const
+{
+    YAML::Node node;
+    YAML::Emitter out;
+
+    node = *this;
+    out << node;
+
+    return out.c_str();
 }

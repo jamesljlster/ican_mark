@@ -1,6 +1,8 @@
 #ifndef __MARK_INSTANCE_HPP__
 #define __MARK_INSTANCE_HPP__
 
+#include <string>
+
 #include <yaml-cpp/yaml.h>
 
 namespace ical_mark
@@ -18,6 +20,8 @@ struct Instance
     void reset();
     void reset_degree();
     void reset_bbox();
+
+    operator std::string() const;
 };
 }  // namespace ical_mark
 
@@ -37,6 +41,8 @@ struct convert<ical_mark::Instance>
         node["y"] = rhs.y;
         node["w"] = rhs.w;
         node["h"] = rhs.h;
+
+        node.SetStyle(YAML::EmitterStyle::Flow);
 
         return node;
     }

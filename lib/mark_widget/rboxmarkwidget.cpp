@@ -23,7 +23,12 @@ RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : QWidget(parent)
     this->setFocus();
 
     this->bgImage = QImage("color_map.png");
-    // this->setCursor(Qt::BlankCursor);
+    this->setCursor(Qt::BlankCursor);
+}
+
+const vector<Instance>& RBoxMarkWidget::annotation_list()
+{
+    return this->annoList;
 }
 
 bool RBoxMarkWidget::event(QEvent* event)
@@ -114,6 +119,9 @@ bool RBoxMarkWidget::event(QEvent* event)
             this->annoList.push_back(this->curInst);
             this->curInst.reset();
             this->markAction.reset();
+
+            // Raise signal
+            emit stateChanged(this->annoList);
 
             break;
     }
