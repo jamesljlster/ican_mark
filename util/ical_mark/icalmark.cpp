@@ -45,43 +45,31 @@ void ICALMark::on_markArea_stateChanged(const vector<Instance>& annoList)
         this->ui->instList->addItem(item);
     }
 
-    // File and state processing
-    QFileInfo fileInfo =
+    // Save data
+    QString filePath =
         QFileInfo(this->ui->dataDir->text(),
-                  this->ui->slideView->currentItem()->text() + MARK_EXT);
-    if (annoList.size())
+                  this->ui->slideView->currentItem()->text() + MARK_EXT)
+            .filePath();
+
+    YAML::Node node;
+    node = annoList;
+
+    YAML::Emitter out;
+    out << node;
+
+    std::ofstream fWriter(filePath.toStdString());
+    if (!fWriter.is_open())
     {
-        // Save data
-        YAML::Node node;
-        node = annoList;
-
-        YAML::Emitter out;
-        out << node;
-
-        QString filePath = fileInfo.filePath();
-        std::ofstream fWriter(filePath.toStdString());
-        if (!fWriter.is_open())
-        {
-            QMessageBox::warning(this, QString(tr("Error")),
-                                 QString(tr("Failed to write file:")) +
-                                     QString("\n") + filePath);
-        }
-
-        fWriter << out.c_str();
-        fWriter.close();
-
-        // Change state
-        this->ui->slideView->currentItem()->setCheckState(
-            Qt::CheckState::Checked);
+        QMessageBox::warning(
+            this, QString(tr("Error")),
+            QString(tr("Failed to write file:")) + QString("\n") + filePath);
     }
-    else
-    {
-        // Remove data
-        if (fileInfo.exists())
-        {
-            QFile::remove(fileInfo.filePath());
-        }
-    }
+
+    fWriter << out.c_str();
+    fWriter.close();
+
+    // Change sample marked state
+    this->ui->slideView->currentItem()->setCheckState(Qt::CheckState::Checked);
 }
 
 void ICALMark::on_instDel_clicked()
