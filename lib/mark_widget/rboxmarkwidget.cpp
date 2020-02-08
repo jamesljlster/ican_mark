@@ -1,5 +1,6 @@
 #include "markwidget.h"
 
+#include <algorithm>
 #include <cmath>
 #include <cstdio>
 #include <iostream>
@@ -29,6 +30,19 @@ RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : QWidget(parent)
 const vector<Instance>& RBoxMarkWidget::annotation_list()
 {
     return this->annoList;
+}
+
+void RBoxMarkWidget::delete_instances(const std::vector<size_t>& indList)
+{
+    vector<size_t> indSort = indList;
+    sort(indSort.begin(), indSort.end());
+    for (auto i = indSort.rbegin(); i != indSort.rend(); i++)
+    {
+        this->annoList.erase(this->annoList.begin() + *i);
+    }
+
+    this->repaint();
+    emit stateChanged(this->annoList);
 }
 
 bool RBoxMarkWidget::event(QEvent* event)

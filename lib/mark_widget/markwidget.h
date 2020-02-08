@@ -25,6 +25,7 @@ class RBoxMarkWidget : public QWidget
 
     /** Data handling */
     const std::vector<ical_mark::Instance>& annotation_list();
+    void delete_instances(const std::vector<size_t>& indList);
 
    signals:
     void stateChanged(const std::vector<ical_mark::Instance>& annoList);
