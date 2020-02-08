@@ -176,3 +176,17 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
         this->ui->markStack->setCurrentIndex(1);
     }
 }
+
+void ICALMark::slideview_sliding(int step)
+{
+    QModelIndex curInd = this->ui->slideView->currentIndex();
+    QModelIndex nextInd = curInd.siblingAtRow(curInd.row() + step);
+    if (nextInd.isValid())
+    {
+        this->ui->slideView->setCurrentIndex(nextInd);
+    }
+}
+
+void ICALMark::on_slideNext_clicked() { this->slideview_sliding(1); }
+
+void ICALMark::on_slidePrevious_clicked() { this->slideview_sliding(-1); }

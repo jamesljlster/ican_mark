@@ -7,6 +7,7 @@
 
 #include <QListWidgetItem>
 #include <QMainWindow>
+#include <QModelIndex>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -36,7 +37,13 @@ class ICALMark : public QMainWindow
     void on_slideView_currentItemChanged(QListWidgetItem *current,
                                          QListWidgetItem *previous);
 
+    void on_slideNext_clicked();
+
+    void on_slidePrevious_clicked();
+
    private:
     Ui::ICALMark *ui;
+
+    void slideview_sliding(int step);
 };
 #endif  // ICALMARK_H
