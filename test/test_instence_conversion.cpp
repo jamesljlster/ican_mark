@@ -1,5 +1,8 @@
+#include <exception>
+#include <fstream>
 #include <iostream>
 #include <string>
+#include <vector>
 
 #include <mark_instance.hpp>
 
@@ -7,6 +10,7 @@ using namespace std;
 using namespace ical_mark;
 
 int main()
+try
 {
     YAML::Node node;
     Instance inst;
@@ -28,5 +32,28 @@ int main()
     cout << string(inst) << endl;
     cout << endl;
 
+    vector<Instance> instList;
+    instList.push_back(inst);
+    instList.push_back(inst);
+
+    node = instList;
+    YAML::Emitter out;
+    out << node;
+    cout << node << endl;
+    std::ofstream fWriter("test.mark");
+    fWriter << out.c_str();
+    fWriter.close();
+
+    node = YAML::LoadFile("test.mark");
+    instList = node.as<vector<Instance>>();
+
     return 0;
+}
+catch (exception& ex)
+{
+    cout << endl;
+    cout << "Error!" << endl;
+    cout << ex.what() << endl;
+    cout << endl;
+    return -1;
 }

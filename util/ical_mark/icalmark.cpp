@@ -165,7 +165,7 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
             try
             {
                 YAML::Node node =
-                    YAML::Load((imgPath + MARK_EXT).toStdString());
+                    YAML::LoadFile((imgPath + MARK_EXT).toStdString());
                 instList = node.as<vector<Instance>>();
             }
             catch (exception& ex)

@@ -42,8 +42,6 @@ struct convert<ical_mark::Instance>
         node["w"] = rhs.w;
         node["h"] = rhs.h;
 
-        node.SetStyle(YAML::EmitterStyle::Flow);
-
         return node;
     }
 

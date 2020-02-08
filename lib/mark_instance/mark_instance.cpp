@@ -27,6 +27,7 @@ Instance::operator string() const
     YAML::Emitter out;
 
     node = *this;
+    node.SetStyle(YAML::EmitterStyle::Flow);
     out << node;
 
     return out.c_str();
