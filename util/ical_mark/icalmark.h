@@ -5,6 +5,7 @@
 #include <mark_instance.hpp>
 #include <vector>
 
+#include <QListWidgetItem>
 #include <QMainWindow>
 
 QT_BEGIN_NAMESPACE
@@ -27,6 +28,13 @@ class ICALMark : public QMainWindow
         const std::vector<ical_mark::Instance> &annoList);
 
     void on_instDel_clicked();
+
+    void on_dataDir_clicked();
+
+    void on_dataRefresh_clicked();
+
+    void on_slideView_currentItemChanged(QListWidgetItem *current,
+                                         QListWidgetItem *previous);
 
    private:
     Ui::ICALMark *ui;

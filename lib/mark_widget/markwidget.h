@@ -23,6 +23,11 @@ class RBoxMarkWidget : public QWidget
    public:
     explicit RBoxMarkWidget(QWidget* parent = nullptr);
 
+    /** Initialization and setup */
+    void reset(const QImage& image,
+               const std::vector<ical_mark::Instance>& instList);
+    void set_mark_label(int label);
+
     /** Data handling */
     const std::vector<ical_mark::Instance>& annotation_list();
     void delete_instances(const std::vector<size_t>& indList);
@@ -39,6 +44,8 @@ class RBoxMarkWidget : public QWidget
     QPoint markBase;
     QSize markSize;
 
+    int label = 0;                              // Current marking label
+    int highlightInst = -1;                     // Index for highlighting
     ical_mark::Instance curInst;                // Current marking instance
     std::vector<ical_mark::Instance> annoList;  // Marked instances
 

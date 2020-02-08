@@ -21,11 +21,20 @@ using namespace ical_mark;
 RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : QWidget(parent)
 {
     this->setMouseTracking(true);
-    this->setFocus();
-
-    this->bgImage = QImage("color_map.png");
     this->setCursor(Qt::BlankCursor);
 }
+
+void RBoxMarkWidget::reset(const QImage& image,
+                           const std::vector<ical_mark::Instance>& instList)
+{
+    this->bgImage = image;
+    this->annoList = instList;
+    this->repaint();
+
+    emit stateChanged(this->annoList);
+}
+
+void RBoxMarkWidget::set_mark_label(int label) { this->label = label; }
 
 const vector<Instance>& RBoxMarkWidget::annotation_list()
 {
@@ -38,6 +47,11 @@ void RBoxMarkWidget::delete_instances(const std::vector<size_t>& indList)
     sort(indSort.begin(), indSort.end());
     for (auto i = indSort.rbegin(); i != indSort.rend(); i++)
     {
+        if ((int)*i == this->highlightInst)
+        {
+            this->highlightInst = -1;
+        }
+
         this->annoList.erase(this->annoList.begin() + *i);
     }
 
@@ -84,7 +98,6 @@ bool RBoxMarkWidget::event(QEvent* event)
     }
 
     // Status checking and processing
-    cout << "state: " << this->markAction.state();
     switch (static_cast<RBoxMark::State>(this->markAction.state()))
     {
         case RBoxMark::State::INIT:
@@ -104,7 +117,6 @@ bool RBoxMarkWidget::event(QEvent* event)
                 this->curInst.degree = 0;
             }
 
-            cout << "-" << this->markAction["degree"].state();
             break;
 
         case RBoxMark::State::DEGREE_FIN:
@@ -124,10 +136,12 @@ bool RBoxMarkWidget::event(QEvent* event)
                 this->curInst.reset_bbox();
             }
 
-            cout << "-" << this->markAction["bbox"].state();
             break;
 
         case RBoxMark::State::BBOX_FIN:
+
+            // Set label
+            this->curInst.label = this->label;
 
             // Append instance to annotation list
             this->annoList.push_back(this->curInst);
@@ -139,19 +153,6 @@ bool RBoxMarkWidget::event(QEvent* event)
 
             break;
     }
-
-    cout << " degree: " << this->curInst.degree;
-    cout << " x: " << this->curInst.x;
-    cout << " y: " << this->curInst.y;
-    cout << " w: " << this->curInst.w;
-    cout << " h: " << this->curInst.h;
-
-    if (this->markAction.finish())
-    {
-        cout << " Finished";
-    }
-
-    cout << endl;
 
     if (ret)
     {
@@ -168,6 +169,8 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
 {
     int width = this->width();
     int height = this->height();
+
+    (void)paintEvent;
 
     // Paint background
     QPainter painter(this);
