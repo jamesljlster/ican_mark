@@ -51,5 +51,6 @@ class ICALMark : public QMainWindow
     Ui::ICALMark *ui;
 
     void slideview_sliding(int step);
+    void load_class_names(const QString &filePath);
 };
 #endif  // ICALMARK_H

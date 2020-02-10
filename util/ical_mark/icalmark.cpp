@@ -128,6 +128,15 @@ void ICALMark::on_dataRefresh_clicked()
 
         this->ui->slideView->addItem(item);
     }
+
+    // Auto looking for class names
+    filter.clear();
+    filter.push_back("*.names");
+    fileList = dir.entryInfoList(filter);
+    if (fileList.count())
+    {
+        this->load_class_names(fileList[0].absoluteFilePath());
+    }
 }
 
 void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
@@ -184,8 +193,33 @@ void ICALMark::slideview_sliding(int step)
 }
 
 void ICALMark::on_slideNext_clicked() { this->slideview_sliding(1); }
-
 void ICALMark::on_slidePrevious_clicked() { this->slideview_sliding(-1); }
+
+void ICALMark::load_class_names(const QString& filePath)
+{
+    try
+    {
+        // Load names
+        YAML::Node node = YAML::LoadFile(filePath.toStdString());
+        vector<string> classNames = node.as<vector<string>>();
+
+        // Apply to name list
+        this->ui->nameList->clear();
+        for (const string& nameStr : classNames)
+        {
+            this->ui->nameList->addItem(QString(nameStr.c_str()));
+        }
+
+        // Reset mark label
+        this->ui->markArea->set_mark_label(0);
+    }
+    catch (exception& ex)
+    {
+        QMessageBox::warning(this, QString(tr("Error")),
+                             QString(tr("Failed to load names file")) +
+                                 QString("\n") + QString(ex.what()));
+    }
+}
 
 void ICALMark::on_nameFile_clicked()
 {
@@ -194,29 +228,7 @@ void ICALMark::on_nameFile_clicked()
 
     if (dialog.exec())
     {
-        QString pathStr = dialog.selectedFiles()[0];
-        try
-        {
-            // Load names
-            YAML::Node node = YAML::LoadFile(pathStr.toStdString());
-            vector<string> classNames = node.as<vector<string>>();
-
-            // Apply to name list
-            this->ui->nameList->clear();
-            for (const string& nameStr : classNames)
-            {
-                this->ui->nameList->addItem(QString(nameStr.c_str()));
-            }
-
-            // Reset mark label
-            this->ui->markArea->set_mark_label(0);
-        }
-        catch (exception& ex)
-        {
-            QMessageBox::warning(this, QString(tr("Error")),
-                                 QString(tr("Failed to load names file")) +
-                                     QString("\n") + QString(ex.what()));
-        }
+        this->load_class_names(dialog.selectedFiles()[0]);
     }
 }
 
