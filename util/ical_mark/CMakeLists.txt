@@ -39,7 +39,7 @@ endif()
 
 target_link_libraries(ical_mark PRIVATE ${PROJECT_DEPS})
 
-qt5_create_translation(QM_FILES ${CMAKE_SOURCE_DIR} ${TS_FILES})
+qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
 
 install(TARGETS ical_mark
     RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
