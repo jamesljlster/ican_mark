@@ -21,10 +21,6 @@ using namespace ical_mark;
 ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
 {
     ui->setupUi(this);
-
-    // Set default dataset folder
-    this->ui->dataDir->setText(
-        QStandardPaths::standardLocations(QStandardPaths::HomeLocation)[0]);
 }
 
 ICALMark::~ICALMark() { delete ui; }
@@ -190,3 +186,33 @@ void ICALMark::slideview_sliding(int step)
 void ICALMark::on_slideNext_clicked() { this->slideview_sliding(1); }
 
 void ICALMark::on_slidePrevious_clicked() { this->slideview_sliding(-1); }
+
+void ICALMark::on_nameFile_clicked()
+{
+    QFileDialog dialog;
+    dialog.setFileMode(QFileDialog::AnyFile);
+
+    if (dialog.exec())
+    {
+        QString pathStr = dialog.selectedFiles()[0];
+        try
+        {
+            // Load names
+            YAML::Node node = YAML::LoadFile(pathStr.toStdString());
+            vector<string> classNames = node.as<vector<string>>();
+
+            // Apply to name list
+            this->ui->nameList->clear();
+            for (const string& nameStr : classNames)
+            {
+                this->ui->nameList->addItem(QString(nameStr.c_str()));
+            }
+        }
+        catch (exception& ex)
+        {
+            QMessageBox::warning(this, QString(tr("Error")),
+                                 QString(tr("Failed to load names file")) +
+                                     QString("\n") + QString(ex.what()));
+        }
+    }
+}

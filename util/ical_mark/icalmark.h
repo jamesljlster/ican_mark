@@ -41,6 +41,8 @@ class ICALMark : public QMainWindow
 
     void on_slidePrevious_clicked();
 
+    void on_nameFile_clicked();
+
    private:
     Ui::ICALMark *ui;
 
