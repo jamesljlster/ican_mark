@@ -242,15 +242,6 @@ double RBoxMarkWidget::find_degree(const QPoint& from, const QPoint& to)
     return theta;
 }
 
-QRectF RBoxMarkWidget::find_bbox(const QPoint& pos1, const QPoint& pos2,
-                                 double degree)
-{
-    Instance inst;
-    inst.degree = degree;
-    this->fill_bbox(inst, pos1, pos2);
-    return QRectF(inst.x, inst.y, inst.w, inst.h);
-}
-
 void RBoxMarkWidget::fill_bbox(Instance& inst, const QPoint& pos1,
                                const QPoint& pos2)
 {
@@ -351,7 +342,6 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst, int ctrRad,
     QPainter painter(this);
 
     painter.setRenderHint(QPainter::Antialiasing);
-    painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
     painter.setPen(penColor);
 
     // Draw center point
@@ -370,17 +360,4 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst, int ctrRad,
     transform.rotate(-inst.degree);
     painter.setTransform(transform);
     painter.drawRect(QRectF(topLeft, bottomRight));
-}
-
-void RBoxMarkWidget::draw_rotated_bbox(const QRectF& bbox, double degree,
-                                       int ctrRad, const QColor& penColor)
-{
-    Instance inst;
-    inst.degree = degree;
-    inst.x = bbox.x();
-    inst.y = bbox.y();
-    inst.w = bbox.width();
-    inst.h = bbox.height();
-
-    this->draw_rotated_bbox(inst, ctrRad, penColor);
 }

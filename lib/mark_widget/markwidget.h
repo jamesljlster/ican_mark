@@ -15,6 +15,7 @@
 #include <mark_instance.hpp>
 
 #define DEFAULT_PEN_COLOR QColor(160, 160, 160)
+#define DEFAULT_BBOX_COLOR QColor(0, 0, 160, 160)
 
 class RBoxMarkWidget : public QWidget
 {
@@ -56,7 +57,6 @@ class RBoxMarkWidget : public QWidget
     /** Estimating functions */
     double find_distance(const QPointF& p1, const QPointF& p2);
     double find_degree(const QPoint& from, const QPoint& to);
-    QRectF find_bbox(const QPoint& pos1, const QPoint& pos2, double degree);
     void fill_bbox(ical_mark::Instance& inst, const QPoint& pos1,
                    const QPoint& pos2);
 
@@ -64,9 +64,7 @@ class RBoxMarkWidget : public QWidget
     void draw_aim_crosshair(const QPoint& center, double degree,
                             const QColor& penColor = DEFAULT_PEN_COLOR);
     void draw_rotated_bbox(const ical_mark::Instance& inst, int ctrRad = 2,
-                           const QColor& penColor = DEFAULT_PEN_COLOR);
-    void draw_rotated_bbox(const QRectF& bbox, double degree, int ctrRad = 2,
-                           const QColor& penColor = DEFAULT_PEN_COLOR);
+                           const QColor& penColor = DEFAULT_BBOX_COLOR);
 };
 
 #endif  // MARKAREA_H
