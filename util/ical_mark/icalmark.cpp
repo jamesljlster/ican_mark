@@ -176,7 +176,7 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
 void ICALMark::slideview_sliding(int step)
 {
     QModelIndex curInd = this->ui->slideView->currentIndex();
-    QModelIndex nextInd = curInd.siblingAtRow(curInd.row() + step);
+    QModelIndex nextInd = curInd.sibling(curInd.row() + step, 0);
     if (nextInd.isValid())
     {
         this->ui->slideView->setCurrentIndex(nextInd);
