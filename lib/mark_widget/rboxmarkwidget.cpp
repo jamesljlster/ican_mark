@@ -9,8 +9,6 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPaintEvent>
-#include <QPainter>
-#include <QRectF>
 #include <QSize>
 #include <Qt>
 #include <QtMath>
@@ -198,12 +196,24 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
     }
 
     // Draw aim crosshair
-    this->draw_aim_crosshair(this->mousePos, this->curInst.degree);
+    this->draw_aim_crosshair(this->mousePos, this->curInst.degree,
+                             this->style.crosshair);
+    if (static_cast<RBoxMark::State>(this->markAction.state()) ==
+        RBoxMark::State::INIT)
+    {
+        if (static_cast<TwiceClick::State>(
+                this->markAction["degree"].state()) ==
+            TwiceClick::State::POS1_FIN)
+        {
+            this->draw_anchor(this->markAction["degree"]["pos1"]["release"],
+                              this->style.anchor);
+        }
+    }
 
     // Draw marked instances
     for (auto anno : this->annoList)
     {
-        this->draw_rotated_bbox(anno);
+        this->draw_rotated_bbox(anno, this->style.rbox);
     }
 
     // Draw rbox marking progress
@@ -212,7 +222,7 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
     {
         if (this->curInst.valid())
         {
-            this->draw_rotated_bbox(this->curInst);
+            this->draw_rotated_bbox(this->curInst, this->style.rbox);
         }
     }
 }
@@ -302,7 +312,7 @@ void RBoxMarkWidget::fill_bbox(Instance& inst, const QPoint& pos1,
 }
 
 void RBoxMarkWidget::draw_aim_crosshair(const QPoint& center, double degree,
-                                        const QColor& penColor)
+                                        const StyleCrosshair& style)
 {
     int width = this->width();
     int height = this->height();
@@ -310,9 +320,9 @@ void RBoxMarkWidget::draw_aim_crosshair(const QPoint& center, double degree,
     // Setup painter and drawing style
     QPainter painter(this);
 
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setCompositionMode(QPainter::RasterOp_SourceXorDestination);
-    painter.setPen(penColor);
+    painter.setRenderHint(style.rendHint);
+    painter.setCompositionMode(style.compMode);
+    painter.setPen(QPen(style.penColor, style.lineWidth));
 
     // Find lines of crosshair
     qreal shift = fmod(degree + 225, 90) - 45;
@@ -330,8 +340,8 @@ void RBoxMarkWidget::draw_aim_crosshair(const QPoint& center, double degree,
     painter.drawLine(line2);
 }
 
-void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst, int ctrRad,
-                                       const QColor& penColor)
+void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
+                                       const StyleRBox& style)
 {
     double xScale =
         (double)this->markSize.width() / (double)this->bgImage.width();
@@ -341,12 +351,16 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst, int ctrRad,
     // Setup painter and drawing style
     QPainter painter(this);
 
-    painter.setRenderHint(QPainter::Antialiasing);
-    painter.setPen(penColor);
+    painter.setRenderHint(style.rendHint);
+    painter.setCompositionMode(style.compMode);
+    painter.setPen(QPen(style.penColor, style.lineWidth));
 
     // Draw center point
     QPointF center = this->markBase + QPointF(inst.x * xScale, inst.y * yScale);
-    painter.drawEllipse(center, ctrRad, ctrRad);
+    if (style.centerRad > 0)
+    {
+        painter.drawEllipse(center, style.centerRad, style.centerRad);
+    }
 
     // Draw rotated bounding box
     double halfWidth = inst.w * xScale / 2;
@@ -360,4 +374,17 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst, int ctrRad,
     transform.rotate(-inst.degree);
     painter.setTransform(transform);
     painter.drawRect(QRectF(topLeft, bottomRight));
+}
+
+void RBoxMarkWidget::draw_anchor(const QPoint& pos, const StyleAnchor& style)
+{
+    // Setup painter and drawing style
+    QPainter painter(this);
+
+    painter.setRenderHint(style.rendHint);
+    painter.setCompositionMode(style.compMode);
+    painter.setPen(QPen(style.penColor, style.lineWidth));
+
+    // Draw anchor point
+    painter.drawEllipse(pos, style.radius, style.radius);
 }
