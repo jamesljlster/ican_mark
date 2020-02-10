@@ -45,6 +45,8 @@ class ICALMark : public QMainWindow
 
     void on_nameList_currentIndexChanged(int index);
 
+    void on_instList_currentRowChanged(int currentRow);
+
    private:
     Ui::ICALMark *ui;
 

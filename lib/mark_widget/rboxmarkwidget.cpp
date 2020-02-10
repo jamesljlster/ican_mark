@@ -20,6 +20,10 @@ RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : QWidget(parent)
 {
     this->setMouseTracking(true);
     this->setCursor(Qt::BlankCursor);
+
+    // Set default painting style
+    this->style.rboxHL.lineWidth = 2;
+    this->style.rboxHL.centerRad = 3;
 }
 
 void RBoxMarkWidget::reset(const QImage& image,
@@ -33,6 +37,11 @@ void RBoxMarkWidget::reset(const QImage& image,
 }
 
 void RBoxMarkWidget::set_mark_label(int label) { this->label = label; }
+void RBoxMarkWidget::set_hl_instance_index(int index)
+{
+    this->highlightInst = index;
+    this->repaint();
+}
 
 const vector<Instance>& RBoxMarkWidget::annotation_list()
 {
@@ -211,9 +220,17 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
     }
 
     // Draw marked instances
-    for (auto anno : this->annoList)
+    for (int i = 0; i < (int)this->annoList.size(); i++)
     {
-        this->draw_rotated_bbox(anno, this->style.rbox);
+        const Instance& anno = this->annoList[i];
+        if (i == this->highlightInst)
+        {
+            this->draw_rotated_bbox(anno, this->style.rboxHL);
+        }
+        else
+        {
+            this->draw_rotated_bbox(anno, this->style.rbox);
+        }
     }
 
     // Draw rbox marking progress

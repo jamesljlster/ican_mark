@@ -224,3 +224,8 @@ void ICALMark::on_nameList_currentIndexChanged(int index)
 {
     this->ui->markArea->set_mark_label(index);
 }
+
+void ICALMark::on_instList_currentRowChanged(int currentRow)
+{
+    this->ui->markArea->set_hl_instance_index(currentRow);
+}

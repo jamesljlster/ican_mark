@@ -56,6 +56,7 @@ class RBoxMarkWidget : public QWidget
     {
         struct StyleCrosshair crosshair;
         struct StyleRBox rbox;
+        struct StyleRBox rboxHL;  // Highlighted rotated bounding box
         struct StyleAnchor anchor;
     };
 
@@ -65,6 +66,7 @@ class RBoxMarkWidget : public QWidget
     void reset(const QImage& image,
                const std::vector<ical_mark::Instance>& instList);
     void set_mark_label(int label);
+    void set_hl_instance_index(int index);  // Highlighting selected instance
 
     /** Data handling */
     const std::vector<ical_mark::Instance>& annotation_list();
