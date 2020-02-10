@@ -43,6 +43,8 @@ class ICALMark : public QMainWindow
 
     void on_nameFile_clicked();
 
+    void on_nameList_currentIndexChanged(int index);
+
    private:
     Ui::ICALMark *ui;
 

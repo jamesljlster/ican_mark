@@ -207,6 +207,9 @@ void ICALMark::on_nameFile_clicked()
             {
                 this->ui->nameList->addItem(QString(nameStr.c_str()));
             }
+
+            // Reset mark label
+            this->ui->markArea->set_mark_label(0);
         }
         catch (exception& ex)
         {
@@ -215,4 +218,9 @@ void ICALMark::on_nameFile_clicked()
                                      QString("\n") + QString(ex.what()));
         }
     }
+}
+
+void ICALMark::on_nameList_currentIndexChanged(int index)
+{
+    this->ui->markArea->set_mark_label(index);
 }
