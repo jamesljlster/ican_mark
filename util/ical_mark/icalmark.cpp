@@ -31,8 +31,17 @@ void ICALMark::on_markArea_stateChanged(const vector<Instance>& annoList)
     this->ui->instList->clear();
     for (size_t i = 0; i < annoList.size(); i++)
     {
-        string itemStr =
-            to_string((int)i + 1) + string(". ") + string(annoList[i]);
+        // Generate string representation of item
+        string itemStr = to_string((int)i + 1) + string(". ");
+        if ((int)i < this->ui->nameList->count())
+        {
+            itemStr +=
+                this->ui->nameList->itemText(i).toStdString() + string(" ");
+        }
+
+        itemStr += string(annoList[i]);
+
+        // Add item to list
         QListWidgetItem* item = new QListWidgetItem(itemStr.c_str());
 
         item->setFlags(item->flags() | Qt::ItemIsUserCheckable);
