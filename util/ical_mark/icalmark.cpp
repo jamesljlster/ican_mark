@@ -33,10 +33,11 @@ void ICALMark::on_markArea_stateChanged(const vector<Instance>& annoList)
     {
         // Generate string representation of item
         string itemStr = to_string((int)i + 1) + string(". ");
-        if ((int)i < this->ui->nameList->count())
+        if (annoList[i].label < this->ui->nameList->count())
         {
             itemStr +=
-                this->ui->nameList->itemText(i).toStdString() + string(" ");
+                this->ui->nameList->itemText(annoList[i].label).toStdString() +
+                string(" ");
         }
 
         itemStr += string(annoList[i]);
