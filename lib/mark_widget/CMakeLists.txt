@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 #set(PROJECT_NAME demo_lib)  # Set project name manually
 get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)  # Set project name with dir name
 set(PROJECT_LANGUAGE CXX)
-set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/markwidget.h)
+set(PROJECT_HEADERS ${CMAKE_CURRENT_SOURCE_DIR}/mark_widget.h)
 #set(PROJECT_DEPS gcc stdc++)
 
 # Compile setting

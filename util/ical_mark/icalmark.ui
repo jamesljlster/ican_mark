@@ -342,7 +342,7 @@
   <customwidget>
    <class>RBoxMarkWidget</class>
    <extends>QWidget</extends>
-   <header>markwidget.h</header>
+   <header>mark_widget.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

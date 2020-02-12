@@ -1,5 +1,5 @@
-#ifndef MARKWIDGET_H
-#define MARKWIDGET_H
+#ifndef MARK_WIDGET_H
+#define MARK_WIDGET_H
 
 #include <map>
 #include <string>
