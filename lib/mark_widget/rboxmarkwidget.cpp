@@ -15,7 +15,7 @@
 using namespace std;
 using namespace ical_mark;
 
-RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : QWidget(parent)
+RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : ImageView(parent)
 {
     this->setMouseTracking(true);
     this->setCursor(Qt::BlankCursor);
@@ -25,12 +25,20 @@ RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : QWidget(parent)
     this->style.rboxHL.centerRad = 3;
 }
 
-void RBoxMarkWidget::reset(const QImage& image,
-                           const std::vector<ical_mark::Instance>& instList)
+void RBoxMarkWidget::reset(const QImage& image)
 {
-    // Set image and instances list
+    this->reset(image, vector<Instance>());
+}
+
+void RBoxMarkWidget::reset(const QImage& image,
+                           const vector<Instance>& instList)
+{
+    // Set background image
     this->bgImage = image;
+
+    // Reset marking state
     this->annoList = instList;
+    this->markAction.reset();
 
     // Reset view and image region
     this->viewRegion = this->find_view_region(this->bgImage, this->size());
@@ -53,7 +61,7 @@ const vector<Instance>& RBoxMarkWidget::annotation_list()
     return this->annoList;
 }
 
-void RBoxMarkWidget::delete_instances(const std::vector<size_t>& indList)
+void RBoxMarkWidget::delete_instances(const vector<size_t>& indList)
 {
     vector<size_t> indSort = indList;
     sort(indSort.begin(), indSort.end());
@@ -389,68 +397,4 @@ void RBoxMarkWidget::draw_anchor(const QPoint& pos, const StyleAnchor& style)
 
     // Draw anchor point
     painter.drawEllipse(pos, style.radius, style.radius);
-}
-
-QRectF RBoxMarkWidget::find_view_region(const QImage& image,
-                                        const QSize& widgetSize)
-{
-    QSize markSize =
-        this->bgImage.size().scaled(widgetSize, Qt::KeepAspectRatio);
-    QPoint markBase = QPoint((widgetSize.width() - markSize.width()) / 2,
-                             (widgetSize.height() - markSize.height()) / 2);
-    return QRectF(markBase, markSize);
-}
-
-QPointF RBoxMarkWidget::scaling_to_view(const QPointF& point)
-{
-    return QPointF(
-        point.x() * this->viewRegion.width() / this->imageRegion.width(),
-        point.y() * this->viewRegion.height() / this->imageRegion.height());
-}
-
-QSizeF RBoxMarkWidget::scaling_to_view(const QSizeF& size)
-{
-    QPointF tmp(size.width(), size.height());
-    tmp = this->scaling_to_view(tmp);
-    return QSizeF(tmp.x(), tmp.y());
-}
-
-QPointF RBoxMarkWidget::mapping_to_view(const QPointF& point)
-{
-    return this->scaling_to_view(point) + this->viewRegion.topLeft();
-}
-
-QRectF RBoxMarkWidget::mapping_to_view(const QRectF& rect)
-{
-    QPointF point = this->mapping_to_view(rect.topLeft());
-    QSizeF size = this->scaling_to_view(rect.size());
-
-    return QRectF(point, size);
-}
-
-QPointF RBoxMarkWidget::scaling_to_image(const QPointF& point)
-{
-    return QPointF(
-        point.x() * this->imageRegion.width() / this->viewRegion.width(),
-        point.y() * this->imageRegion.height() / this->viewRegion.height());
-}
-
-QSizeF RBoxMarkWidget::scaling_to_image(const QSizeF& size)
-{
-    QPointF tmp(size.width(), size.height());
-    tmp = this->scaling_to_image(tmp);
-    return QSizeF(tmp.x(), tmp.y());
-}
-
-QPointF RBoxMarkWidget::mapping_to_image(const QPointF& point)
-{
-    return this->scaling_to_image(point - this->viewRegion.topLeft());
-}
-
-QRectF RBoxMarkWidget::mapping_to_image(const QRectF& rect)
-{
-    QPointF point = this->mapping_to_image(rect.topLeft());
-    QSizeF size = this->scaling_to_image(rect.size());
-
-    return QRectF(point, size);
 }
