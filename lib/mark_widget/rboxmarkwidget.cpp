@@ -9,7 +9,6 @@
 #include <QKeyEvent>
 #include <QMouseEvent>
 #include <QPaintEvent>
-#include <QSize>
 #include <Qt>
 #include <QtMath>
 
@@ -29,10 +28,16 @@ RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : QWidget(parent)
 void RBoxMarkWidget::reset(const QImage& image,
                            const std::vector<ical_mark::Instance>& instList)
 {
+    // Set image and instances list
     this->bgImage = image;
     this->annoList = instList;
-    this->repaint();
 
+    // Reset view and image region
+    this->viewRegion = this->find_view_region(this->bgImage, this->size());
+    this->imageRegion = QRectF(QPoint(0, 0), this->bgImage.size());
+
+    // Repaint and raise signal
+    this->repaint();
     emit stateChanged(this->annoList);
 }
 
@@ -115,8 +120,9 @@ bool RBoxMarkWidget::event(QEvent* event)
             {
                 // Calculate and set degree
                 this->curInst.degree = this->find_degree(
-                    this->markAction["degree"]["pos1"]["release"],
-                    this->mousePos);
+                    this->mapping_to_image(
+                        this->markAction["degree"]["pos1"]["release"]),
+                    this->mapping_to_image(this->mousePos));
             }
             else
             {
@@ -133,9 +139,11 @@ bool RBoxMarkWidget::event(QEvent* event)
                 TwiceClick::State::POS1_FIN)
             {
                 // Fill bounding box
-                this->fill_bbox(this->curInst,
-                                this->markAction["bbox"]["pos1"]["release"],
-                                this->mousePos);
+                this->fill_bbox(
+                    this->curInst,
+                    this->mapping_to_image(
+                        this->markAction["bbox"]["pos1"]["release"]),
+                    this->mapping_to_image(this->mousePos));
             }
             else
             {
@@ -188,20 +196,7 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
 
     if (!this->bgImage.isNull())
     {
-        this->markSize =
-            this->bgImage.size().scaled(this->size(), Qt::KeepAspectRatio);
-
-        int markWidth = this->markSize.width();
-        int markHeight = this->markSize.height();
-
-        this->markBase =
-            QPoint((width - markWidth) / 2, (height - markHeight) / 2);
-
-        QRectF srcRect(0, 0, this->bgImage.width(), this->bgImage.height());
-        QRectF bgRect(this->markBase.x(), this->markBase.y(), markWidth,
-                      markHeight);
-
-        painter.drawImage(bgRect, this->bgImage, srcRect);
+        painter.drawImage(this->viewRegion, this->bgImage, this->imageRegion);
     }
 
     // Draw aim crosshair
@@ -244,6 +239,11 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
     }
 }
 
+void RBoxMarkWidget::resizeEvent(QResizeEvent* event)
+{
+    this->viewRegion = this->find_view_region(this->bgImage, event->size());
+}
+
 double RBoxMarkWidget::find_distance(const QPointF& p1, const QPointF& p2)
 {
     qreal pwrDist = qPow(p1.x() - p2.x(), 2) + qPow(p1.y() - p2.y(), 2);
@@ -257,7 +257,7 @@ double RBoxMarkWidget::find_distance(const QPointF& p1, const QPointF& p2)
     }
 }
 
-double RBoxMarkWidget::find_degree(const QPoint& from, const QPoint& to)
+double RBoxMarkWidget::find_degree(const QPointF& from, const QPointF& to)
 {
     qreal theta = qAtan2(from.y() - to.y(), to.x() - from.x());
     theta = qRadiansToDegrees(theta) - 90.0;
@@ -269,23 +269,18 @@ double RBoxMarkWidget::find_degree(const QPoint& from, const QPoint& to)
     return theta;
 }
 
-void RBoxMarkWidget::fill_bbox(Instance& inst, const QPoint& pos1,
-                               const QPoint& pos2)
+void RBoxMarkWidget::fill_bbox(Instance& inst, const QPointF& pos1,
+                               const QPointF& pos2)
 {
-    double x, y, w, h;
+    double w, h;
     double degree = inst.degree;
-    double xScale =
-        (double)this->markSize.width() / (double)this->bgImage.width();
-    double yScale =
-        (double)this->markSize.height() / (double)this->bgImage.height();
 
     QLineF line1, line2;
-    QPointF pos1f(pos1), pos2f(pos2);
     QPointF crossPt1, crossPt2, center;
 
     // Set center point of lines
-    line1.setP1(pos1f);
-    line2.setP1(pos2f);
+    line1.setP1(pos1);
+    line2.setP1(pos2);
 
     // Find cross point 1 and height
     line1.setAngle(degree);
@@ -296,7 +291,7 @@ void RBoxMarkWidget::fill_bbox(Instance& inst, const QPoint& pos1,
 #else
     line1.intersects(line2, &crossPt1);
 #endif
-    h = this->find_distance(pos2f, crossPt1) / xScale;
+    h = this->find_distance(pos2, crossPt1);
 
     // Find cross point 2 and width
     line1.setAngle(degree + 90);
@@ -307,10 +302,10 @@ void RBoxMarkWidget::fill_bbox(Instance& inst, const QPoint& pos1,
 #else
     line1.intersects(line2, &crossPt2);
 #endif
-    w = this->find_distance(pos2f, crossPt2) / yScale;
+    w = this->find_distance(pos2, crossPt2);
 
     // Find center point
-    line1.setPoints(pos1f, pos2f);
+    line1.setPoints(pos1, pos2);
     line2.setPoints(crossPt1, crossPt2);
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
     line1.intersect(line2, &center);
@@ -318,12 +313,8 @@ void RBoxMarkWidget::fill_bbox(Instance& inst, const QPoint& pos1,
     line1.intersects(line2, &center);
 #endif
 
-    center = center - this->markBase;
-    x = center.x() / xScale;
-    y = center.y() / yScale;
-
-    inst.x = x;
-    inst.y = y;
+    inst.x = center.x();
+    inst.y = center.y();
     inst.w = w;
     inst.h = h;
 }
@@ -360,11 +351,6 @@ void RBoxMarkWidget::draw_aim_crosshair(const QPoint& center, double degree,
 void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
                                        const StyleRBox& style)
 {
-    double xScale =
-        (double)this->markSize.width() / (double)this->bgImage.width();
-    double yScale =
-        (double)this->markSize.height() / (double)this->bgImage.height();
-
     // Setup painter and drawing style
     QPainter painter(this);
 
@@ -373,24 +359,23 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
     painter.setPen(QPen(style.penColor, style.lineWidth));
 
     // Draw center point
-    QPointF center = this->markBase + QPointF(inst.x * xScale, inst.y * yScale);
+    QPointF center = this->mapping_to_view(QPointF(inst.x, inst.y));
     if (style.centerRad > 0)
     {
         painter.drawEllipse(center, style.centerRad, style.centerRad);
     }
 
     // Draw rotated bounding box
-    double halfWidth = inst.w * xScale / 2;
-    double halfHeight = inst.h * yScale / 2;
-
-    QPointF topLeft = QPointF(-halfWidth, -halfHeight);
-    QPointF bottomRight = QPointF(halfWidth, halfHeight);
+    double halfWidth = inst.w / 2;
+    double halfHeight = inst.h / 2;
 
     QTransform transform;
     transform.translate(center.x(), center.y());
     transform.rotate(-inst.degree);
     painter.setTransform(transform);
-    painter.drawRect(QRectF(topLeft, bottomRight));
+    painter.drawRect(
+        QRectF(this->scaling_to_view(QPointF(-halfWidth, -halfHeight)),
+               this->scaling_to_view(QPointF(halfWidth, halfHeight))));
 }
 
 void RBoxMarkWidget::draw_anchor(const QPoint& pos, const StyleAnchor& style)
@@ -404,4 +389,68 @@ void RBoxMarkWidget::draw_anchor(const QPoint& pos, const StyleAnchor& style)
 
     // Draw anchor point
     painter.drawEllipse(pos, style.radius, style.radius);
+}
+
+QRectF RBoxMarkWidget::find_view_region(const QImage& image,
+                                        const QSize& widgetSize)
+{
+    QSize markSize =
+        this->bgImage.size().scaled(widgetSize, Qt::KeepAspectRatio);
+    QPoint markBase = QPoint((widgetSize.width() - markSize.width()) / 2,
+                             (widgetSize.height() - markSize.height()) / 2);
+    return QRectF(markBase, markSize);
+}
+
+QPointF RBoxMarkWidget::scaling_to_view(const QPointF& point)
+{
+    return QPointF(
+        point.x() * this->viewRegion.width() / this->imageRegion.width(),
+        point.y() * this->viewRegion.height() / this->imageRegion.height());
+}
+
+QSizeF RBoxMarkWidget::scaling_to_view(const QSizeF& size)
+{
+    QPointF tmp(size.width(), size.height());
+    tmp = this->scaling_to_view(tmp);
+    return QSizeF(tmp.x(), tmp.y());
+}
+
+QPointF RBoxMarkWidget::mapping_to_view(const QPointF& point)
+{
+    return this->scaling_to_view(point) + this->viewRegion.topLeft();
+}
+
+QRectF RBoxMarkWidget::mapping_to_view(const QRectF& rect)
+{
+    QPointF point = this->mapping_to_view(rect.topLeft());
+    QSizeF size = this->scaling_to_view(rect.size());
+
+    return QRectF(point, size);
+}
+
+QPointF RBoxMarkWidget::scaling_to_image(const QPointF& point)
+{
+    return QPointF(
+        point.x() * this->imageRegion.width() / this->viewRegion.width(),
+        point.y() * this->imageRegion.height() / this->viewRegion.height());
+}
+
+QSizeF RBoxMarkWidget::scaling_to_image(const QSizeF& size)
+{
+    QPointF tmp(size.width(), size.height());
+    tmp = this->scaling_to_image(tmp);
+    return QSizeF(tmp.x(), tmp.y());
+}
+
+QPointF RBoxMarkWidget::mapping_to_image(const QPointF& point)
+{
+    return this->scaling_to_image(point - this->viewRegion.topLeft());
+}
+
+QRectF RBoxMarkWidget::mapping_to_image(const QRectF& rect)
+{
+    QPointF point = this->mapping_to_image(rect.topLeft());
+    QSizeF size = this->scaling_to_image(rect.size());
+
+    return QRectF(point, size);
 }

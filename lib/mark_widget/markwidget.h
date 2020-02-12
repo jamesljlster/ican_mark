@@ -9,7 +9,10 @@
 #include <QImage>
 #include <QObject>
 #include <QPainter>
+#include <QPointF>
 #include <QRectF>
+#include <QSize>
+#include <QSizeF>
 #include <QWidget>
 
 #include <mark_action.hpp>
@@ -81,8 +84,9 @@ class RBoxMarkWidget : public QWidget
 
     QImage bgImage;
     QPoint mousePos;
-    QPoint markBase;
-    QSize markSize;
+
+    QRectF viewRegion;
+    QRectF imageRegion;
 
     int label = 0;                              // Current marking label
     int highlightInst = -1;                     // Index for highlighting
@@ -94,12 +98,13 @@ class RBoxMarkWidget : public QWidget
     /** Event handler */
     bool event(QEvent* event);
     void paintEvent(QPaintEvent* paintEvent);
+    void resizeEvent(QResizeEvent* event);
 
     /** Estimating functions */
     double find_distance(const QPointF& p1, const QPointF& p2);
-    double find_degree(const QPoint& from, const QPoint& to);
-    void fill_bbox(ical_mark::Instance& inst, const QPoint& pos1,
-                   const QPoint& pos2);
+    double find_degree(const QPointF& from, const QPointF& to);
+    void fill_bbox(ical_mark::Instance& inst, const QPointF& pos1,
+                   const QPointF& pos2);
 
     /** Drawing functions */
     void draw_aim_crosshair(const QPoint& center, double degree,
@@ -107,6 +112,20 @@ class RBoxMarkWidget : public QWidget
     void draw_rotated_bbox(const ical_mark::Instance& inst,
                            const StyleRBox& style);
     void draw_anchor(const QPoint& pos, const StyleAnchor& style);
+
+    /** Region handling functions */
+    QRectF find_view_region(const QImage& image, const QSize& widgetSize);
+
+    /** Point mapping functions */
+    QPointF scaling_to_view(const QPointF& point);
+    QSizeF scaling_to_view(const QSizeF& size);
+    QPointF mapping_to_view(const QPointF& point);
+    QRectF mapping_to_view(const QRectF& rect);
+
+    QPointF scaling_to_image(const QPointF& point);
+    QSizeF scaling_to_image(const QSizeF& size);
+    QPointF mapping_to_image(const QPointF& point);
+    QRectF mapping_to_image(const QRectF& rect);
 };
 
 #endif  // MARKAREA_H
