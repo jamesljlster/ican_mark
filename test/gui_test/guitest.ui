@@ -14,10 +14,34 @@
    <string>GuiTest</string>
   </property>
   <widget class="QWidget" name="centralwidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <widget class="RBoxMarkWidget" name="widget" native="true">
-      <layout class="QGridLayout" name="gridLayout"/>
+     <widget class="ImageMap" name="widget" native="true">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+        <horstretch>0</horstretch>
+        <verstretch>1</verstretch>
+       </sizepolicy>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QWidget" name="widget_2" native="true">
+      <layout class="QHBoxLayout" name="horizontalLayout">
+       <item>
+        <widget class="QSlider" name="horizontalSlider">
+         <property name="minimum">
+          <number>0</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QDoubleSpinBox" name="doubleSpinBox"/>
+       </item>
+      </layout>
      </widget>
     </item>
    </layout>
@@ -36,7 +60,7 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>RBoxMarkWidget</class>
+   <class>ImageMap</class>
    <extends>QWidget</extends>
    <header>mark_widget.h</header>
    <container>1</container>
