@@ -51,6 +51,8 @@ class ICALMark : public QMainWindow
 
     void on_scaleRatioSlider_valueChanged(int value);
 
+    void on_imageMap_stateChanged(const QRectF &imageRegion);
+
    private:
     Ui::ICALMark *ui;
 

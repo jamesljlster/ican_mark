@@ -29,6 +29,7 @@ void ImageMap::set_ratio(qreal ratio)
     this->ratio = ratio;
     this->selRegion =
         this->find_select_region(this->selRegion.center(), this->ratio);
+    emit stateChanged(this->selRegion);
     this->repaint();
 }
 
@@ -72,6 +73,7 @@ bool ImageMap::event(QEvent* event)
         case ClickAction::State::PRESS:
             this->selRegion = this->find_select_region(
                 this->mapping_to_image(this->clickAction["move"]), this->ratio);
+            emit stateChanged(this->selRegion);
             break;
 
         case ClickAction::State::RELEASE:
