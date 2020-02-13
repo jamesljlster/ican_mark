@@ -64,7 +64,7 @@ class ImageMap : public ImageView
     ical_mark::ClickAction clickAction;
     qreal ratio = 1.0;
 
-    QSize selSize;
+    QSize selSizeHint;
     QRectF selRegion;
 
     /** Event handler */

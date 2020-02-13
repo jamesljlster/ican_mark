@@ -18,6 +18,11 @@ class GuiTest : public QMainWindow
     GuiTest(QWidget *parent = nullptr);
     ~GuiTest();
 
+   private slots:
+    void on_horizontalSlider_valueChanged(int value);
+
+    void on_doubleSpinBox_valueChanged(double arg1);
+
    private:
     Ui::GuiTest *ui;
 };

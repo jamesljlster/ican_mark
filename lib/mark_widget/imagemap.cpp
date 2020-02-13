@@ -9,7 +9,7 @@ ImageMap::ImageMap(QWidget* parent) : ImageView(parent)
 {
     this->setMouseTracking(true);
     this->bgImage = QImage("color_map.png");
-    this->selSize = QSize(1280, 720);
+    this->selSizeHint = QSize(1280, 720);
 
     this->imageRegion = QRectF(QPoint(0, 0), this->bgImage.size());
     this->viewRegion =
@@ -115,12 +115,26 @@ QRectF ImageMap::find_select_region(const QPointF& point, qreal ratio)
     qreal imgHeight = this->bgImage.height();
 
     // Find region size
-    QSizeF imgSelSize =
-        this->selSize.scaled(this->bgImage.size(), Qt::KeepAspectRatio) /
-        (ratio * 2);
+    QSizeF selSize = this->selSizeHint.scaled(this->bgImage.size(),
+                                              Qt::KeepAspectRatioByExpanding) /
+                     ratio;
 
-    qreal halfWidth = imgSelSize.width();
-    qreal halfHeight = imgSelSize.height();
+    // Limit region size inside available region
+    qreal halfWidth = selSize.width();
+    qreal halfHeight = selSize.height();
+
+    if (halfWidth > this->bgImage.width())
+    {
+        halfWidth = this->bgImage.width();
+    }
+
+    if (halfHeight > this->bgImage.height())
+    {
+        halfHeight = this->bgImage.height();
+    }
+
+    halfWidth /= 2.0;
+    halfHeight /= 2.0;
 
     // Limit point inside available region
     qreal x = point.x();
