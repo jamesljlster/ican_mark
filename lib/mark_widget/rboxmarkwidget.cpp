@@ -41,8 +41,9 @@ void RBoxMarkWidget::reset(const QImage& image,
     this->markAction.reset();
 
     // Reset view and image region
-    this->viewRegion = this->find_view_region(this->bgImage, this->size());
     this->imageRegion = QRectF(QPoint(0, 0), this->bgImage.size());
+    this->viewRegion =
+        this->find_view_region(this->imageRegion.size().toSize(), this->size());
 
     // Repaint and raise signal
     this->repaint();
@@ -249,7 +250,8 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
 
 void RBoxMarkWidget::resizeEvent(QResizeEvent* event)
 {
-    this->viewRegion = this->find_view_region(this->bgImage, event->size());
+    this->viewRegion = this->find_view_region(this->imageRegion.size().toSize(),
+                                              event->size());
 }
 
 double RBoxMarkWidget::find_distance(const QPointF& p1, const QPointF& p2)

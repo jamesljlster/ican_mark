@@ -3,10 +3,10 @@
 using namespace std;
 using namespace ical_mark;
 
-QRectF ImageView::find_view_region(const QImage& image, const QSize& widgetSize)
+QRectF ImageView::find_view_region(const QSize& viewSize,
+                                   const QSize& widgetSize)
 {
-    QSize markSize =
-        this->bgImage.size().scaled(widgetSize, Qt::KeepAspectRatio);
+    QSize markSize = viewSize.scaled(widgetSize, Qt::KeepAspectRatio);
     QPoint markBase = QPoint((widgetSize.width() - markSize.width()) / 2,
                              (widgetSize.height() - markSize.height()) / 2);
     return QRectF(markBase, markSize);

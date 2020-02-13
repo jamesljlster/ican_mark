@@ -33,7 +33,7 @@ class ImageView : public QWidget
     QRectF imageRegion;  // Image showing region on widget
 
     /** Region handling functions */
-    QRectF find_view_region(const QImage& image, const QSize& widgetSize);
+    QRectF find_view_region(const QSize& viewSize, const QSize& widgetSize);
 
     /** Point mapping functions */
     QPointF scaling_to_view(const QPointF& point);
@@ -64,6 +64,7 @@ class ImageMap : public ImageView
     ical_mark::ClickAction clickAction;
     qreal ratio = 1.0;
 
+    QSize selSize;
     QRectF selRegion;
 
     /** Event handler */
