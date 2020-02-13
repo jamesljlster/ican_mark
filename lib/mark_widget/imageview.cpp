@@ -32,7 +32,8 @@ QSizeF ImageView::scaling_to_view(const QSizeF& size)
 
 QPointF ImageView::mapping_to_view(const QPointF& point)
 {
-    return this->scaling_to_view(point) + this->viewRegion.topLeft();
+    return this->scaling_to_view(point - this->imageRegion.topLeft()) +
+           this->viewRegion.topLeft();
 }
 
 QRectF ImageView::mapping_to_view(const QRectF& rect)
@@ -59,7 +60,8 @@ QSizeF ImageView::scaling_to_image(const QSizeF& size)
 
 QPointF ImageView::mapping_to_image(const QPointF& point)
 {
-    return this->scaling_to_image(point - this->viewRegion.topLeft());
+    return this->scaling_to_image(point - this->viewRegion.topLeft()) +
+           this->imageRegion.topLeft();
 }
 
 QRectF ImageView::mapping_to_image(const QRectF& rect)
