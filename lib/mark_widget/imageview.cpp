@@ -3,6 +3,10 @@
 using namespace std;
 using namespace ical_mark;
 
+ImageView::ImageView(QWidget* parent) : QWidget(parent) {}
+
+void ImageView::reset(const QImage& image) { this->bgImage = image; }
+
 QRectF ImageView::find_view_region(const QSize& viewSize,
                                    const QSize& widgetSize)
 {

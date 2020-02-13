@@ -27,10 +27,10 @@ RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : ImageView(parent)
 
 void RBoxMarkWidget::reset(const QImage& image)
 {
-    this->reset(image, vector<Instance>());
+    this->reset(image, QRectF(QPointF(0, 0), image.size()), vector<Instance>());
 }
 
-void RBoxMarkWidget::reset(const QImage& image,
+void RBoxMarkWidget::reset(const QImage& image, const QRectF& imageRegion,
                            const vector<Instance>& instList)
 {
     // Set background image
@@ -41,7 +41,7 @@ void RBoxMarkWidget::reset(const QImage& image,
     this->markAction.reset();
 
     // Reset view and image region
-    this->imageRegion = QRectF(QPoint(0, 0), this->bgImage.size());
+    this->imageRegion = imageRegion;
     this->viewRegion =
         this->find_view_region(this->imageRegion.size().toSize(), this->size());
 

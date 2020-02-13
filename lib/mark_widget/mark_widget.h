@@ -23,8 +23,8 @@ class ImageView : public QWidget
     Q_OBJECT
 
    public:
-    explicit ImageView(QWidget* parent = nullptr) : QWidget(parent) {}
-    virtual void reset(const QImage& image) = 0;
+    explicit ImageView(QWidget* parent = nullptr);
+    virtual void reset(const QImage& image);
 
    protected:
     /** Member variables */
@@ -53,8 +53,14 @@ class ImageMap : public ImageView
 
    public:
     explicit ImageMap(QWidget* parent = nullptr);
-    void reset(const QImage& image);
+
+    using ImageView::reset;
+    void reset(const QImage& image, const QSize& sizeHint, qreal ratio);
+
     void set_ratio(qreal ratio);
+    void set_size_hint(const QSize& size);
+
+    const QRectF get_selected_region();
 
    signals:
     void stateChanged(const QRectF& imageRegion);
@@ -88,7 +94,7 @@ class RBoxMarkWidget : public ImageView
 
     /** Initialization and setup */
     void reset(const QImage& image);
-    void reset(const QImage& image,
+    void reset(const QImage& image, const QRectF& imageRegion,
                const std::vector<ical_mark::Instance>& instList);
     void set_mark_label(int label);
     void set_hl_instance_index(int index);  // Highlighting selected instance

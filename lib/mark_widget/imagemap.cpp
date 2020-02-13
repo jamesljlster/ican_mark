@@ -8,19 +8,21 @@ using namespace ical_mark;
 ImageMap::ImageMap(QWidget* parent) : ImageView(parent)
 {
     this->setMouseTracking(true);
-    this->bgImage = QImage("color_map.png");
-    this->selSizeHint = QSize(1280, 720);
+}
 
+void ImageMap::reset(const QImage& image, const QSize& sizeHint, qreal ratio)
+{
+    // Set background image and regions
+    this->reset(image);
     this->imageRegion = QRectF(QPoint(0, 0), this->bgImage.size());
     this->viewRegion =
         this->find_view_region(this->imageRegion.size().toSize(), this->size());
 
-    this->ratio = 2.0;
-    this->selRegion =
-        this->find_select_region(this->imageRegion.center(), this->ratio);
+    // Initialization
+    this->selSizeHint = sizeHint;
+    this->selRegion = this->find_select_region(this->imageRegion.center(), 1.0);
+    this->set_ratio(ratio);
 }
-
-void ImageMap::reset(const QImage& image) { this->bgImage = image; }
 
 void ImageMap::set_ratio(qreal ratio)
 {
@@ -29,6 +31,14 @@ void ImageMap::set_ratio(qreal ratio)
         this->find_select_region(this->selRegion.center(), this->ratio);
     this->repaint();
 }
+
+void ImageMap::set_size_hint(const QSize& size)
+{
+    this->selSizeHint = size;
+    this->repaint();
+}
+
+const QRectF ImageMap::get_selected_region() { return this->selRegion; }
 
 bool ImageMap::event(QEvent* event)
 {
