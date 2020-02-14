@@ -142,10 +142,37 @@ bool RBoxMarkWidget::event(QEvent* event)
             break;
 
         case ClickAction::State::PRESS:
-            this->imageRegion.moveTo(
-                this->regionPosCache +
-                this->scaling_to_image(this->moveAction["press"] -
-                                       this->moveAction["move"]));
+            do
+            {
+                QPointF finalPos =
+                    this->regionPosCache +
+                    this->scaling_to_image(this->moveAction["press"] -
+                                           this->moveAction["move"]);
+
+                if (finalPos.x() < 0)
+                {
+                    finalPos.setX(0);
+                }
+                else if (finalPos.x() + this->imageRegion.width() >
+                         this->bgImage.width())
+                {
+                    finalPos.setX(this->bgImage.width() -
+                                  this->imageRegion.width());
+                }
+
+                if (finalPos.y() < 0)
+                {
+                    finalPos.setY(0);
+                }
+                else if (finalPos.y() + this->imageRegion.height() >
+                         this->bgImage.height())
+                {
+                    finalPos.setY(this->bgImage.height() -
+                                  this->imageRegion.height());
+                }
+
+                this->imageRegion.moveTo(finalPos);
+            } while (0);
             break;
 
         case ClickAction::State::RELEASE:
