@@ -35,7 +35,6 @@ void RBoxMarkWidget::reset(const QImage& image,
 {
     // Call parent reset function
     ImageView::reset(image);
-    // this->bgImage = image;
 
     // Reset marking state
     this->annoList = instList;
@@ -141,41 +140,15 @@ bool RBoxMarkWidget::event(QEvent* event)
     switch (static_cast<ClickAction::State>(this->moveAction.state()))
     {
         case ClickAction::State::MOVE:
-            this->regionPosCache = this->imageRegion.topLeft();
+            this->regionPosCache = this->imageRegion.center();
             break;
 
         case ClickAction::State::PRESS:
-            do
-            {
-                QPointF finalPos =
-                    this->regionPosCache +
+            this->imageRegion = this->find_image_region(
+                this->regionPosCache +
                     this->scaling_to_image(this->moveAction["press"] -
-                                           this->moveAction["move"]);
-
-                if (finalPos.x() < 0)
-                {
-                    finalPos.setX(0);
-                }
-                else if (finalPos.x() + this->imageRegion.width() >
-                         this->bgImage.width())
-                {
-                    finalPos.setX(this->bgImage.width() -
-                                  this->imageRegion.width());
-                }
-
-                if (finalPos.y() < 0)
-                {
-                    finalPos.setY(0);
-                }
-                else if (finalPos.y() + this->imageRegion.height() >
-                         this->bgImage.height())
-                {
-                    finalPos.setY(this->bgImage.height() -
-                                  this->imageRegion.height());
-                }
-
-                this->imageRegion.moveTo(finalPos);
-            } while (0);
+                                           this->moveAction["move"]),
+                this->size(), this->scaleRatio);
             break;
 
         case ClickAction::State::RELEASE:
