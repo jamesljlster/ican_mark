@@ -183,12 +183,14 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
         // Load images and reset mark area
         QImage image = QImage(imgPath);
 
-        this->ui->imageMap->reset(image, this->ui->markUnavailLabel->size(),
-                                  this->ui->scaleRatio->value());
-        this->ui->mapStack->setCurrentIndex(0);
+        // this->ui->imageMap->reset(image, this->ui->markUnavailLabel->size(),
+        //                          this->ui->scaleRatio->value());
+        // this->ui->mapStack->setCurrentIndex(0);
 
-        this->ui->markArea->reset(
-            image, this->ui->imageMap->get_selected_region(), instList);
+        // this->ui->markArea->reset(
+        //    image, this->ui->imageMap->get_selected_region(), instList);
+        this->ui->markArea->reset(image, QRectF(QPoint(0, 0), image.size()),
+                                  instList);
         this->ui->markStack->setCurrentIndex(0);
     }
     else
@@ -260,7 +262,7 @@ void ICALMark::on_instList_currentRowChanged(int currentRow)
 
 void ICALMark::on_scaleRatio_valueChanged(double arg1)
 {
-    this->ui->imageMap->set_ratio(arg1);
+    // this->ui->imageMap->set_ratio(arg1);
     this->ui->scaleRatioSlider->setValue(arg1 * 10.0);
 }
 
