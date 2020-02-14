@@ -148,8 +148,10 @@ class RBoxMarkWidget : public ImageView
 
     /** Member variables */
     ical_mark::RBoxMark markAction;
+    ical_mark::ClickAction moveAction;
 
     QPoint mousePos;
+    QPointF regionPosCache;
 
     int label = 0;                              // Current marking label
     int highlightInst = -1;                     // Index for highlighting

@@ -39,6 +39,7 @@ void RBoxMarkWidget::reset(const QImage& image, const QRectF& imageRegion,
     // Reset marking state
     this->annoList = instList;
     this->markAction.reset();
+    this->moveAction.reset();
 
     // Reset view and image region
     this->imageRegion = imageRegion;
@@ -99,6 +100,7 @@ bool RBoxMarkWidget::event(QEvent* event)
         QMouseEvent* me = static_cast<QMouseEvent*>(event);
         this->mousePos = me->pos();
         this->markAction.run(me);
+        this->moveAction.run(me);
         ret = true;
     }
     else if (eventType == QEvent::MouseButtonPress ||
@@ -108,6 +110,12 @@ bool RBoxMarkWidget::event(QEvent* event)
         if (me->button() == Qt::MouseButton::LeftButton)
         {
             this->markAction.run(me);
+            ret = true;
+        }
+
+        if (me->button() == Qt::MouseButton::MiddleButton)
+        {
+            this->moveAction.run(me);
             ret = true;
         }
     }
@@ -127,6 +135,24 @@ bool RBoxMarkWidget::event(QEvent* event)
     }
 
     // Status checking and processing
+    switch (static_cast<ClickAction::State>(this->moveAction.state()))
+    {
+        case ClickAction::State::MOVE:
+            this->regionPosCache = this->imageRegion.topLeft();
+            break;
+
+        case ClickAction::State::PRESS:
+            this->imageRegion.moveTo(
+                this->regionPosCache +
+                this->scaling_to_image(this->moveAction["press"] -
+                                       this->moveAction["move"]));
+            break;
+
+        case ClickAction::State::RELEASE:
+            this->moveAction.reset();
+            break;
+    }
+
     switch (static_cast<RBoxMark::State>(this->markAction.state()))
     {
         case RBoxMark::State::INIT:
