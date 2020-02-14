@@ -7,10 +7,64 @@ ImageView::ImageView(QWidget* parent) : QWidget(parent) {}
 
 void ImageView::reset(const QImage& image) { this->bgImage = image; }
 
-QRectF ImageView::find_view_region(const QSize& viewSize,
+QRectF ImageView::find_image_region(const QPointF& center,
+                                    const QSizeF& sizeHint, qreal scaleRatio)
+{
+    qreal imgWidth = this->bgImage.width();
+    qreal imgHeight = this->bgImage.height();
+
+    // Find region size
+    QSizeF selSize =
+        sizeHint.scaled(this->bgImage.size(), Qt::KeepAspectRatioByExpanding) /
+        scaleRatio;
+
+    // Limit region size inside available region
+    qreal halfWidth = selSize.width();
+    qreal halfHeight = selSize.height();
+
+    if (halfWidth > this->bgImage.width())
+    {
+        halfWidth = this->bgImage.width();
+    }
+
+    if (halfHeight > this->bgImage.height())
+    {
+        halfHeight = this->bgImage.height();
+    }
+
+    halfWidth /= 2.0;
+    halfHeight /= 2.0;
+
+    // Limit point inside available region
+    qreal x = center.x();
+    qreal y = center.y();
+
+    if (x < halfWidth)
+    {
+        x = halfWidth;
+    }
+    else if (x >= imgWidth - halfWidth)
+    {
+        x = imgWidth - halfWidth;
+    }
+
+    if (y < halfHeight)
+    {
+        y = halfHeight;
+    }
+    else if (y >= imgHeight - halfHeight)
+    {
+        y = imgHeight - halfHeight;
+    }
+
+    return QRectF(QPointF(x - halfWidth, y - halfHeight),
+                  QPointF(x + halfWidth, y + halfHeight));
+}
+
+QRectF ImageView::find_view_region(const QSize& sizeHint,
                                    const QSize& widgetSize)
 {
-    QSize markSize = viewSize.scaled(widgetSize, Qt::KeepAspectRatio);
+    QSize markSize = sizeHint.scaled(widgetSize, Qt::KeepAspectRatio);
     QPoint markBase = QPoint((widgetSize.width() - markSize.width()) / 2,
                              (widgetSize.height() - markSize.height()) / 2);
     return QRectF(markBase, markSize);

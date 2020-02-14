@@ -189,8 +189,7 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
 
         // this->ui->markArea->reset(
         //    image, this->ui->imageMap->get_selected_region(), instList);
-        this->ui->markArea->reset(image, QRectF(QPoint(0, 0), image.size()),
-                                  instList);
+        this->ui->markArea->reset(image, instList);
         this->ui->markStack->setCurrentIndex(0);
     }
     else

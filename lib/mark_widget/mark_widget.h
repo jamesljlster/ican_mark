@@ -33,7 +33,9 @@ class ImageView : public QWidget
     QRectF imageRegion;  // Image showing region on widget
 
     /** Region handling functions */
-    QRectF find_view_region(const QSize& viewSize, const QSize& widgetSize);
+    QRectF find_image_region(const QPointF& center, const QSizeF& sizeHint,
+                             qreal scaleRatio);
+    QRectF find_view_region(const QSize& sizeHint, const QSize& widgetSize);
 
     /** Point mapping functions */
     QPointF scaling_to_view(const QPointF& point);
@@ -94,7 +96,7 @@ class RBoxMarkWidget : public ImageView
 
     /** Initialization and setup */
     void reset(const QImage& image);
-    void reset(const QImage& image, const QRectF& imageRegion,
+    void reset(const QImage& image,
                const std::vector<ical_mark::Instance>& instList);
     void set_mark_label(int label);
     void set_hl_instance_index(int index);  // Highlighting selected instance
@@ -152,6 +154,7 @@ class RBoxMarkWidget : public ImageView
 
     QPoint mousePos;
     QPointF regionPosCache;
+    qreal scaleRatio = 2.0;
 
     int label = 0;                              // Current marking label
     int highlightInst = -1;                     // Index for highlighting
