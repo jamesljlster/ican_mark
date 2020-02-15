@@ -21,6 +21,12 @@ using namespace ical_mark;
 ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
 {
     ui->setupUi(this);
+
+    // Connect signals and slots
+    connect(this->ui->markArea, &RBoxMarkWidget::imageRegionChanged,
+            this->ui->imageMap, &ImageMap::set_select_region);
+    connect(this->ui->imageMap, &ImageMap::selectRegionChanged,
+            this->ui->markArea, &RBoxMarkWidget::set_image_region);
 }
 
 ICALMark::~ICALMark() { delete ui; }
@@ -182,13 +188,9 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
 
         // Load images and reset mark area
         QImage image = QImage(imgPath);
+        this->ui->imageMap->reset(image);
+        this->ui->mapStack->setCurrentIndex(0);
 
-        // this->ui->imageMap->reset(image, this->ui->markUnavailLabel->size(),
-        //                          this->ui->scaleRatio->value());
-        // this->ui->mapStack->setCurrentIndex(0);
-
-        // this->ui->markArea->reset(
-        //    image, this->ui->imageMap->get_selected_region(), instList);
         this->ui->markArea->reset(image, instList);
         this->ui->markStack->setCurrentIndex(0);
     }
@@ -268,9 +270,4 @@ void ICALMark::on_scaleRatio_valueChanged(double arg1)
 void ICALMark::on_scaleRatioSlider_valueChanged(int value)
 {
     this->ui->scaleRatio->setValue((double)value / 10.0);
-}
-
-void ICALMark::on_imageMap_stateChanged(const QRectF& imageRegion)
-{
-    // this->ui->markArea->set_image_region(imageRegion);
 }

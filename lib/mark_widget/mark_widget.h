@@ -55,32 +55,23 @@ class ImageMap : public ImageView
    public:
     explicit ImageMap(QWidget* parent = nullptr);
 
-    using ImageView::reset;
-    void reset(const QImage& image, const QSize& sizeHint, qreal ratio);
+    void reset(const QImage& image);
 
-    void set_ratio(qreal ratio);
-    void set_size_hint(const QSize& size);
-
-    const QRectF get_selected_region();
+    void set_select_region(const QRectF& selectRegion);
+    const QRectF get_select_region();
 
    signals:
-    void stateChanged(const QRectF& imageRegion);
+    void selectRegionChanged(const QRectF& imageRegion);
 
    protected:
     /** Member variables */
     ical_mark::ClickAction clickAction;
-    qreal ratio = 1.0;
-
-    QSize selSizeHint;
-    QRectF selRegion;
+    QRectF selectRegion;
 
     /** Event handler */
     bool event(QEvent* event);
     void paintEvent(QPaintEvent* paintEvent);
     void resizeEvent(QResizeEvent* event);
-
-    /** Region handling functions */
-    QRectF find_select_region(const QPointF& point, qreal ratio);
 
     /** Drawing functions */
     void draw_select_region(const QRectF& selRegion);

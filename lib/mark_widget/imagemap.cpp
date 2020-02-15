@@ -10,36 +10,24 @@ ImageMap::ImageMap(QWidget* parent) : ImageView(parent)
     this->setMouseTracking(true);
 }
 
-void ImageMap::reset(const QImage& image, const QSize& sizeHint, qreal ratio)
+void ImageMap::reset(const QImage& image)
 {
-    // Set background image and regions
-    this->reset(image);
+    // Call parent reset function
+    ImageView::reset(image);
+
+    // Set regions
     this->imageRegion = QRectF(QPoint(0, 0), this->bgImage.size());
     this->viewRegion =
         this->find_view_region(this->imageRegion.size().toSize(), this->size());
-
-    // Initialization
-    this->selSizeHint = sizeHint;
-    this->selRegion = this->find_select_region(this->imageRegion.center(), 1.0);
-    this->set_ratio(ratio);
 }
 
-void ImageMap::set_ratio(qreal ratio)
+void ImageMap::set_select_region(const QRectF& selectRegion)
 {
-    this->ratio = ratio;
-    this->selRegion =
-        this->find_select_region(this->selRegion.center(), this->ratio);
-    emit stateChanged(this->selRegion);
+    this->selectRegion = selectRegion;
     this->repaint();
 }
 
-void ImageMap::set_size_hint(const QSize& size)
-{
-    this->selSizeHint = size;
-    this->repaint();
-}
-
-const QRectF ImageMap::get_selected_region() { return this->selRegion; }
+const QRectF ImageMap::get_select_region() { return this->selectRegion; }
 
 bool ImageMap::event(QEvent* event)
 {
@@ -71,9 +59,10 @@ bool ImageMap::event(QEvent* event)
             break;
 
         case ClickAction::State::PRESS:
-            this->selRegion = this->find_select_region(
-                this->mapping_to_image(this->clickAction["move"]), this->ratio);
-            emit stateChanged(this->selRegion);
+            this->selectRegion = this->find_image_region(
+                this->mapping_to_image(this->clickAction["move"]),
+                this->selectRegion.size());
+            emit selectRegionChanged(this->selectRegion);
             break;
 
         case ClickAction::State::RELEASE:
@@ -112,66 +101,13 @@ void ImageMap::paintEvent(QPaintEvent* paintEvent)
     }
 
     // Draw selected region
-    this->draw_select_region(this->mapping_to_view(this->selRegion));
+    this->draw_select_region(this->mapping_to_view(this->selectRegion));
 }
 
 void ImageMap::resizeEvent(QResizeEvent* event)
 {
     this->viewRegion = this->find_view_region(this->imageRegion.size().toSize(),
                                               event->size());
-}
-
-QRectF ImageMap::find_select_region(const QPointF& point, qreal ratio)
-{
-    qreal imgWidth = this->bgImage.width();
-    qreal imgHeight = this->bgImage.height();
-
-    // Find region size
-    QSizeF selSize = this->selSizeHint.scaled(this->bgImage.size(),
-                                              Qt::KeepAspectRatioByExpanding) /
-                     ratio;
-
-    // Limit region size inside available region
-    qreal halfWidth = selSize.width();
-    qreal halfHeight = selSize.height();
-
-    if (halfWidth > this->bgImage.width())
-    {
-        halfWidth = this->bgImage.width();
-    }
-
-    if (halfHeight > this->bgImage.height())
-    {
-        halfHeight = this->bgImage.height();
-    }
-
-    halfWidth /= 2.0;
-    halfHeight /= 2.0;
-
-    // Limit point inside available region
-    qreal x = point.x();
-    qreal y = point.y();
-
-    if (x < halfWidth)
-    {
-        x = halfWidth;
-    }
-    else if (x >= imgWidth - halfWidth)
-    {
-        x = imgWidth - halfWidth;
-    }
-
-    if (y < halfHeight)
-    {
-        y = halfHeight;
-    }
-    else if (y >= imgHeight - halfHeight)
-    {
-        y = imgHeight - halfHeight;
-    }
-
-    return QRectF(QPointF(x - halfWidth, y - halfHeight),
-                  QPointF(x + halfWidth, y + halfHeight));
 }
 
 void ImageMap::draw_select_region(const QRectF& selRegion)
@@ -182,6 +118,6 @@ void ImageMap::draw_select_region(const QRectF& selRegion)
     painter.setRenderHint(QPainter::RenderHint::Antialiasing);
     painter.setPen(QPen(QColor(0, 0, 0, 196), 2));
 
-    // Draw anchor point
+    // Draw select region
     painter.drawRect(selRegion);
 }

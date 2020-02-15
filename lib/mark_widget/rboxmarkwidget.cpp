@@ -118,6 +118,9 @@ void RBoxMarkWidget::delete_instances(const vector<size_t>& indList)
 bool RBoxMarkWidget::event(QEvent* event)
 {
     bool ret = false;
+    bool imgRegionChanged = false;
+    bool instListChanged = false;
+
     QEvent::Type eventType = event->type();
 
     // Run FSM of marking action
@@ -172,7 +175,7 @@ bool RBoxMarkWidget::event(QEvent* event)
                     this->scaling_to_image(this->moveAction["press"] -
                                            this->moveAction["move"]),
                 this->size(), this->scaleRatio);
-            emit imageRegionChanged(this->imageRegion);
+            imgRegionChanged = true;
             break;
 
         case ClickAction::State::RELEASE:
@@ -230,11 +233,10 @@ bool RBoxMarkWidget::event(QEvent* event)
 
             // Append instance to annotation list
             this->annoList.push_back(this->curInst);
+            instListChanged = true;
+
             this->curInst.reset();
             this->markAction.reset();
-
-            // Raise signal
-            emit instanceListChanged(this->annoList);
 
             break;
     }
@@ -242,6 +244,11 @@ bool RBoxMarkWidget::event(QEvent* event)
     if (ret)
     {
         this->repaint();
+
+        // Raise signals
+        if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
+        if (instListChanged) emit instanceListChanged(this->annoList);
+
         return ret;
     }
     else
