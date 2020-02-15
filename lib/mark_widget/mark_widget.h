@@ -88,8 +88,9 @@ class RBoxMarkWidget : public ImageView
     void reset(const QImage& image);
     void reset(const QImage& image,
                const std::vector<ical_mark::Instance>& instList);
-    void set_mark_label(int label);
-    void set_hl_instance_index(int index);  // Highlighting selected instance
+
+    int get_mark_label();
+    int get_hl_instance_index();
 
     QRectF get_image_region();
     qreal get_scale_ratio();
@@ -99,10 +100,14 @@ class RBoxMarkWidget : public ImageView
     void delete_instances(const std::vector<size_t>& indList);
 
    public slots:
+    void set_mark_label(int label);
+    void set_hl_instance_index(int index);  // Highlighting selected instance
     void set_image_region(const QRectF& imageRegion);
     void set_scale_ratio(qreal ratio);
 
    signals:
+    void markLabelChanged(int label);
+    void hlInstanceIndexChanged(int index);
     void instanceListChanged(const std::vector<ical_mark::Instance>& annoList);
     void scaleRatioChanged(qreal ratio);
     void imageRegionChanged(const QRectF& imageRegion);

@@ -54,22 +54,29 @@ void RBoxMarkWidget::reset(const QImage& image,
     emit imageRegionChanged(this->imageRegion);
 }
 
+int RBoxMarkWidget::get_mark_label() { return this->label; }
 void RBoxMarkWidget::set_mark_label(int label)
 {
     if (this->label != label)
     {
         this->label = label;
+        this->repaint();
+        emit markLabelChanged(this->label);
     }
 }
+
+int RBoxMarkWidget::get_hl_instance_index() { return this->highlightInst; }
 void RBoxMarkWidget::set_hl_instance_index(int index)
 {
     if (this->highlightInst != index)
     {
         this->highlightInst = index;
         this->repaint();
+        emit hlInstanceIndexChanged(this->highlightInst);
     }
 }
 
+qreal RBoxMarkWidget::get_scale_ratio() { return this->scaleRatio; }
 void RBoxMarkWidget::set_scale_ratio(qreal ratio)
 {
     if (ratio < 1.0)
@@ -93,8 +100,7 @@ void RBoxMarkWidget::set_scale_ratio(qreal ratio)
     }
 }
 
-qreal RBoxMarkWidget::get_scale_ratio() { return this->scaleRatio; }
-
+QRectF RBoxMarkWidget::get_image_region() { return this->imageRegion; }
 void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
 {
     if (this->imageRegion != imageRegion)
@@ -106,8 +112,6 @@ void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
         emit imageRegionChanged(this->imageRegion);
     }
 }
-
-QRectF RBoxMarkWidget::get_image_region() { return this->imageRegion; }
 
 const vector<Instance>& RBoxMarkWidget::annotation_list()
 {
