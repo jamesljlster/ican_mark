@@ -27,6 +27,12 @@ ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
             this->ui->imageMap, &ImageMap::set_select_region);
     connect(this->ui->imageMap, &ImageMap::selectRegionChanged,
             this->ui->markArea, &RBoxMarkWidget::set_image_region);
+
+    connect(this->ui->markArea, &RBoxMarkWidget::scaleRatioChanged,
+            this->ui->scaleRatio, &QDoubleSpinBox::setValue);
+    connect(this->ui->scaleRatio,
+            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this->ui->markArea, &RBoxMarkWidget::set_scale_ratio);
 }
 
 ICALMark::~ICALMark() { delete ui; }
@@ -263,7 +269,6 @@ void ICALMark::on_instList_currentRowChanged(int currentRow)
 
 void ICALMark::on_scaleRatio_valueChanged(double arg1)
 {
-    // this->ui->imageMap->set_ratio(arg1);
     this->ui->scaleRatioSlider->setValue(arg1 * 10.0);
 }
 
