@@ -237,7 +237,11 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
     }
 
     // Find new center of image region
+#if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
+    QPointF wheelPos = this->mapping_to_image(event->posF());
+#else
     QPointF wheelPos = this->mapping_to_image(event->position());
+#endif
     QPointF center = this->imageRegion.center();
     QPointF newCenter =
         ((center - wheelPos) * this->scaleRatio) / ratioTmp + wheelPos;
