@@ -28,11 +28,11 @@ ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
     connect(this->ui->imageMap, &ImageMap::selectRegionChanged,
             this->ui->markArea, &RBoxMarkWidget::set_image_region);
 
-    connect(this->ui->markArea, &RBoxMarkWidget::scaleRatioChanged,
-            this->ui->scaleRatio, &QDoubleSpinBox::setValue);
-    connect(this->ui->scaleRatio,
-            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-            this->ui->markArea, &RBoxMarkWidget::set_scale_ratio);
+    connect(this->ui->nameList,
+            QOverload<int>::of(&QComboBox::currentIndexChanged),
+            this->ui->markArea, &RBoxMarkWidget::set_mark_label);
+    connect(this->ui->instList, &QListWidget::currentRowChanged,
+            this->ui->markArea, &RBoxMarkWidget::set_hl_instance_index);
 }
 
 ICALMark::~ICALMark() { delete ui; }
@@ -255,24 +255,4 @@ void ICALMark::on_nameFile_clicked()
     {
         this->load_class_names(dialog.selectedFiles()[0]);
     }
-}
-
-void ICALMark::on_nameList_currentIndexChanged(int index)
-{
-    this->ui->markArea->set_mark_label(index);
-}
-
-void ICALMark::on_instList_currentRowChanged(int currentRow)
-{
-    this->ui->markArea->set_hl_instance_index(currentRow);
-}
-
-void ICALMark::on_scaleRatio_valueChanged(double arg1)
-{
-    this->ui->scaleRatioSlider->setValue(arg1 * 10.0);
-}
-
-void ICALMark::on_scaleRatioSlider_valueChanged(int value)
-{
-    this->ui->scaleRatio->setValue((double)value / 10.0);
 }

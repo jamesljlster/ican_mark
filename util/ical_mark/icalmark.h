@@ -43,14 +43,6 @@ class ICALMark : public QMainWindow
 
     void on_nameFile_clicked();
 
-    void on_nameList_currentIndexChanged(int index);
-
-    void on_instList_currentRowChanged(int currentRow);
-
-    void on_scaleRatio_valueChanged(double arg1);
-
-    void on_scaleRatioSlider_valueChanged(int value);
-
    private:
     Ui::ICALMark *ui;
 
