@@ -179,6 +179,8 @@ class RBoxMarkWidget : public ImageView
                              qreal scaleRatio);
     bool update_regions(const QPointF& newCenter, qreal oldScaleRatio,
                         qreal newScaleRatio);
+    bool update_scale_ratio(qreal newScaleRatio,
+                            qreal* oldScaleRatioPtr = nullptr);
 
     /** Estimating functions */
     double find_distance(const QPointF& p1, const QPointF& p2);

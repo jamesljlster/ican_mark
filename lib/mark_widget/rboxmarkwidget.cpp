@@ -79,25 +79,15 @@ void RBoxMarkWidget::set_hl_instance_index(int index)
 qreal RBoxMarkWidget::get_scale_ratio() { return this->scaleRatio; }
 void RBoxMarkWidget::set_scale_ratio(qreal ratio)
 {
+    qreal oldScaleRatio;
     bool imgRegionChanged = false;
-    bool scaleChanged = false;
+    bool scaleChanged = this->update_scale_ratio(ratio, &oldScaleRatio);
 
-    if (ratio < 1.0)
+    if (scaleChanged)
     {
-        ratio = 1.0;
-    }
-
-    if (this->scaleRatio != ratio)
-    {
-        scaleChanged = true;
-
         // Update regions
         imgRegionChanged = this->update_regions(this->imageRegion.center(),
-                                                this->scaleRatio, ratio);
-
-        // Assign new scale ratio
-        this->scaleRatio = ratio;
-        scaleChanged = true;
+                                                oldScaleRatio, ratio);
     }
 
     // Repaint and raise signals
@@ -284,18 +274,15 @@ bool RBoxMarkWidget::event(QEvent* event)
 void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
 {
     bool imgRegionChanged = false;
-    bool scaleChanged = false;
 
     // Find new scale ratio
     qreal newScaleRatio = this->scaleRatio + (event->angleDelta().y() /
                                               abs(event->angleDelta().y())) *
                                                  this->scaleStep;
-    if (newScaleRatio < 1.0)
-    {
-        newScaleRatio = 1.0;
-    }
 
-    if (this->scaleRatio != newScaleRatio)
+    qreal oldScaleRatio;
+    bool scaleChanged = this->update_scale_ratio(newScaleRatio, &oldScaleRatio);
+    if (scaleChanged)
     {
         // Find new center of image region
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
@@ -305,15 +292,11 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
 #endif
         QPointF center = this->imageRegion.center();
         QPointF newCenter =
-            ((center - wheelPos) * this->scaleRatio) / newScaleRatio + wheelPos;
+            ((center - wheelPos) * oldScaleRatio) / newScaleRatio + wheelPos;
 
         // Update regions
         imgRegionChanged =
-            this->update_regions(newCenter, this->scaleRatio, newScaleRatio);
-
-        // Assign new scale ratio
-        this->scaleRatio = newScaleRatio;
-        scaleChanged = true;
+            this->update_regions(newCenter, oldScaleRatio, newScaleRatio);
     }
 
     // Raise signal
@@ -432,6 +415,30 @@ bool RBoxMarkWidget::update_regions(const QPointF& newCenter,
         this->find_view_region(this->imageRegion.size().toSize(), this->size());
 
     return imgRegionChanged;
+}
+
+bool RBoxMarkWidget::update_scale_ratio(qreal newScaleRatio,
+                                        qreal* oldScaleRatioPtr)
+{
+    if (oldScaleRatioPtr)
+    {
+        *oldScaleRatioPtr = this->scaleRatio;
+    }
+
+    if (newScaleRatio < 1.0)
+    {
+        newScaleRatio = 1.0;
+    }
+
+    if (this->scaleRatio != newScaleRatio)
+    {
+        this->scaleRatio = newScaleRatio;
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 double RBoxMarkWidget::find_distance(const QPointF& p1, const QPointF& p2)
