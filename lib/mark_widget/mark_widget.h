@@ -154,7 +154,8 @@ class RBoxMarkWidget : public ImageView
 
     QPoint mousePos;
     QPointF regionPosCache;
-    qreal scaleRatio = 2.0;
+    qreal scaleRatio = 1.0;
+    qreal scaleStep = 0.1;
 
     int label = 0;                              // Current marking label
     int highlightInst = -1;                     // Index for highlighting
@@ -165,6 +166,7 @@ class RBoxMarkWidget : public ImageView
 
     /** Event handler */
     bool event(QEvent* event);
+    void wheelEvent(QWheelEvent* event);
     void paintEvent(QPaintEvent* paintEvent);
     void resizeEvent(QResizeEvent* event);
 

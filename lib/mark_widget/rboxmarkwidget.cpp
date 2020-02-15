@@ -114,8 +114,7 @@ bool RBoxMarkWidget::event(QEvent* event)
             this->markAction.run(me);
             ret = true;
         }
-
-        if (me->button() == Qt::MouseButton::MiddleButton)
+        else if (me->button() == Qt::MouseButton::MiddleButton)
         {
             this->moveAction.run(me);
             ret = true;
@@ -224,6 +223,33 @@ bool RBoxMarkWidget::event(QEvent* event)
     {
         return QWidget::event(event);
     }
+}
+
+void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
+{
+    // Find new scale ratio
+    qreal ratioTmp = this->scaleRatio +
+                     (event->angleDelta().y() / abs(event->angleDelta().y())) *
+                         this->scaleStep;
+    if (ratioTmp < 1.0)
+    {
+        ratioTmp = 1.0;
+    }
+
+    // Find new center of image region
+    QPointF wheelPos = this->mapping_to_image(event->position());
+    QPointF center = this->imageRegion.center();
+    QPointF newCenter =
+        ((center - wheelPos) * this->scaleRatio) / ratioTmp + wheelPos;
+
+    // Update scaling ratio
+    this->scaleRatio = ratioTmp;
+
+    // Update regions
+    this->imageRegion =
+        this->find_image_region(newCenter, this->size(), this->scaleRatio);
+    this->viewRegion =
+        this->find_view_region(this->imageRegion.size().toSize(), this->size());
 }
 
 void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
