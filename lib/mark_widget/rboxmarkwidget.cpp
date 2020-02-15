@@ -86,16 +86,33 @@ void RBoxMarkWidget::set_scale_ratio(qreal ratio)
 
     if (this->scaleRatio != ratio)
     {
-        this->scaleRatio = ratio;
+        bool imgRegionChanged = false;
 
-        this->imageRegion = this->find_image_region(
+        // Update image region
+        QRectF newImageRegion = this->find_image_region(
             this->imageRegion.center(), this->size(), this->scaleRatio);
+        if (this->imageRegion != newImageRegion)
+        {
+            // Shift marked position
+            this->markAction.shift(
+                this->scaling_to_view(this->imageRegion.center() -
+                                      newImageRegion.center())
+                    .toPoint());
+
+            // Assign new image region
+            this->imageRegion = newImageRegion;
+            imgRegionChanged = true;
+        }
+
         this->viewRegion = this->find_view_region(
             this->imageRegion.size().toSize(), this->size());
 
+        // Assign value
+        this->scaleRatio = ratio;
+
         // Repaint and raise signal
         this->repaint();
-        emit imageRegionChanged(this->imageRegion);
+        if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
         emit scaleRatioChanged(this->scaleRatio);
     }
 }
@@ -199,7 +216,6 @@ bool RBoxMarkWidget::event(QEvent* event)
                         this->scaling_to_image(this->moveAction["press"] -
                                                this->moveAction["move"]),
                     this->size(), this->scaleRatio);
-
                 if (this->imageRegion != newImageRegion)
                 {
                     // Shift marked position
@@ -296,6 +312,8 @@ bool RBoxMarkWidget::event(QEvent* event)
 
 void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
 {
+    bool imgRegionChanged = false;
+
     // Find new scale ratio
     qreal ratioTmp = this->scaleRatio +
                      (event->angleDelta().y() / abs(event->angleDelta().y())) *
@@ -315,18 +333,36 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
     QPointF newCenter =
         ((center - wheelPos) * this->scaleRatio) / ratioTmp + wheelPos;
 
+    // Scale marked position
+    double ratioChangeRate = ratioTmp / this->scaleRatio;
+    this->markAction.shift(-this->viewRegion.center());
+    this->markAction.scale(ratioChangeRate);
+    this->markAction.shift(this->viewRegion.center());
+
     // Update scale ratio
     this->scaleRatio = ratioTmp;
 
     // Update regions
-    this->imageRegion =
+    QRectF newImageRegion =
         this->find_image_region(newCenter, this->size(), this->scaleRatio);
+    if (this->imageRegion != newImageRegion)
+    {
+        // Shift marked position
+        this->markAction.shift(this->scaling_to_view(
+            (this->imageRegion.center() - newImageRegion.center()) *
+            ratioChangeRate));
+
+        // Assign new image region
+        this->imageRegion = newImageRegion;
+        imgRegionChanged = true;
+    }
+
     this->viewRegion =
         this->find_view_region(this->imageRegion.size().toSize(), this->size());
 
     // Raise signal
     emit scaleRatioChanged(this->scaleRatio);
-    emit imageRegionChanged(this->imageRegion);
+    if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
 void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
@@ -390,12 +426,27 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
 
 void RBoxMarkWidget::resizeEvent(QResizeEvent* event)
 {
-    this->imageRegion = this->find_image_region(
+    bool imgRegionChanged = false;
+
+    QRectF newImageRegion = this->find_image_region(
         this->imageRegion.center(), event->size(), this->scaleRatio);
+    if (this->imageRegion != newImageRegion)
+    {
+        // Shift marked position
+        this->markAction.shift(
+            this->scaling_to_view(this->imageRegion.center() -
+                                  newImageRegion.center())
+                .toPoint());
+
+        // Assign new image region
+        this->imageRegion = newImageRegion;
+        imgRegionChanged = true;
+    }
+
     this->viewRegion = this->find_view_region(this->imageRegion.size().toSize(),
                                               event->size());
 
-    emit imageRegionChanged(this->imageRegion);
+    if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
 QRectF RBoxMarkWidget::find_image_region(const QPointF& center,
@@ -483,7 +534,7 @@ void RBoxMarkWidget::fill_bbox(Instance& inst, const QPointF& pos1,
     inst.h = h;
 }
 
-void RBoxMarkWidget::draw_aim_crosshair(const QPoint& center, double degree,
+void RBoxMarkWidget::draw_aim_crosshair(const QPointF& center, double degree,
                                         const StyleCrosshair& style)
 {
     int width = this->width();
@@ -500,12 +551,12 @@ void RBoxMarkWidget::draw_aim_crosshair(const QPoint& center, double degree,
     qreal shift = fmod(degree + 225, 90) - 45;
     shift = qTan(qDegreesToRadians(shift));
 
-    QLine line1(  //
-        QPoint(center.x() - shift * center.y(), 0),
-        QPoint(center.x() + shift * (height - center.y()), height));
-    QLine line2(  //
-        QPoint(0, center.y() + shift * center.x()),
-        QPoint(width, center.y() - shift * (width - center.x())));
+    QLineF line1(  //
+        QPointF(center.x() - shift * center.y(), 0),
+        QPointF(center.x() + shift * (height - center.y()), height));
+    QLineF line2(  //
+        QPointF(0, center.y() + shift * center.x()),
+        QPointF(width, center.y() - shift * (width - center.x())));
 
     // Draw aim crosshair
     painter.drawLine(line1);
@@ -542,7 +593,7 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
                this->scaling_to_view(QPointF(halfWidth, halfHeight))));
 }
 
-void RBoxMarkWidget::draw_anchor(const QPoint& pos, const StyleAnchor& style)
+void RBoxMarkWidget::draw_anchor(const QPointF& pos, const StyleAnchor& style)
 {
     // Setup painter and drawing style
     QPainter painter(this);

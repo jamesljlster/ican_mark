@@ -6,7 +6,7 @@
 #include <string>
 
 #include <QInputEvent>
-#include <QPoint>
+#include <QPointF>
 
 namespace ical_mark
 {
@@ -17,7 +17,8 @@ class ActionBase
     virtual void reset() = 0;
     virtual void run(QInputEvent* event) = 0;
     virtual void revert() = 0;
-    virtual void shift(const QPoint& vec) = 0;
+    virtual void shift(const QPointF& vec) = 0;
+    virtual void scale(double ratio) = 0;
 
     virtual bool finish() const = 0;
     virtual int state() const = 0;
@@ -25,7 +26,7 @@ class ActionBase
     virtual argType operator[](std::string) const = 0;
 };
 
-class ClickAction : public ActionBase<const QPoint&>
+class ClickAction : public ActionBase<const QPointF&>
 {
    public:
     enum class State
@@ -38,17 +39,18 @@ class ClickAction : public ActionBase<const QPoint&>
     void reset();
     void run(QInputEvent* event);
     void revert();
-    void shift(const QPoint& vec);
+    void shift(const QPointF& vec);
+    void scale(double ratio);
 
     bool finish() const;
     int state() const;
 
-    const QPoint& operator[](std::string key) const;
+    const QPointF& operator[](std::string key) const;
 
    protected:
     int s = static_cast<int>(State::MOVE);
-    std::map<std::string, QPoint> varMap = {
-        {"move", QPoint()}, {"press", QPoint()}, {"release", QPoint()}};
+    std::map<std::string, QPointF> varMap = {
+        {"move", QPointF()}, {"press", QPointF()}, {"release", QPointF()}};
 };
 
 class TwiceClick : public ActionBase<const ClickAction&>
@@ -64,7 +66,8 @@ class TwiceClick : public ActionBase<const ClickAction&>
     void reset();
     void run(QInputEvent* event);
     void revert();
-    void shift(const QPoint& vec);
+    void shift(const QPointF& vec);
+    void scale(double ratio);
 
     bool finish() const;
     int state() const;
@@ -90,7 +93,8 @@ class RBoxMark : public ActionBase<const TwiceClick&>
     void reset();
     void run(QInputEvent* event);
     void revert();
-    void shift(const QPoint& vec);
+    void shift(const QPointF& vec);
+    void scale(double ratio);
 
     bool finish() const;
     int state() const;

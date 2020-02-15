@@ -155,7 +155,7 @@ class RBoxMarkWidget : public ImageView
     ical_mark::RBoxMark markAction;
     ical_mark::ClickAction moveAction;
 
-    QPoint mousePos;
+    QPointF mousePos;
     QPointF regionPosCache;
     qreal scaleRatio = 1.0;
     qreal scaleStep = 0.1;
@@ -185,11 +185,11 @@ class RBoxMarkWidget : public ImageView
                    const QPointF& pos2);
 
     /** Drawing functions */
-    void draw_aim_crosshair(const QPoint& center, double degree,
+    void draw_aim_crosshair(const QPointF& center, double degree,
                             const StyleCrosshair& style);
     void draw_rotated_bbox(const ical_mark::Instance& inst,
                            const StyleRBox& style);
-    void draw_anchor(const QPoint& pos, const StyleAnchor& style);
+    void draw_anchor(const QPointF& pos, const StyleAnchor& style);
 };
 
 #endif  // MARKAREA_H

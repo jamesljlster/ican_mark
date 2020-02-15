@@ -57,10 +57,16 @@ void TwiceClick::revert()
     }
 }
 
-void TwiceClick::shift(const QPoint& vec)
+void TwiceClick::shift(const QPointF& vec)
 {
     this->varMap["pos1"].shift(vec);
     this->varMap["pos2"].shift(vec);
+}
+
+void TwiceClick::scale(double ratio)
+{
+    this->varMap["pos1"].scale(ratio);
+    this->varMap["pos2"].scale(ratio);
 }
 
 bool TwiceClick::finish() const

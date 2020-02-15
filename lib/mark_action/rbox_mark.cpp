@@ -68,10 +68,16 @@ void RBoxMark::revert()
     }
 }
 
-void RBoxMark::shift(const QPoint& vec)
+void RBoxMark::shift(const QPointF& vec)
 {
     this->varMap["degree"].shift(vec);
     this->varMap["bbox"].shift(vec);
+}
+
+void RBoxMark::scale(double ratio)
+{
+    this->varMap["degree"].scale(ratio);
+    this->varMap["bbox"].scale(ratio);
 }
 
 bool RBoxMark::finish() const

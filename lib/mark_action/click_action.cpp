@@ -7,7 +7,7 @@ void ClickAction::reset()
     this->s = static_cast<int>(State::MOVE);
     for (auto it = this->varMap.begin(); it != this->varMap.end(); it++)
     {
-        it->second = QPoint();
+        it->second = QPointF();
     }
 }
 
@@ -20,12 +20,14 @@ void ClickAction::run(QInputEvent* event)
         case State::MOVE:
             if (eventType == QEvent::MouseMove)
             {
-                this->varMap["move"] = static_cast<QMouseEvent*>(event)->pos();
+                this->varMap["move"] =
+                    static_cast<QMouseEvent*>(event)->localPos();
             }
 
             if (eventType == QEvent::MouseButtonPress)
             {
-                this->varMap["press"] = static_cast<QMouseEvent*>(event)->pos();
+                this->varMap["press"] =
+                    static_cast<QMouseEvent*>(event)->localPos();
                 this->s++;
             }
 
@@ -34,13 +36,14 @@ void ClickAction::run(QInputEvent* event)
         case State::PRESS:
             if (eventType == QEvent::MouseMove)
             {
-                this->varMap["move"] = static_cast<QMouseEvent*>(event)->pos();
+                this->varMap["move"] =
+                    static_cast<QMouseEvent*>(event)->localPos();
             }
 
             if (eventType == QEvent::MouseButtonRelease)
             {
                 this->varMap["release"] =
-                    static_cast<QMouseEvent*>(event)->pos();
+                    static_cast<QMouseEvent*>(event)->localPos();
                 this->s++;
             }
 
@@ -53,11 +56,18 @@ void ClickAction::run(QInputEvent* event)
 
 void ClickAction::revert() { this->reset(); }
 
-void ClickAction::shift(const QPoint& vec)
+void ClickAction::shift(const QPointF& vec)
 {
     this->varMap["move"] += vec;
     this->varMap["press"] += vec;
     this->varMap["release"] += vec;
+}
+
+void ClickAction::scale(double ratio)
+{
+    this->varMap["move"] *= ratio;
+    this->varMap["press"] *= ratio;
+    this->varMap["release"] *= ratio;
 }
 
 bool ClickAction::finish() const
@@ -67,7 +77,7 @@ bool ClickAction::finish() const
 
 int ClickAction::state() const { return this->s; }
 
-const QPoint& ClickAction::operator[](std::string key) const
+const QPointF& ClickAction::operator[](std::string key) const
 {
     auto it = this->varMap.find(key);
     if (it == this->varMap.end())
