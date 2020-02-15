@@ -101,12 +101,17 @@ class RBoxMarkWidget : public ImageView
     void set_mark_label(int label);
     void set_hl_instance_index(int index);  // Highlighting selected instance
 
+    void set_scale_ratio(qreal ratio);
+    qreal get_scale_ratio();
+
     /** Data handling */
     const std::vector<ical_mark::Instance>& annotation_list();
     void delete_instances(const std::vector<size_t>& indList);
 
    signals:
-    void stateChanged(const std::vector<ical_mark::Instance>& annoList);
+    void instanceListChanged(const std::vector<ical_mark::Instance>& annoList);
+    void scaleRatioChanged(qreal ratio);
+    void imageRegionChanged(const QRectF& imageRegion);
 
    protected:
     /** Style datatypes */

@@ -25,7 +25,7 @@ ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
 
 ICALMark::~ICALMark() { delete ui; }
 
-void ICALMark::on_markArea_stateChanged(const vector<Instance>& annoList)
+void ICALMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
 {
     // Refresh marked instances list
     this->ui->instList->clear();

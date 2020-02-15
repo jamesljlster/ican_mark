@@ -25,7 +25,7 @@ class ICALMark : public QMainWindow
     ~ICALMark();
 
    private slots:
-    void on_markArea_stateChanged(
+    void on_markArea_instanceListChanged(
         const std::vector<ical_mark::Instance> &annoList);
 
     void on_instDel_clicked();
