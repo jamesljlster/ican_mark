@@ -90,6 +90,8 @@ void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
     this->repaint();
 }
 
+QRectF RBoxMarkWidget::get_image_region() { return this->imageRegion; }
+
 const vector<Instance>& RBoxMarkWidget::annotation_list()
 {
     return this->annoList;
@@ -350,6 +352,16 @@ void RBoxMarkWidget::resizeEvent(QResizeEvent* event)
                                               event->size());
 
     emit imageRegionChanged(this->imageRegion);
+}
+
+QRectF RBoxMarkWidget::find_image_region(const QPointF& center,
+                                         const QSizeF& sizeHint,
+                                         qreal scaleRatio)
+{
+    QSizeF size =
+        sizeHint.scaled(this->bgImage.size(), Qt::KeepAspectRatioByExpanding) /
+        scaleRatio;
+    return this->find_image_region(center, size);
 }
 
 double RBoxMarkWidget::find_distance(const QPointF& p1, const QPointF& p2)

@@ -33,8 +33,7 @@ class ImageView : public QWidget
     QRectF imageRegion;  // Image showing region on widget
 
     /** Region handling functions */
-    QRectF find_image_region(const QPointF& center, const QSizeF& sizeHint,
-                             qreal scaleRatio);
+    QRectF find_image_region(const QPointF& center, const QSizeF& size);
     QRectF find_view_region(const QSize& sizeHint, const QSize& widgetSize);
 
     /** Point mapping functions */
@@ -100,7 +99,9 @@ class RBoxMarkWidget : public ImageView
                const std::vector<ical_mark::Instance>& instList);
     void set_mark_label(int label);
     void set_hl_instance_index(int index);  // Highlighting selected instance
+
     void set_image_region(const QRectF& imageRegion);
+    QRectF get_image_region();
 
     void set_scale_ratio(qreal ratio);
     qreal get_scale_ratio();
@@ -174,6 +175,11 @@ class RBoxMarkWidget : public ImageView
     void wheelEvent(QWheelEvent* event);
     void paintEvent(QPaintEvent* paintEvent);
     void resizeEvent(QResizeEvent* event);
+
+    /** Region handling functions */
+    using ImageView::find_image_region;
+    QRectF find_image_region(const QPointF& center, const QSizeF& sizeHint,
+                             qreal scaleRatio);
 
     /** Estimating functions */
     double find_distance(const QPointF& p1, const QPointF& p2);

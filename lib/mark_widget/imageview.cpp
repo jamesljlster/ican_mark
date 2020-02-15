@@ -7,20 +7,14 @@ ImageView::ImageView(QWidget* parent) : QWidget(parent) {}
 
 void ImageView::reset(const QImage& image) { this->bgImage = image; }
 
-QRectF ImageView::find_image_region(const QPointF& center,
-                                    const QSizeF& sizeHint, qreal scaleRatio)
+QRectF ImageView::find_image_region(const QPointF& center, const QSizeF& size)
 {
     qreal imgWidth = this->bgImage.width();
     qreal imgHeight = this->bgImage.height();
 
-    // Find region size
-    QSizeF selSize =
-        sizeHint.scaled(this->bgImage.size(), Qt::KeepAspectRatioByExpanding) /
-        scaleRatio;
-
     // Limit region size inside available region
-    qreal halfWidth = selSize.width();
-    qreal halfHeight = selSize.height();
+    qreal halfWidth = size.width();
+    qreal halfHeight = size.height();
 
     if (halfWidth > this->bgImage.width())
     {
