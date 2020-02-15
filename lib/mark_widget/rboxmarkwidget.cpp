@@ -54,11 +54,20 @@ void RBoxMarkWidget::reset(const QImage& image,
     emit imageRegionChanged(this->imageRegion);
 }
 
-void RBoxMarkWidget::set_mark_label(int label) { this->label = label; }
+void RBoxMarkWidget::set_mark_label(int label)
+{
+    if (this->label != label)
+    {
+        this->label = label;
+    }
+}
 void RBoxMarkWidget::set_hl_instance_index(int index)
 {
-    this->highlightInst = index;
-    this->repaint();
+    if (this->highlightInst != index)
+    {
+        this->highlightInst = index;
+        this->repaint();
+    }
 }
 
 void RBoxMarkWidget::set_scale_ratio(qreal ratio)
@@ -68,26 +77,34 @@ void RBoxMarkWidget::set_scale_ratio(qreal ratio)
         ratio = 1.0;
     }
 
-    this->scaleRatio = ratio;
+    if (this->scaleRatio != ratio)
+    {
+        this->scaleRatio = ratio;
 
-    this->imageRegion = this->find_image_region(this->imageRegion.center(),
-                                                this->size(), this->scaleRatio);
-    this->viewRegion =
-        this->find_view_region(this->imageRegion.size().toSize(), this->size());
+        this->imageRegion = this->find_image_region(
+            this->imageRegion.center(), this->size(), this->scaleRatio);
+        this->viewRegion = this->find_view_region(
+            this->imageRegion.size().toSize(), this->size());
 
-    // Repaint and raise signal
-    this->repaint();
-    emit imageRegionChanged(this->imageRegion);
+        // Repaint and raise signal
+        this->repaint();
+        emit imageRegionChanged(this->imageRegion);
+        emit scaleRatioChanged(this->scaleRatio);
+    }
 }
 
 qreal RBoxMarkWidget::get_scale_ratio() { return this->scaleRatio; }
 
 void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
 {
-    this->imageRegion = imageRegion;
-    this->viewRegion =
-        this->find_view_region(this->imageRegion.size().toSize(), this->size());
-    this->repaint();
+    if (this->imageRegion != imageRegion)
+    {
+        this->imageRegion = imageRegion;
+        this->viewRegion = this->find_view_region(
+            this->imageRegion.size().toSize(), this->size());
+        this->repaint();
+        emit imageRegionChanged(this->imageRegion);
+    }
 }
 
 QRectF RBoxMarkWidget::get_image_region() { return this->imageRegion; }

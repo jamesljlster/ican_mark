@@ -54,11 +54,11 @@ class ImageMap : public ImageView
 
    public:
     explicit ImageMap(QWidget* parent = nullptr);
-
     void reset(const QImage& image);
-
-    void set_select_region(const QRectF& selectRegion);
     const QRectF get_select_region();
+
+   public slots:
+    void set_select_region(const QRectF& selectRegion);
 
    signals:
     void selectRegionChanged(const QRectF& imageRegion);
@@ -91,15 +91,16 @@ class RBoxMarkWidget : public ImageView
     void set_mark_label(int label);
     void set_hl_instance_index(int index);  // Highlighting selected instance
 
-    void set_image_region(const QRectF& imageRegion);
     QRectF get_image_region();
-
-    void set_scale_ratio(qreal ratio);
     qreal get_scale_ratio();
 
     /** Data handling */
     const std::vector<ical_mark::Instance>& annotation_list();
     void delete_instances(const std::vector<size_t>& indList);
+
+   public slots:
+    void set_image_region(const QRectF& imageRegion);
+    void set_scale_ratio(qreal ratio);
 
    signals:
     void instanceListChanged(const std::vector<ical_mark::Instance>& annoList);

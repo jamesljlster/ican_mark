@@ -23,8 +23,12 @@ void ImageMap::reset(const QImage& image)
 
 void ImageMap::set_select_region(const QRectF& selectRegion)
 {
-    this->selectRegion = selectRegion;
-    this->repaint();
+    if (this->selectRegion != selectRegion)
+    {
+        this->selectRegion = selectRegion;
+        this->repaint();
+        emit this->selectRegionChanged(this->selectRegion);
+    }
 }
 
 const QRectF ImageMap::get_select_region() { return this->selectRegion; }
