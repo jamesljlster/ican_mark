@@ -82,6 +82,14 @@ void RBoxMarkWidget::set_scale_ratio(qreal ratio)
 
 qreal RBoxMarkWidget::get_scale_ratio() { return this->scaleRatio; }
 
+void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
+{
+    this->imageRegion = imageRegion;
+    this->viewRegion =
+        this->find_view_region(this->imageRegion.size().toSize(), this->size());
+    this->repaint();
+}
+
 const vector<Instance>& RBoxMarkWidget::annotation_list()
 {
     return this->annoList;
