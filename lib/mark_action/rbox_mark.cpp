@@ -68,6 +68,12 @@ void RBoxMark::revert()
     }
 }
 
+void RBoxMark::shift(const QPoint& vec)
+{
+    this->varMap["degree"].shift(vec);
+    this->varMap["bbox"].shift(vec);
+}
+
 bool RBoxMark::finish() const
 {
     return (static_cast<State>(this->s) == State::BBOX_FIN);

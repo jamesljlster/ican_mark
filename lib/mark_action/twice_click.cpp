@@ -57,6 +57,12 @@ void TwiceClick::revert()
     }
 }
 
+void TwiceClick::shift(const QPoint& vec)
+{
+    this->varMap["pos1"].shift(vec);
+    this->varMap["pos2"].shift(vec);
+}
+
 bool TwiceClick::finish() const
 {
     return (static_cast<State>(this->s) == State::POS2_FIN);

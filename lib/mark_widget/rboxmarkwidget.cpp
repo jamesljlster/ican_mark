@@ -191,12 +191,28 @@ bool RBoxMarkWidget::event(QEvent* event)
             break;
 
         case ClickAction::State::PRESS:
-            this->imageRegion = this->find_image_region(
-                this->regionPosCache +
-                    this->scaling_to_image(this->moveAction["press"] -
-                                           this->moveAction["move"]),
-                this->size(), this->scaleRatio);
-            imgRegionChanged = true;
+            do
+            {
+                // Find new image region
+                QRectF newImageRegion = this->find_image_region(
+                    this->regionPosCache +
+                        this->scaling_to_image(this->moveAction["press"] -
+                                               this->moveAction["move"]),
+                    this->size(), this->scaleRatio);
+
+                if (this->imageRegion != newImageRegion)
+                {
+                    // Shift marked position
+                    this->markAction.shift(
+                        this->scaling_to_view(this->imageRegion.center() -
+                                              newImageRegion.center())
+                            .toPoint());
+
+                    // Assign new image region
+                    this->imageRegion = newImageRegion;
+                    imgRegionChanged = true;
+                }
+            } while (0);
             break;
 
         case ClickAction::State::RELEASE:

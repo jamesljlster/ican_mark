@@ -53,6 +53,13 @@ void ClickAction::run(QInputEvent* event)
 
 void ClickAction::revert() { this->reset(); }
 
+void ClickAction::shift(const QPoint& vec)
+{
+    this->varMap["move"] += vec;
+    this->varMap["press"] += vec;
+    this->varMap["release"] += vec;
+}
+
 bool ClickAction::finish() const
 {
     return (this->s == static_cast<int>(State::RELEASE));

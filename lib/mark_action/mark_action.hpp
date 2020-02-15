@@ -6,6 +6,7 @@
 #include <string>
 
 #include <QInputEvent>
+#include <QPoint>
 
 namespace ical_mark
 {
@@ -16,6 +17,7 @@ class ActionBase
     virtual void reset() = 0;
     virtual void run(QInputEvent* event) = 0;
     virtual void revert() = 0;
+    virtual void shift(const QPoint& vec) = 0;
 
     virtual bool finish() const = 0;
     virtual int state() const = 0;
@@ -36,6 +38,7 @@ class ClickAction : public ActionBase<const QPoint&>
     void reset();
     void run(QInputEvent* event);
     void revert();
+    void shift(const QPoint& vec);
 
     bool finish() const;
     int state() const;
@@ -61,6 +64,7 @@ class TwiceClick : public ActionBase<const ClickAction&>
     void reset();
     void run(QInputEvent* event);
     void revert();
+    void shift(const QPoint& vec);
 
     bool finish() const;
     int state() const;
@@ -86,6 +90,7 @@ class RBoxMark : public ActionBase<const TwiceClick&>
     void reset();
     void run(QInputEvent* event);
     void revert();
+    void shift(const QPoint& vec);
 
     bool finish() const;
     int state() const;
