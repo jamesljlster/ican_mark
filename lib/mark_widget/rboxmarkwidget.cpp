@@ -60,14 +60,6 @@ void RBoxMarkWidget::set_hl_instance_index(int index)
     this->repaint();
 }
 
-void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
-{
-    this->imageRegion = imageRegion;
-    this->viewRegion =
-        this->find_view_region(this->imageRegion.size().toSize(), this->size());
-    this->repaint();
-}
-
 const vector<Instance>& RBoxMarkWidget::annotation_list()
 {
     return this->annoList;

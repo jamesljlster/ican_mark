@@ -272,5 +272,5 @@ void ICALMark::on_scaleRatioSlider_valueChanged(int value)
 
 void ICALMark::on_imageMap_stateChanged(const QRectF& imageRegion)
 {
-    this->ui->markArea->set_image_region(imageRegion);
+    // this->ui->markArea->set_image_region(imageRegion);
 }
