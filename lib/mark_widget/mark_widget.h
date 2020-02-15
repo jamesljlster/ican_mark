@@ -177,6 +177,8 @@ class RBoxMarkWidget : public ImageView
     using ImageView::find_image_region;
     QRectF find_image_region(const QPointF& center, const QSizeF& sizeHint,
                              qreal scaleRatio);
+    void update_regions(const QPointF& newCenter, bool& imgRegionChanged,
+                        qreal newScaleRatio, bool& scaleChanged);
 
     /** Estimating functions */
     double find_distance(const QPointF& p1, const QPointF& p2);
