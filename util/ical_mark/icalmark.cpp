@@ -216,8 +216,12 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
     }
     else
     {
-        // Disable mark area
+        // Disable mark area and image map
+        this->ui->mapStack->setCurrentIndex(1);
         this->ui->markStack->setCurrentIndex(1);
+
+        // Clear instances list
+        this->ui->instList->clear();
     }
 }
 
