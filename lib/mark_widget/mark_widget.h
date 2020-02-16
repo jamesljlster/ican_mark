@@ -104,7 +104,7 @@ class ImageMap : public ImageView
     void resizeEvent(QResizeEvent* event);
 
     /** Drawing functions */
-    void draw_select_region(const QRectF& selRegion);
+    void draw_select_region(const QRectF& selRegion, const QRectF& viewRegion);
 };
 
 class RBoxMarkWidget : public ImageView

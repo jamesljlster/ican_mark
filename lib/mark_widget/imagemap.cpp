@@ -1,5 +1,7 @@
 #include "mark_widget.h"
 
+#include <QPainterPath>
+
 #include <iostream>
 
 using namespace std;
@@ -19,6 +21,8 @@ void ImageMap::reset(const QImage& image)
     this->imageRegion = QRectF(QPoint(0, 0), this->bgImage.size());
     this->viewRegion =
         this->find_view_region(this->imageRegion.size().toSize(), this->size());
+
+    this->repaint();
 }
 
 void ImageMap::set_select_region(const QRectF& selectRegion)
@@ -105,7 +109,8 @@ void ImageMap::paintEvent(QPaintEvent* paintEvent)
     }
 
     // Draw selected region
-    this->draw_select_region(this->mapping_to_view(this->selectRegion));
+    this->draw_select_region(this->mapping_to_view(this->selectRegion),
+                             this->viewRegion);
 }
 
 void ImageMap::resizeEvent(QResizeEvent* event)
@@ -114,14 +119,19 @@ void ImageMap::resizeEvent(QResizeEvent* event)
                                               event->size());
 }
 
-void ImageMap::draw_select_region(const QRectF& selRegion)
+void ImageMap::draw_select_region(const QRectF& selRegion,
+                                  const QRectF& viewRegion)
 {
     // Setup painter and drawing style
     QPainter painter(this);
 
-    painter.setRenderHint(QPainter::RenderHint::Antialiasing);
-    painter.setPen(QPen(QColor(0, 0, 0, 196), 2));
+    painter.setPen(QPen(QColor(0, 0, 0, 128), 2));
+    painter.setBrush(QColor(0, 0, 0, 96));
 
     // Draw select region
-    painter.drawRect(selRegion);
+    QPainterPath path;
+    path.addRect(viewRegion);
+    path.addRect(selRegion);
+
+    painter.drawPath(path);
 }
