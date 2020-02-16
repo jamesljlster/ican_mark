@@ -28,6 +28,8 @@ class ICALMark : public QMainWindow
     void on_markArea_instanceListChanged(
         const std::vector<ical_mark::Instance> &annoList);
 
+    void on_markArea_scaleRatioChanged(qreal ratio);
+
     void on_instDel_clicked();
 
     void on_dataDir_clicked();
@@ -42,6 +44,10 @@ class ICALMark : public QMainWindow
     void on_slidePrevious_clicked();
 
     void on_nameFile_clicked();
+
+    void on_scaleRatio_valueChanged(double arg1);
+
+    void on_scaleRatioSlider_valueChanged(int value);
 
    private:
     Ui::ICALMark *ui;

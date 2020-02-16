@@ -33,6 +33,10 @@ ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
             this->ui->markArea, &RBoxMarkWidget::set_mark_label);
     connect(this->ui->instList, &QListWidget::currentRowChanged,
             this->ui->markArea, &RBoxMarkWidget::set_hl_instance_index);
+
+    connect(this->ui->scaleRatio,
+            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
+            this->ui->markArea, &RBoxMarkWidget::set_scale_ratio);
 }
 
 ICALMark::~ICALMark() { delete ui; }
@@ -88,6 +92,16 @@ void ICALMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
 
     // Change sample marked state
     this->ui->slideView->currentItem()->setCheckState(Qt::CheckState::Checked);
+}
+
+void ICALMark::on_markArea_scaleRatioChanged(qreal ratio)
+{
+    if (ratio > this->ui->scaleRatio->maximum())
+    {
+        this->ui->scaleRatio->setMaximum(ratio);
+    }
+
+    this->ui->scaleRatio->setValue(ratio);
 }
 
 void ICALMark::on_instDel_clicked()
@@ -255,4 +269,20 @@ void ICALMark::on_nameFile_clicked()
     {
         this->load_class_names(dialog.selectedFiles()[0]);
     }
+}
+
+void ICALMark::on_scaleRatio_valueChanged(double arg1)
+{
+    int val = arg1 * 10;
+    if (val > this->ui->scaleRatioSlider->maximum())
+    {
+        this->ui->scaleRatioSlider->setMaximum(val);
+    }
+
+    this->ui->scaleRatioSlider->setValue(val);
+}
+
+void ICALMark::on_scaleRatioSlider_valueChanged(int value)
+{
+    this->ui->scaleRatio->setValue((double)value / 10);
 }
