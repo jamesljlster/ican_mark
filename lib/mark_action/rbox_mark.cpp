@@ -68,18 +68,6 @@ void RBoxMark::revert()
     }
 }
 
-void RBoxMark::shift(const QPointF& vec)
-{
-    this->varMap["degree"].shift(vec);
-    this->varMap["bbox"].shift(vec);
-}
-
-void RBoxMark::scale(double ratio)
-{
-    this->varMap["degree"].scale(ratio);
-    this->varMap["bbox"].scale(ratio);
-}
-
 bool RBoxMark::finish() const
 {
     return (static_cast<State>(this->s) == State::BBOX_FIN);
@@ -92,9 +80,9 @@ const TwiceClick& RBoxMark::operator[](std::string key) const
     auto it = this->varMap.find(key);
     if (it == this->varMap.end())
     {
-        std::string errMsg = std::string("'") + key +
-                             std::string("' variable not exist in class '") +
-                             typeid(*this).name() + std::string("'");
+        std::string errMsg =
+            std::string("'") + key +
+            std::string("' variable not exist in class 'RBoxMark'");
         throw std::invalid_argument(errMsg);
     }
 

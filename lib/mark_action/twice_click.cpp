@@ -57,18 +57,6 @@ void TwiceClick::revert()
     }
 }
 
-void TwiceClick::shift(const QPointF& vec)
-{
-    this->varMap["pos1"].shift(vec);
-    this->varMap["pos2"].shift(vec);
-}
-
-void TwiceClick::scale(double ratio)
-{
-    this->varMap["pos1"].scale(ratio);
-    this->varMap["pos2"].scale(ratio);
-}
-
 bool TwiceClick::finish() const
 {
     return (static_cast<State>(this->s) == State::POS2_FIN);
@@ -81,9 +69,9 @@ const ClickAction& TwiceClick::operator[](std::string key) const
     auto it = this->varMap.find(key);
     if (it == this->varMap.end())
     {
-        std::string errMsg = std::string("'") + key +
-                             std::string("' variable not exist in class '") +
-                             typeid(*this).name() + std::string("'");
+        std::string errMsg =
+            std::string("'") + key +
+            std::string("' variable not exist in class 'TwiceClick'");
         throw std::invalid_argument(errMsg);
     }
 

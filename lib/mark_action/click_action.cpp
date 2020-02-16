@@ -56,20 +56,6 @@ void ClickAction::run(QInputEvent* event)
 
 void ClickAction::revert() { this->reset(); }
 
-void ClickAction::shift(const QPointF& vec)
-{
-    this->varMap["move"] += vec;
-    this->varMap["press"] += vec;
-    this->varMap["release"] += vec;
-}
-
-void ClickAction::scale(double ratio)
-{
-    this->varMap["move"] *= ratio;
-    this->varMap["press"] *= ratio;
-    this->varMap["release"] *= ratio;
-}
-
 bool ClickAction::finish() const
 {
     return (this->s == static_cast<int>(State::RELEASE));
@@ -82,9 +68,9 @@ const QPointF& ClickAction::operator[](std::string key) const
     auto it = this->varMap.find(key);
     if (it == this->varMap.end())
     {
-        std::string errMsg = std::string("'") + key +
-                             std::string("' variable not exist in class '") +
-                             typeid(*this).name() + std::string("'");
+        std::string errMsg =
+            std::string("'") + key +
+            std::string("' variable not exist in class 'ClickAction'");
         throw std::invalid_argument(errMsg);
     }
 

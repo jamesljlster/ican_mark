@@ -47,8 +47,6 @@ class ActionBase
     virtual void reset() = 0;
     virtual void run(QInputEvent* event) = 0;
     virtual void revert() = 0;
-    virtual void shift(const QPointF& vec) = 0;
-    virtual void scale(double ratio) = 0;
 
     virtual bool finish() const = 0;
     virtual int state() const = 0;
@@ -80,8 +78,6 @@ class ClickAction : public ActionBase<QPointF>
     void reset();
     void run(QInputEvent* event);
     void revert();
-    void shift(const QPointF& vec);
-    void scale(double ratio);
 
     bool finish() const;
     int state() const;
@@ -112,8 +108,6 @@ class TwiceClick : public ActionBase<ClickAction>
     void reset();
     void run(QInputEvent* event);
     void revert();
-    void shift(const QPointF& vec);
-    void scale(double ratio);
 
     bool finish() const;
     int state() const;
@@ -144,8 +138,6 @@ class RBoxMark : public ActionBase<TwiceClick>
     void reset();
     void run(QInputEvent* event);
     void revert();
-    void shift(const QPointF& vec);
-    void scale(double ratio);
 
     bool finish() const;
     int state() const;
