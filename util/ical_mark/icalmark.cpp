@@ -128,9 +128,9 @@ void ICALMark::on_dataDir_clicked()
     {
         QString pathStr = dialog.selectedFiles()[0];
         this->ui->dataDir->setText(pathStr);
-    }
 
-    this->on_dataRefresh_clicked();
+        this->on_dataRefresh_clicked();
+    }
 }
 
 void ICALMark::on_dataRefresh_clicked()
