@@ -386,25 +386,14 @@ bool RBoxMarkWidget::update_regions(const QPointF& newCenter,
 {
     bool imgRegionChanged = false;
 
-    double ratioChangeRate = newScaleRatio / oldScaleRatio;
-    if (oldScaleRatio != newScaleRatio)
-    {
-        // Scale marked position
-        this->markAction.shift(-this->viewRegion.center());
-        this->markAction.scale(ratioChangeRate);
-        this->markAction.shift(this->viewRegion.center());
-    }
+    // Mapping mark points to image space
+    RBoxMark imgMark = this->mapping_to_image<RBoxMark>(this->markAction);
 
     // Update image region
     QRectF newImageRegion =
         this->find_image_region(newCenter, this->size(), newScaleRatio);
     if (this->imageRegion != newImageRegion)
     {
-        // Shift marked position
-        this->markAction.shift(this->scaling_to_view(
-            (this->imageRegion.center() - newImageRegion.center()) *
-            ratioChangeRate));
-
         // Assign new image region
         this->imageRegion = newImageRegion;
         imgRegionChanged = true;
@@ -413,6 +402,9 @@ bool RBoxMarkWidget::update_regions(const QPointF& newCenter,
     // Update view region
     this->viewRegion =
         this->find_view_region(this->imageRegion.size().toSize(), this->size());
+
+    // Mapping mark points back to view space
+    this->markAction = this->mapping_to_view<RBoxMark>(imgMark);
 
     return imgRegionChanged;
 }

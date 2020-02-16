@@ -66,9 +66,7 @@ QRectF ImageView::find_view_region(const QSize& sizeHint,
 
 QPointF ImageView::scaling_to_view(const QPointF& point)
 {
-    return QPointF(
-        point.x() * this->viewRegion.width() / this->imageRegion.width(),
-        point.y() * this->viewRegion.height() / this->imageRegion.height());
+    return this->scaling_to_view<QPointF>(point);
 }
 
 QSizeF ImageView::scaling_to_view(const QSizeF& size)
@@ -94,9 +92,7 @@ QRectF ImageView::mapping_to_view(const QRectF& rect)
 
 QPointF ImageView::scaling_to_image(const QPointF& point)
 {
-    return QPointF(
-        point.x() * this->imageRegion.width() / this->viewRegion.width(),
-        point.y() * this->imageRegion.height() / this->viewRegion.height());
+    return this->scaling_to_image<QPointF>(point);
 }
 
 QSizeF ImageView::scaling_to_image(const QSizeF& size)

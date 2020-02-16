@@ -90,4 +90,68 @@ const ClickAction& TwiceClick::operator[](std::string key) const
     return it->second;
 }
 
+const TwiceClick TwiceClick::operator+(const QPointF& data) const
+{
+    TwiceClick ret = (*this);
+    ret.varMap["pos1"] = ret.varMap["pos1"] + data;
+    ret.varMap["pos2"] = ret.varMap["pos2"] + data;
+    return ret;
+}
+
+const TwiceClick TwiceClick::operator-(const QPointF& data) const
+{
+    TwiceClick ret = (*this);
+    ret.varMap["pos1"] = ret.varMap["pos1"] - data;
+    ret.varMap["pos2"] = ret.varMap["pos2"] - data;
+    return ret;
+}
+
+const TwiceClick TwiceClick::operator*(const QPointF& data) const
+{
+    TwiceClick ret = (*this);
+    ret.varMap["pos1"] = ret.varMap["pos1"] * data;
+    ret.varMap["pos2"] = ret.varMap["pos2"] * data;
+    return ret;
+}
+
+const TwiceClick TwiceClick::operator/(const QPointF& data) const
+{
+    TwiceClick ret = (*this);
+    ret.varMap["pos1"] = ret.varMap["pos1"] / data;
+    ret.varMap["pos2"] = ret.varMap["pos2"] / data;
+    return ret;
+}
+
+const TwiceClick TwiceClick::operator+(const TwiceClick& data) const
+{
+    TwiceClick ret = (*this);
+    ret.varMap["pos1"] = ret.varMap["pos1"] + data["pos1"];
+    ret.varMap["pos2"] = ret.varMap["pos2"] + data["pos2"];
+    return ret;
+}
+
+const TwiceClick TwiceClick::operator-(const TwiceClick& data) const
+{
+    TwiceClick ret = (*this);
+    ret.varMap["pos1"] = ret.varMap["pos1"] - data["pos1"];
+    ret.varMap["pos2"] = ret.varMap["pos2"] - data["pos2"];
+    return ret;
+}
+
+const TwiceClick TwiceClick::operator*(const TwiceClick& data) const
+{
+    TwiceClick ret = (*this);
+    ret.varMap["pos1"] = ret.varMap["pos1"] * data["pos1"];
+    ret.varMap["pos2"] = ret.varMap["pos2"] * data["pos2"];
+    return ret;
+}
+
+const TwiceClick TwiceClick::operator/(const TwiceClick& data) const
+{
+    TwiceClick ret = (*this);
+    ret.varMap["pos1"] = ret.varMap["pos1"] / data["pos1"];
+    ret.varMap["pos2"] = ret.varMap["pos2"] / data["pos2"];
+    return ret;
+}
+
 }  // namespace ical_mark

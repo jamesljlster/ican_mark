@@ -10,6 +10,9 @@
 
 namespace ical_mark
 {
+const QPointF operator*(const QPointF& point, const QPointF& factor);
+const QPointF operator/(const QPointF& point, const QPointF& divisor);
+
 template <typename argType>
 class ActionBase
 {
@@ -47,6 +50,16 @@ class ClickAction : public ActionBase<const QPointF&>
 
     const QPointF& operator[](std::string key) const;
 
+    const ClickAction operator+(const QPointF& data) const;
+    const ClickAction operator-(const QPointF& data) const;
+    const ClickAction operator*(const QPointF& data) const;
+    const ClickAction operator/(const QPointF& data) const;
+
+    const ClickAction operator+(const ClickAction& data) const;
+    const ClickAction operator-(const ClickAction& data) const;
+    const ClickAction operator*(const ClickAction& data) const;
+    const ClickAction operator/(const ClickAction& data) const;
+
    protected:
     int s = static_cast<int>(State::MOVE);
     std::map<std::string, QPointF> varMap = {
@@ -74,6 +87,16 @@ class TwiceClick : public ActionBase<const ClickAction&>
 
     const ClickAction& operator[](std::string key) const;
 
+    const TwiceClick operator+(const QPointF& data) const;
+    const TwiceClick operator-(const QPointF& data) const;
+    const TwiceClick operator*(const QPointF& data) const;
+    const TwiceClick operator/(const QPointF& data) const;
+
+    const TwiceClick operator+(const TwiceClick& data) const;
+    const TwiceClick operator-(const TwiceClick& data) const;
+    const TwiceClick operator*(const TwiceClick& data) const;
+    const TwiceClick operator/(const TwiceClick& data) const;
+
    protected:
     int s = static_cast<int>(State::INIT);
     std::map<std::string, ClickAction> varMap = {{"pos1", ClickAction()},
@@ -100,6 +123,16 @@ class RBoxMark : public ActionBase<const TwiceClick&>
     int state() const;
 
     const TwiceClick& operator[](std::string key) const;
+
+    const RBoxMark operator+(const QPointF& data) const;
+    const RBoxMark operator-(const QPointF& data) const;
+    const RBoxMark operator*(const QPointF& data) const;
+    const RBoxMark operator/(const QPointF& data) const;
+
+    const RBoxMark operator+(const RBoxMark& data) const;
+    const RBoxMark operator-(const RBoxMark& data) const;
+    const RBoxMark operator*(const RBoxMark& data) const;
+    const RBoxMark operator/(const RBoxMark& data) const;
 
    protected:
     int s = static_cast<int>(State::INIT);

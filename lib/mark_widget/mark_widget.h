@@ -3,6 +3,7 @@
 
 #include <map>
 #include <string>
+#include <utility>
 #include <vector>
 
 #include <QEvent>
@@ -39,13 +40,42 @@ class ImageView : public QWidget
     /** Point mapping functions */
     QPointF scaling_to_view(const QPointF& point);
     QSizeF scaling_to_view(const QSizeF& size);
+    template <typename T>
+    T scaling_to_view(const T& data)
+    {
+        QPointF factor(this->viewRegion.width() / this->imageRegion.width(),
+                       this->viewRegion.height() / this->imageRegion.height());
+        return data * factor;
+    }
+
     QPointF mapping_to_view(const QPointF& point);
     QRectF mapping_to_view(const QRectF& rect);
+    template <typename T>
+    T mapping_to_view(const T& data)
+    {
+        return this->scaling_to_view<T>(data - this->imageRegion.topLeft()) +
+               this->viewRegion.topLeft();
+    }
 
     QPointF scaling_to_image(const QPointF& point);
     QSizeF scaling_to_image(const QSizeF& size);
+    template <typename T>
+    T scaling_to_image(const T& data)
+    {
+        QPointF factor(
+            this->imageRegion.width() / this->viewRegion.width(),
+            (this->imageRegion.height() / this->viewRegion.height()));
+        return data * factor;
+    }
+
     QPointF mapping_to_image(const QPointF& point);
     QRectF mapping_to_image(const QRectF& rect);
+    template <typename T>
+    T mapping_to_image(const T& point)
+    {
+        return this->scaling_to_image<T>(point - this->viewRegion.topLeft()) +
+               this->imageRegion.topLeft();
+    }
 };
 
 class ImageMap : public ImageView
