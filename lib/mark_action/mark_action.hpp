@@ -13,6 +13,33 @@ namespace ical_mark
 const QPointF operator*(const QPointF& point, const QPointF& factor);
 const QPointF operator/(const QPointF& point, const QPointF& divisor);
 
+#define MARK_ACTION_OPERATOR_IMPL(ClassName, ArgClass, op, accessor)     \
+    const ClassName operator op(const ArgClass& data) const              \
+    {                                                                    \
+        ClassName ret = (*this);                                         \
+        for (auto it = ret.varMap.begin(); it != ret.varMap.end(); it++) \
+        {                                                                \
+            it->second = it->second op accessor;                         \
+        }                                                                \
+        return ret;                                                      \
+    }
+
+#define MARK_ACTION_OPERATOR_QPOINTF(ClassName, op) \
+    MARK_ACTION_OPERATOR_IMPL(ClassName, QPointF, op, data)
+#define MARK_ACTION_OPERATOR_CLASSNAME(ClassName, op) \
+    MARK_ACTION_OPERATOR_IMPL(ClassName, ClassName, op, data[it->first])
+
+#define MARK_ACTION_OPERATOR(ClassName)          \
+   public:                                       \
+    MARK_ACTION_OPERATOR_QPOINTF(ClassName, +)   \
+    MARK_ACTION_OPERATOR_QPOINTF(ClassName, -)   \
+    MARK_ACTION_OPERATOR_QPOINTF(ClassName, *)   \
+    MARK_ACTION_OPERATOR_QPOINTF(ClassName, /)   \
+    MARK_ACTION_OPERATOR_CLASSNAME(ClassName, +) \
+    MARK_ACTION_OPERATOR_CLASSNAME(ClassName, -) \
+    MARK_ACTION_OPERATOR_CLASSNAME(ClassName, *) \
+    MARK_ACTION_OPERATOR_CLASSNAME(ClassName, /)
+
 template <typename argType>
 class ActionBase
 {
@@ -26,11 +53,16 @@ class ActionBase
     virtual bool finish() const = 0;
     virtual int state() const = 0;
 
-    virtual argType operator[](std::string) const = 0;
+    virtual const argType& operator[](std::string key) const = 0;
+
+   protected:
+    std::map<std::string, argType> varMap;
 };
 
-class ClickAction : public ActionBase<const QPointF&>
+class ClickAction : public ActionBase<QPointF>
 {
+    MARK_ACTION_OPERATOR(ClickAction)
+
    public:
     enum class State
     {
@@ -38,6 +70,12 @@ class ClickAction : public ActionBase<const QPointF&>
         PRESS,
         RELEASE
     };
+
+    ClickAction()
+    {
+        this->varMap = {
+            {"move", QPointF()}, {"press", QPointF()}, {"release", QPointF()}};
+    }
 
     void reset();
     void run(QInputEvent* event);
@@ -50,24 +88,14 @@ class ClickAction : public ActionBase<const QPointF&>
 
     const QPointF& operator[](std::string key) const;
 
-    const ClickAction operator+(const QPointF& data) const;
-    const ClickAction operator-(const QPointF& data) const;
-    const ClickAction operator*(const QPointF& data) const;
-    const ClickAction operator/(const QPointF& data) const;
-
-    const ClickAction operator+(const ClickAction& data) const;
-    const ClickAction operator-(const ClickAction& data) const;
-    const ClickAction operator*(const ClickAction& data) const;
-    const ClickAction operator/(const ClickAction& data) const;
-
    protected:
     int s = static_cast<int>(State::MOVE);
-    std::map<std::string, QPointF> varMap = {
-        {"move", QPointF()}, {"press", QPointF()}, {"release", QPointF()}};
 };
 
-class TwiceClick : public ActionBase<const ClickAction&>
+class TwiceClick : public ActionBase<ClickAction>
 {
+    MARK_ACTION_OPERATOR(TwiceClick)
+
    public:
     enum class State
     {
@@ -75,6 +103,11 @@ class TwiceClick : public ActionBase<const ClickAction&>
         POS1_FIN,
         POS2_FIN
     };
+
+    TwiceClick()
+    {
+        this->varMap = {{"pos1", ClickAction()}, {"pos2", ClickAction()}};
+    }
 
     void reset();
     void run(QInputEvent* event);
@@ -87,24 +120,14 @@ class TwiceClick : public ActionBase<const ClickAction&>
 
     const ClickAction& operator[](std::string key) const;
 
-    const TwiceClick operator+(const QPointF& data) const;
-    const TwiceClick operator-(const QPointF& data) const;
-    const TwiceClick operator*(const QPointF& data) const;
-    const TwiceClick operator/(const QPointF& data) const;
-
-    const TwiceClick operator+(const TwiceClick& data) const;
-    const TwiceClick operator-(const TwiceClick& data) const;
-    const TwiceClick operator*(const TwiceClick& data) const;
-    const TwiceClick operator/(const TwiceClick& data) const;
-
    protected:
     int s = static_cast<int>(State::INIT);
-    std::map<std::string, ClickAction> varMap = {{"pos1", ClickAction()},
-                                                 {"pos2", ClickAction()}};
 };
 
-class RBoxMark : public ActionBase<const TwiceClick&>
+class RBoxMark : public ActionBase<TwiceClick>
 {
+    MARK_ACTION_OPERATOR(RBoxMark)
+
    public:
     enum class State
     {
@@ -112,6 +135,11 @@ class RBoxMark : public ActionBase<const TwiceClick&>
         DEGREE_FIN,
         BBOX_FIN
     };
+
+    RBoxMark()
+    {
+        this->varMap = {{"degree", TwiceClick()}, {"bbox", TwiceClick()}};
+    }
 
     void reset();
     void run(QInputEvent* event);
@@ -124,20 +152,8 @@ class RBoxMark : public ActionBase<const TwiceClick&>
 
     const TwiceClick& operator[](std::string key) const;
 
-    const RBoxMark operator+(const QPointF& data) const;
-    const RBoxMark operator-(const QPointF& data) const;
-    const RBoxMark operator*(const QPointF& data) const;
-    const RBoxMark operator/(const QPointF& data) const;
-
-    const RBoxMark operator+(const RBoxMark& data) const;
-    const RBoxMark operator-(const RBoxMark& data) const;
-    const RBoxMark operator*(const RBoxMark& data) const;
-    const RBoxMark operator/(const RBoxMark& data) const;
-
    protected:
     int s = static_cast<int>(State::INIT);
-    std::map<std::string, TwiceClick> varMap = {{"degree", TwiceClick()},
-                                                {"bbox", TwiceClick()}};
 };
 
 }  // namespace ical_mark
