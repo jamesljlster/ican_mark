@@ -21,12 +21,12 @@ class ICALMark : public QMainWindow
     Q_OBJECT
 
    public:
-    ICALMark(QWidget *parent = nullptr);
+    ICALMark(QWidget* parent = nullptr);
     ~ICALMark();
 
    private slots:
     void on_markArea_instanceListChanged(
-        const std::vector<ical_mark::Instance> &annoList);
+        const std::vector<ical_mark::Instance>& annoList);
 
     void on_markArea_scaleRatioChanged(qreal ratio);
 
@@ -36,8 +36,8 @@ class ICALMark : public QMainWindow
 
     void on_dataRefresh_clicked();
 
-    void on_slideView_currentItemChanged(QListWidgetItem *current,
-                                         QListWidgetItem *previous);
+    void on_slideView_currentItemChanged(QListWidgetItem* current,
+                                         QListWidgetItem* previous);
 
     void on_slideNext_clicked();
 
@@ -50,9 +50,10 @@ class ICALMark : public QMainWindow
     void on_scaleRatioSlider_valueChanged(int value);
 
    private:
-    Ui::ICALMark *ui;
+    Ui::ICALMark* ui;
 
     void slideview_sliding(int step);
-    void load_class_names(const QString &filePath);
+    void load_class_names(const QString& filePath);
+    void keyPressEvent(QKeyEvent* event) override;
 };
 #endif  // ICALMARK_H

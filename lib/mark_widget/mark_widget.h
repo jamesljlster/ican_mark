@@ -119,11 +119,15 @@ class RBoxMarkWidget : public ImageView
     void reset(const QImage& image,
                const std::vector<ical_mark::Instance>& instList);
 
+    /** Control functions */
     int get_mark_label();
     int get_hl_instance_index();
 
     QRectF get_image_region();
     qreal get_scale_ratio();
+
+    void marking_revert();
+    void marking_reset();
 
     /** Data handling */
     const std::vector<ical_mark::Instance>& annotation_list();

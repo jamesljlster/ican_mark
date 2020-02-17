@@ -290,3 +290,25 @@ void ICALMark::on_scaleRatioSlider_valueChanged(int value)
 {
     this->ui->scaleRatio->setValue((double)value / 10);
 }
+
+void ICALMark::keyPressEvent(QKeyEvent* event)
+{
+    if (event->isAutoRepeat())
+    {
+        return;
+    }
+
+    if (this->ui->markStack->currentIndex() == 0)
+    {
+        switch (event->key())
+        {
+            case Qt::Key_Escape:
+                this->ui->markArea->marking_revert();
+                break;
+
+            case Qt::Key_Backspace:
+                this->ui->markArea->marking_reset();
+                break;
+        }
+    }
+}

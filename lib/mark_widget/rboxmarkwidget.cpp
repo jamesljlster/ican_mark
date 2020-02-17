@@ -107,6 +107,18 @@ void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
     if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
+void RBoxMarkWidget::marking_revert()
+{
+    this->markAction.revert();
+    this->repaint();
+}
+
+void RBoxMarkWidget::marking_reset()
+{
+    this->markAction.reset();
+    this->repaint();
+}
+
 const vector<Instance>& RBoxMarkWidget::annotation_list()
 {
     return this->annoList;
@@ -275,20 +287,6 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
         if (me->button() == Qt::MouseButton::LeftButton)
         {
             this->markAction.run(me);
-            ret = true;
-        }
-    }
-    else if (eventType == QEvent::KeyPress)
-    {
-        QKeyEvent* ke = static_cast<QKeyEvent*>(event);
-        if (ke->key() == Qt::Key_Escape)
-        {
-            this->markAction.revert();
-            ret = true;
-        }
-        else if (ke->key() == Qt::Key_Backspace)
-        {
-            this->markAction.reset();
             ret = true;
         }
     }
