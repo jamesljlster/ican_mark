@@ -6,7 +6,9 @@
 #include <iostream>
 
 #include <QBrush>
+#include <QFont>
 #include <QKeyEvent>
+#include <QMarginsF>
 #include <QMouseEvent>
 #include <QPaintEvent>
 #include <Qt>
@@ -598,9 +600,21 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
     transform.translate(center.x(), center.y());
     transform.rotate(-inst.degree);
     painter.setTransform(transform);
-    painter.drawRect(
+
+    QRectF rect =
         QRectF(this->scaling_to_view(QPointF(-halfWidth, -halfHeight)),
-               this->scaling_to_view(QPointF(halfWidth, halfHeight))));
+               this->scaling_to_view(QPointF(halfWidth, halfHeight)));
+    painter.drawRect(rect);
+
+    // Draw label
+    QFont font = painter.font();
+    font.setPixelSize(style.fontSize);
+    font.setBold(true);
+    painter.setFont(font);
+
+    string labelStr = to_string(inst.label);
+    painter.drawText(rect.marginsRemoved(QMarginsF(5, 5, 5, 5)),
+                     Qt::AlignTop | Qt::AlignTop, labelStr.c_str());
 }
 
 void RBoxMarkWidget::draw_anchor(const QPointF& pos, const StyleAnchor& style)

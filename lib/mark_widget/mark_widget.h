@@ -162,6 +162,7 @@ class RBoxMarkWidget : public ImageView
     {
         int centerRad = 0;  // Center point radius
         int lineWidth = 1;
+        int fontSize = 16;
         QPainter::RenderHint rendHint = QPainter::RenderHint::Antialiasing;
         QPainter::CompositionMode compMode =
             QPainter::CompositionMode_SourceOver;
