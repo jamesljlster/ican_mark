@@ -262,6 +262,7 @@ void ICALMark::load_class_names(const QString& filePath)
         // Load names
         YAML::Node node = YAML::LoadFile(filePath.toStdString());
         vector<string> classNames = node.as<vector<string>>();
+        this->ui->markArea->set_class_names(classNames);
 
         // Apply to name list
         this->ui->nameList->clear();

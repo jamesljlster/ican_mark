@@ -130,6 +130,7 @@ class RBoxMarkWidget : public ImageView
     void delete_instances(const std::vector<size_t>& indList);
 
    public slots:
+    void set_class_names(const std::vector<std::string>& classNames);
     void set_mark_label(int label);
     void set_hl_instance_index(int index);  // Highlighting selected instance
     void set_image_region(const QRectF& imageRegion);
@@ -200,6 +201,7 @@ class RBoxMarkWidget : public ImageView
     int highlightInst = -1;                     // Index for highlighting
     ical_mark::Instance curInst;                // Current marking instance
     std::vector<ical_mark::Instance> annoList;  // Marked instances
+    std::vector<std::string> classNames;        // Class names
 
     Style style;  // Painting style
 

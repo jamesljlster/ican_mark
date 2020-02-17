@@ -56,6 +56,11 @@ void RBoxMarkWidget::reset(const QImage& image,
     if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
+void RBoxMarkWidget::set_class_names(const std::vector<std::string>& classNames)
+{
+    this->classNames = classNames;
+}
+
 int RBoxMarkWidget::get_mark_label() { return this->label; }
 void RBoxMarkWidget::set_mark_label(int label)
 {
@@ -613,6 +618,11 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
     painter.setFont(font);
 
     string labelStr = to_string(inst.label);
+    if (inst.label < (int)this->classNames.size())
+    {
+        labelStr += string(": ") + this->classNames[inst.label];
+    }
+
     painter.drawText(rect.marginsRemoved(QMarginsF(5, 5, 5, 5)),
                      Qt::AlignTop | Qt::AlignTop, labelStr.c_str());
 }
