@@ -203,6 +203,9 @@ class RBoxMarkWidget : public ImageView
     void paintEvent(QPaintEvent* paintEvent);
     void resizeEvent(QResizeEvent* event);
 
+    bool instance_marking(QEvent* event, bool& instListChanged);
+    bool image_region_moving(QEvent* event, bool& imgRegionChanged);
+
     /** Region handling functions */
     using ImageView::find_image_region;
     QRectF find_image_region(const QPointF& center, const QSizeF& sizeHint,

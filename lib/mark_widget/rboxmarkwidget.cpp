@@ -136,124 +136,8 @@ bool RBoxMarkWidget::event(QEvent* event)
     bool imgRegionChanged = false;
     bool instListChanged = false;
 
-    QEvent::Type eventType = event->type();
-
-    // Run FSM of marking action
-    if (eventType == QEvent::MouseMove)
-    {
-        QMouseEvent* me = static_cast<QMouseEvent*>(event);
-        this->mousePos = me->pos();
-        this->markAction.run(me);
-        this->moveAction.run(me);
-        ret = true;
-    }
-    else if (eventType == QEvent::MouseButtonPress ||
-             eventType == QEvent::MouseButtonRelease)
-    {
-        QMouseEvent* me = static_cast<QMouseEvent*>(event);
-        if (me->button() == Qt::MouseButton::LeftButton)
-        {
-            this->markAction.run(me);
-            ret = true;
-        }
-        else if (me->button() == Qt::MouseButton::MiddleButton)
-        {
-            this->moveAction.run(me);
-            ret = true;
-        }
-    }
-    else if (eventType == QEvent::KeyPress)
-    {
-        QKeyEvent* ke = static_cast<QKeyEvent*>(event);
-        if (ke->key() == Qt::Key_Escape)
-        {
-            this->markAction.revert();
-            ret = true;
-        }
-        else if (ke->key() == Qt::Key_Backspace)
-        {
-            this->markAction.reset();
-            ret = true;
-        }
-    }
-
-    // Status checking and processing
-    switch (static_cast<ClickAction::State>(this->moveAction.state()))
-    {
-        case ClickAction::State::MOVE:
-            this->regionPosCache = this->imageRegion.center();
-            break;
-
-        case ClickAction::State::PRESS:
-            imgRegionChanged = this->update_regions(
-                this->regionPosCache +
-                    this->scaling_to_image(this->moveAction["press"] -
-                                           this->moveAction["move"]),
-                this->scaleRatio, this->scaleRatio);
-            break;
-
-        case ClickAction::State::RELEASE:
-            this->moveAction.reset();
-            break;
-    }
-
-    switch (static_cast<RBoxMark::State>(this->markAction.state()))
-    {
-        case RBoxMark::State::INIT:
-
-            if (static_cast<TwiceClick::State>(
-                    this->markAction["degree"].state()) ==
-                TwiceClick::State::POS1_FIN)
-            {
-                // Calculate and set degree
-                this->curInst.degree = this->find_degree(
-                    this->mapping_to_image(
-                        this->markAction["degree"]["pos1"]["release"]),
-                    this->mapping_to_image(this->mousePos));
-            }
-            else
-            {
-                // Reset degree
-                this->curInst.degree = 0;
-            }
-
-            break;
-
-        case RBoxMark::State::DEGREE_FIN:
-
-            if (static_cast<TwiceClick::State>(
-                    this->markAction["bbox"].state()) ==
-                TwiceClick::State::POS1_FIN)
-            {
-                // Fill bounding box
-                this->fill_bbox(
-                    this->curInst,
-                    this->mapping_to_image(
-                        this->markAction["bbox"]["pos1"]["release"]),
-                    this->mapping_to_image(this->mousePos));
-            }
-            else
-            {
-                // Reset bounding box
-                this->curInst.reset_bbox();
-            }
-
-            break;
-
-        case RBoxMark::State::BBOX_FIN:
-
-            // Set label
-            this->curInst.label = this->label;
-
-            // Append instance to annotation list
-            this->annoList.push_back(this->curInst);
-            instListChanged = true;
-
-            this->curInst.reset();
-            this->markAction.reset();
-
-            break;
-    }
+    ret |= this->instance_marking(event, instListChanged);
+    ret |= this->image_region_moving(event, imgRegionChanged);
 
     if (ret)
     {
@@ -369,6 +253,153 @@ void RBoxMarkWidget::resizeEvent(QResizeEvent* event)
     imgRegionChanged = this->update_regions(this->imageRegion.center(),
                                             this->scaleRatio, this->scaleRatio);
     if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
+}
+
+bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
+{
+    bool ret = false;
+    QEvent::Type eventType = event->type();
+
+    // Run FSM of marking action
+    if (eventType == QEvent::MouseMove)
+    {
+        QMouseEvent* me = static_cast<QMouseEvent*>(event);
+        this->mousePos = me->pos();
+        this->markAction.run(me);
+        ret = true;
+    }
+    else if (eventType == QEvent::MouseButtonPress ||
+             eventType == QEvent::MouseButtonRelease)
+    {
+        QMouseEvent* me = static_cast<QMouseEvent*>(event);
+        if (me->button() == Qt::MouseButton::LeftButton)
+        {
+            this->markAction.run(me);
+            ret = true;
+        }
+    }
+    else if (eventType == QEvent::KeyPress)
+    {
+        QKeyEvent* ke = static_cast<QKeyEvent*>(event);
+        if (ke->key() == Qt::Key_Escape)
+        {
+            this->markAction.revert();
+            ret = true;
+        }
+        else if (ke->key() == Qt::Key_Backspace)
+        {
+            this->markAction.reset();
+            ret = true;
+        }
+    }
+
+    // Status checking and processing
+    switch (static_cast<RBoxMark::State>(this->markAction.state()))
+    {
+        case RBoxMark::State::INIT:
+
+            if (static_cast<TwiceClick::State>(
+                    this->markAction["degree"].state()) ==
+                TwiceClick::State::POS1_FIN)
+            {
+                // Calculate and set degree
+                this->curInst.degree = this->find_degree(
+                    this->mapping_to_image(
+                        this->markAction["degree"]["pos1"]["release"]),
+                    this->mapping_to_image(this->mousePos));
+            }
+            else
+            {
+                // Reset degree
+                this->curInst.degree = 0;
+            }
+
+            break;
+
+        case RBoxMark::State::DEGREE_FIN:
+
+            if (static_cast<TwiceClick::State>(
+                    this->markAction["bbox"].state()) ==
+                TwiceClick::State::POS1_FIN)
+            {
+                // Fill bounding box
+                this->fill_bbox(
+                    this->curInst,
+                    this->mapping_to_image(
+                        this->markAction["bbox"]["pos1"]["release"]),
+                    this->mapping_to_image(this->mousePos));
+            }
+            else
+            {
+                // Reset bounding box
+                this->curInst.reset_bbox();
+            }
+
+            break;
+
+        case RBoxMark::State::BBOX_FIN:
+
+            // Set label
+            this->curInst.label = this->label;
+
+            // Append instance to annotation list
+            this->annoList.push_back(this->curInst);
+            instListChanged = true;
+
+            this->curInst.reset();
+            this->markAction.reset();
+
+            break;
+    }
+
+    return ret;
+}
+
+bool RBoxMarkWidget::image_region_moving(QEvent* event, bool& imgRegionChanged)
+{
+    bool ret = false;
+    QEvent::Type eventType = event->type();
+
+    // Run FSM of moving action
+    if (eventType == QEvent::MouseMove)
+    {
+        QMouseEvent* me = static_cast<QMouseEvent*>(event);
+        this->mousePos = me->pos();
+        this->moveAction.run(me);
+        ret = true;
+    }
+    else if (eventType == QEvent::MouseButtonPress ||
+             eventType == QEvent::MouseButtonRelease)
+    {
+        QMouseEvent* me = static_cast<QMouseEvent*>(event);
+        if (me->button() == Qt::MouseButton::MiddleButton)
+        {
+            this->moveAction.run(me);
+            ret = true;
+        }
+    }
+
+    // Status checking and processing
+    switch (static_cast<ClickAction::State>(this->moveAction.state()))
+    {
+        case ClickAction::State::MOVE:
+            this->regionPosCache = this->imageRegion.center();
+            break;
+
+        case ClickAction::State::PRESS:
+            imgRegionChanged = this->update_regions(
+                this->regionPosCache +
+                    this->scaling_to_image(this->moveAction["press"] -
+                                           this->moveAction["move"]),
+                this->scaleRatio, this->scaleRatio);
+            break;
+
+        case ClickAction::State::RELEASE:
+            this->moveAction.reset();
+            break;
+    }
+
+    return ret;
 }
 
 QRectF RBoxMarkWidget::find_image_region(const QPointF& center,
