@@ -315,10 +315,10 @@ void ICALMark::keyPressEvent(QKeyEvent* event)
     if (this->ui->markStack->currentIndex() == 0)
     {
         int key = event->key();
-        this->w = (key == Qt::Key_W);
-        this->a = (key == Qt::Key_A);
-        this->s = (key == Qt::Key_S);
-        this->d = (key == Qt::Key_D);
+        this->w = (key == Qt::Key_W) ? 1 : this->w;
+        this->a = (key == Qt::Key_A) ? 1 : this->a;
+        this->s = (key == Qt::Key_S) ? 1 : this->s;
+        this->d = (key == Qt::Key_D) ? 1 : this->d;
     }
 
     if (event->isAutoRepeat())
