@@ -8,6 +8,7 @@
 #include <QListWidgetItem>
 #include <QMainWindow>
 #include <QModelIndex>
+#include <QTimer>
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -49,11 +50,20 @@ class ICALMark : public QMainWindow
 
     void on_scaleRatioSlider_valueChanged(int value);
 
+    void ctrl_timer_event();
+
    private:
     Ui::ICALMark* ui;
+    QTimer* ctrlTimer;
+
+    // For moving image region
+    int fps = 30;
+    int moveStep = 1;
+    int w = 0, a = 0, s = 0, d = 0;
 
     void slideview_sliding(int step);
     void load_class_names(const QString& filePath);
     void keyPressEvent(QKeyEvent* event) override;
+    void keyReleaseEvent(QKeyEvent* event) override;
 };
 #endif  // ICALMARK_H

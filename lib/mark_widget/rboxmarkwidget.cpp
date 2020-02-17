@@ -107,6 +107,13 @@ void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
     if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
+void RBoxMarkWidget::move_image_region(int dx, int dy)
+{
+    QRectF imgRegion = this->get_image_region();
+    imgRegion.moveTo(imgRegion.topLeft() + QPoint(dx, dy));
+    this->set_image_region(imgRegion);
+}
+
 void RBoxMarkWidget::marking_revert()
 {
     this->markAction.revert();

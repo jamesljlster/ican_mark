@@ -22,6 +22,12 @@ ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
 {
     ui->setupUi(this);
 
+    // Setup timer
+    this->ctrlTimer = new QTimer();
+    connect(this->ctrlTimer, &QTimer::timeout, this,
+            &ICALMark::ctrl_timer_event);
+    this->ctrlTimer->start(1000 / this->fps);
+
     // Connect signals and slots
     connect(this->ui->markArea, &RBoxMarkWidget::imageRegionChanged,
             this->ui->imageMap, &ImageMap::set_select_region);
@@ -225,6 +231,17 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
     }
 }
 
+void ICALMark::ctrl_timer_event()
+{
+    // Image region moving
+    int dy = (this->s - this->w) * this->moveStep;
+    int dx = (this->d - this->a) * this->moveStep;
+    if (dx || dy)
+    {
+        this->ui->markArea->move_image_region(dx, dy);
+    }
+}
+
 void ICALMark::slideview_sliding(int step)
 {
     QModelIndex curInd = this->ui->slideView->currentIndex();
@@ -293,11 +310,22 @@ void ICALMark::on_scaleRatioSlider_valueChanged(int value)
 
 void ICALMark::keyPressEvent(QKeyEvent* event)
 {
+    // Key shortcut of moving image region
+    if (this->ui->markStack->currentIndex() == 0)
+    {
+        int key = event->key();
+        this->w = (key == Qt::Key_W);
+        this->a = (key == Qt::Key_A);
+        this->s = (key == Qt::Key_S);
+        this->d = (key == Qt::Key_D);
+    }
+
     if (event->isAutoRepeat())
     {
         return;
     }
 
+    // Key shortcut of marking action
     if (this->ui->markStack->currentIndex() == 0)
     {
         switch (event->key())
@@ -311,4 +339,14 @@ void ICALMark::keyPressEvent(QKeyEvent* event)
                 break;
         }
     }
+}
+
+void ICALMark::keyReleaseEvent(QKeyEvent* event)
+{
+    // Key shortcut of moving image region
+    int key = event->key();
+    this->w = (key == Qt::Key_W) ? 0 : this->w;
+    this->a = (key == Qt::Key_A) ? 0 : this->a;
+    this->s = (key == Qt::Key_S) ? 0 : this->s;
+    this->d = (key == Qt::Key_D) ? 0 : this->d;
 }
