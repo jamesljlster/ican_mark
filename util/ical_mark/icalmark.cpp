@@ -326,6 +326,12 @@ void ICALMark::keyPressEvent(QKeyEvent* event)
         return;
     }
 
+    // Key shortcurs for resetting focus
+    if (event->key() == Qt::Key_Escape)
+    {
+        this->ui->markArea->setFocus();
+    }
+
     // Key shortcuts for marking action
     if (this->ui->markStack->currentIndex() == 0)
     {
