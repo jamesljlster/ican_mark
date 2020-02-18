@@ -152,6 +152,8 @@ void ICALMark::on_dataRefresh_clicked()
     // Scan images
     QDir dir = QDir(this->ui->dataDir->text());
     QFileInfoList fileList = dir.entryInfoList(filter);
+    QList<QListWidgetItem*> unmarkedList;
+    QList<QListWidgetItem*> markedList;
 
     this->ui->slideView->clear();
     for (const QFileInfo& fileInfo : fileList)
@@ -162,12 +164,22 @@ void ICALMark::on_dataRefresh_clicked()
         if (QFileInfo::exists(fileInfo.absoluteFilePath() + MARK_EXT))
         {
             item->setCheckState(Qt::Checked);
+            markedList.append(item);
         }
         else
         {
             item->setCheckState(Qt::Unchecked);
+            unmarkedList.append(item);
         }
+    }
 
+    for (QListWidgetItem* item : unmarkedList)
+    {
+        this->ui->slideView->addItem(item);
+    }
+
+    for (QListWidgetItem* item : markedList)
+    {
         this->ui->slideView->addItem(item);
     }
 
