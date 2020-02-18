@@ -619,7 +619,7 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
 
     QRectF labelRect(
         boxRect.topLeft() + QPoint(style.lineWidth / 2, style.lineWidth / 2),
-        QSizeF(boxRect.width() - style.lineWidth, style.fontSize + 10));
+        QSizeF(boxRect.width() - style.lineWidth, style.fontSize + 15));
 
     QFont font = painter.font();
     font.setPixelSize(style.fontSize);
