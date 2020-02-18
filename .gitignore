@@ -5,3 +5,10 @@ CMakeFiles
 
 # Temp file
 *.swp
+
+# Generated ycm config file
+.ycm_extra_conf.py
+
+# Generated Qt files
+*.user
+*.ts

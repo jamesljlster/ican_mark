@@ -1,7 +1,11 @@
-#include <mark_action.hpp>
+#include "icalmark.h"
 
-int main()
+#include <QApplication>
+
+int main(int argc, char *argv[])
 {
-    ical_mark::foo();
-    return 0;
+    QApplication a(argc, argv);
+    ICALMark w;
+    w.show();
+    return a.exec();
 }

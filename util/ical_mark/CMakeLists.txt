@@ -1,51 +1,46 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 3.5)
 
-# Set variables
-#set(PROJECT_NAME demo_util)  # Set project name manually
-get_filename_component(PROJECT_NAME ${CMAKE_CURRENT_SOURCE_DIR} NAME)  # Set project name with dir name
-set(PROJECT_LANGUAGE C CXX)
-set(PROJECT_DEPS mark_action)
+project(ical_mark LANGUAGES CXX)
 
-# Compile setting
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wall")
-set(CMAKE_C_FLAGS_RELEASE "-O3")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3")
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-# Set default build type
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
 
-# Set project
-project(${PROJECT_NAME} ${PROJECT_LANGUAGE})
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Add definition
-if(CMAKE_BUILD_TYPE MATCHES Debug)
-    add_definitions(-DDEBUG)
-endif()
+# QtCreator supports the following variables for Android, which are identical to qmake Android variables.
+# Check http://doc.qt.io/qt-5/deployment-android.html for more information.
+# They need to be set before the find_package(Qt5 ...) call.
 
-# Include directory
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+#if(ANDROID)
+#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+#    if (ANDROID_ABI STREQUAL "armeabi-v7a")
+#        set(ANDROID_EXTRA_LIBS
+#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libcrypto.so
+#            ${CMAKE_CURRENT_SOURCE_DIR}/path/to/libssl.so)
+#    endif()
+#endif()
 
-# Set file list
+set(TS_FILES ical_mark_en_US.ts)
 file(GLOB PROJECT_SRCS
-    ${CMAKE_CURRENT_SOURCE_DIR}/*.c
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/*.ui
     )
 
-# Build utility
-add_executable(${PROJECT_NAME} ${PROJECT_SRCS})
-set_target_properties(${PROJECT_NAME} PROPERTIES
-    CXX_STANDARD 11
-    OUTPUT_NAME ${PROJECT_NAME}
-    )
-target_link_libraries(${PROJECT_NAME} ${PROJECT_DEPS})
+if(ANDROID)
+  add_library(ical_mark SHARED ${PROJECT_SRCS} ${TS_FILES})
+else()
+  add_executable(ical_mark ${PROJECT_SRCS} ${TS_FILES})
+endif()
 
-# Install
-install(TARGETS ${PROJECT_NAME}
+target_link_libraries(ical_mark PRIVATE ${PROJECT_DEPS})
+
+qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
+
+install(TARGETS ical_mark
     RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
-    ARCHIVE DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
-    LIBRARY DESTINATION "${CMAKE_INSTALL_PREFIX}/lib"
-    PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_PREFIX}/include"
     )

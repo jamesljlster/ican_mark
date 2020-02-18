@@ -1,0 +1,5 @@
+BasedOnStyle: Google
+BreakBeforeBraces: Allman
+TabWidth: 4
+# UseTab: Always
+IndentWidth: 4
