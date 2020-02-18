@@ -286,6 +286,9 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
     bool ret = false;
     QEvent::Type eventType = event->type();
 
+    // Set label
+    this->curInst.label = this->label;
+
     // Run FSM of marking action
     if (eventType == QEvent::MouseMove)
     {
@@ -350,9 +353,6 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
             break;
 
         case RBoxMark::State::BBOX_FIN:
-
-            // Set label
-            this->curInst.label = this->label;
 
             // Append instance to annotation list
             this->annoList.push_back(this->curInst);

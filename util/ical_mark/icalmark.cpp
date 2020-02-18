@@ -311,7 +311,7 @@ void ICALMark::on_scaleRatioSlider_valueChanged(int value)
 
 void ICALMark::keyPressEvent(QKeyEvent* event)
 {
-    // Key shortcut of moving image region
+    // Key shortcuts for moving image region
     if (this->ui->markStack->currentIndex() == 0)
     {
         int key = event->key();
@@ -326,12 +326,12 @@ void ICALMark::keyPressEvent(QKeyEvent* event)
         return;
     }
 
-    // Key shortcut of marking action
+    // Key shortcuts for marking action
     if (this->ui->markStack->currentIndex() == 0)
     {
         switch (event->key())
         {
-            case Qt::Key_Escape:
+            case Qt::Key_R:
                 this->ui->markArea->marking_revert();
                 break;
 
@@ -340,11 +340,47 @@ void ICALMark::keyPressEvent(QKeyEvent* event)
                 break;
         }
     }
+
+    // Key shortcuts for label switching
+    int newLabelIndex = this->ui->nameList->currentIndex();
+    switch (event->key())
+    {
+        case Qt::Key_Up:
+            newLabelIndex = newLabelIndex - 1;
+            if (newLabelIndex >= 0)
+            {
+                this->ui->nameList->setCurrentIndex(newLabelIndex);
+            }
+
+            break;
+
+        case Qt::Key_Down:
+            newLabelIndex = newLabelIndex + 1;
+            if (newLabelIndex < this->ui->nameList->count())
+            {
+                this->ui->nameList->setCurrentIndex(newLabelIndex);
+            }
+
+            break;
+    }
+
+    // Key shortcuts for sample sliding
+    switch (event->key())
+    {
+        case Qt::Key_Right:
+        case Qt::Key_Space:
+            this->ui->slideNext->animateClick();
+            break;
+
+        case Qt::Key_Left:
+            this->ui->slidePrevious->animateClick();
+            break;
+    }
 }
 
 void ICALMark::keyReleaseEvent(QKeyEvent* event)
 {
-    // Key shortcut of moving image region
+    // Key shortcuts for moving image region
     int key = event->key();
     this->w = (key == Qt::Key_W) ? 0 : this->w;
     this->a = (key == Qt::Key_A) ? 0 : this->a;
