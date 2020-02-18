@@ -606,25 +606,30 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
     transform.rotate(-inst.degree);
     painter.setTransform(transform);
 
-    QRectF rect =
-        QRectF(this->scaling_to_view(QPointF(-halfWidth, -halfHeight)),
-               this->scaling_to_view(QPointF(halfWidth, halfHeight)));
-    painter.drawRect(rect);
+    QRectF boxRect(this->scaling_to_view(QPointF(-halfWidth, -halfHeight)),
+                   this->scaling_to_view(QPointF(halfWidth, halfHeight)));
+    painter.drawRect(boxRect);
 
     // Draw label
-    QFont font = painter.font();
-    font.setPixelSize(style.fontSize);
-    font.setBold(true);
-    painter.setFont(font);
-
     string labelStr = to_string(inst.label);
     if (inst.label < (int)this->classNames.size())
     {
         labelStr += string(": ") + this->classNames[inst.label];
     }
 
-    painter.drawText(rect.marginsRemoved(QMarginsF(5, 5, 5, 5)),
-                     Qt::AlignTop | Qt::AlignTop, labelStr.c_str());
+    QRectF labelRect(
+        boxRect.topLeft() + QPoint(style.lineWidth / 2, style.lineWidth / 2),
+        QSizeF(boxRect.width() - style.lineWidth, style.fontSize + 10));
+
+    QFont font = painter.font();
+    font.setPixelSize(style.fontSize);
+    font.setBold(true);
+    painter.setFont(font);
+
+    painter.fillRect(labelRect, QColor(255, 255, 255, 64));
+    painter.drawText(labelRect.marginsRemoved(QMarginsF(5, 5, 5, 5)),
+                     Qt::AlignVCenter | Qt::AlignLeft, labelStr.c_str(),
+                     &labelRect);
 }
 
 void RBoxMarkWidget::draw_anchor(const QPointF& pos, const StyleAnchor& style)
