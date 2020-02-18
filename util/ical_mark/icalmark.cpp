@@ -261,6 +261,8 @@ void ICALMark::slideview_sliding(int step)
     if (nextInd.isValid())
     {
         this->ui->slideView->setCurrentIndex(nextInd);
+        this->ui->slideView->scrollTo(
+            nextInd, QAbstractItemView::ScrollHint::PositionAtCenter);
     }
 }
 
