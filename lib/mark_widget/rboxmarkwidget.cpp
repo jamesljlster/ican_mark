@@ -140,20 +140,23 @@ const vector<Instance>& RBoxMarkWidget::annotation_list()
 
 void RBoxMarkWidget::delete_instances(const vector<size_t>& indList)
 {
-    vector<size_t> indSort = indList;
-    sort(indSort.begin(), indSort.end());
-    for (auto i = indSort.rbegin(); i != indSort.rend(); i++)
+    if (indList.size())
     {
-        if ((int)*i == this->highlightInst)
+        vector<size_t> indSort = indList;
+        sort(indSort.begin(), indSort.end());
+        for (auto i = indSort.rbegin(); i != indSort.rend(); i++)
         {
-            this->highlightInst = -1;
+            if ((int)*i == this->highlightInst)
+            {
+                this->highlightInst = -1;
+            }
+
+            this->annoList.erase(this->annoList.begin() + *i);
         }
 
-        this->annoList.erase(this->annoList.begin() + *i);
+        this->repaint();
+        emit instanceListChanged(this->annoList);
     }
-
-    this->repaint();
-    emit instanceListChanged(this->annoList);
 }
 
 bool RBoxMarkWidget::event(QEvent* event)
