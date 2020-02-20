@@ -28,7 +28,7 @@ ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
     this->ctrlTimer = new QTimer();
     connect(this->ctrlTimer, &QTimer::timeout, this,
             &ICALMark::ctrl_timer_event);
-    this->ctrlTimer->start(1000 / this->fps);
+    this->ctrlTimer->start(1000 / this->ui->moveSpeed->value());
 
     // Connect signals and slots
     connect(this->ui->markArea, &RBoxMarkWidget::imageRegionChanged,
@@ -460,4 +460,9 @@ void ICALMark::keyReleaseEvent(QKeyEvent* event)
     this->a = (key == Qt::Key_A) ? 0 : this->a;
     this->s = (key == Qt::Key_S) ? 0 : this->s;
     this->d = (key == Qt::Key_D) ? 0 : this->d;
+}
+
+void ICALMark::on_moveSpeed_valueChanged(int arg1)
+{
+    this->ctrlTimer->start(1000 / arg1);
 }

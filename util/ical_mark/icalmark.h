@@ -52,12 +52,13 @@ class ICALMark : public QMainWindow
 
     void ctrl_timer_event();
 
+    void on_moveSpeed_valueChanged(int arg1);
+
    private:
     Ui::ICALMark* ui;
     QTimer* ctrlTimer;
 
     // For moving image region
-    int fps = 30;
     int moveStep = 1;
     int w = 0, a = 0, s = 0, d = 0;
 
