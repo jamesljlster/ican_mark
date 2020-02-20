@@ -320,8 +320,32 @@ void ICALMark::slideview_sliding(int step)
     }
 }
 
-void ICALMark::on_slideNext_clicked() { this->slideview_sliding(1); }
-void ICALMark::on_slidePrevious_clicked() { this->slideview_sliding(-1); }
+void ICALMark::on_slideNext_clicked()
+{
+    if (this->ui->slideView->currentIndex().isValid())
+    {
+        this->slideview_sliding(1);
+    }
+    else
+    {
+        QAbstractItemModel* model = this->ui->slideView->model();
+        this->ui->slideView->setCurrentIndex(model->index(0, 0));
+    }
+}
+
+void ICALMark::on_slidePrevious_clicked()
+{
+    if (this->ui->slideView->currentIndex().isValid())
+    {
+        this->slideview_sliding(-1);
+    }
+    else
+    {
+        QAbstractItemModel* model = this->ui->slideView->model();
+        this->ui->slideView->setCurrentIndex(
+            model->index(model->rowCount() - 1, model->columnCount() - 1));
+    }
+}
 
 void ICALMark::load_class_names(const QString& filePath)
 {
