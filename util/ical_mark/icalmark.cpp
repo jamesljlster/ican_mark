@@ -70,11 +70,11 @@ void ICALMark::setup_tab_controller()
 
         // Add button to group and UI
         btnGroup->addButton(btn, i);
-        this->ui->tabCtrl->addWidget(btn);
+        this->ui->sTabCtrl->addWidget(btn);
     }
 
     // Add spacer to button group
-    this->ui->tabCtrl->addStretch();
+    this->ui->sTabCtrl->addStretch();
 
     // Setup initial condition
     this->ui->southTab->setCurrentIndex(0);
