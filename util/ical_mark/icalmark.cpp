@@ -54,19 +54,15 @@ ICALMark::~ICALMark() { delete ui; }
 
 void ICALMark::setup_tab_controller()
 {
-    // Hide tab bar
-    this->ui->southTab->tabBar()->hide();
-    this->ui->southTab->resize(minimumSize());
-
     // Setup tab controll buttons
     QButtonGroup* btnGroup = new QButtonGroup(this);
-    QTabBar* tabBar = this->ui->southTab->tabBar();
-    for (int i = 0; i < tabBar->count(); i++)
+    QStackedWidget* root = this->ui->southTab;
+    for (int i = 0; i < root->count(); i++)
     {
         // Create and set new button
         QToolButton* btn = new QToolButton(this);
         btn->setCheckable(true);
-        btn->setText(tabBar->tabText(i));
+        btn->setText(root->widget(i)->accessibleName());
 
         // Add button to group and UI
         btnGroup->addButton(btn, i);
@@ -76,7 +72,7 @@ void ICALMark::setup_tab_controller()
     // Add spacer to button group
     this->ui->sTabCtrl->addStretch();
 
-    // Setup initial condition
+    // Setup controller initial condition
     this->ui->southTab->setCurrentIndex(0);
     btnGroup->button(0)->setChecked(true);
     btnGroup->setExclusive(true);
@@ -84,13 +80,13 @@ void ICALMark::setup_tab_controller()
     // Setup signal and slot
     connect(btnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
             [=](int id) {
-                QTabWidget* tabWidget = this->ui->southTab;
-                int tabIndex = tabWidget->currentIndex();
+                QStackedWidget* root = this->ui->southTab;
+                int tabIndex = root->currentIndex();
                 if (tabIndex == id)
                 {
                     // Hide or show tab widget
-                    bool visible = !tabWidget->isVisible();
-                    tabWidget->setVisible(visible);
+                    bool visible = !root->isVisible();
+                    root->setVisible(visible);
 
                     // Set button check state
                     btnGroup->setExclusive(false);
@@ -99,8 +95,8 @@ void ICALMark::setup_tab_controller()
                 }
                 else
                 {
-                    tabWidget->setCurrentIndex(id);
-                    tabWidget->show();
+                    root->setCurrentIndex(id);
+                    root->show();
                 }
             });
 }

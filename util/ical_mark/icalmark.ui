@@ -314,24 +314,15 @@
      </widget>
     </item>
     <item>
-     <widget class="QTabWidget" name="southTab">
-      <property name="tabPosition">
-       <enum>QTabWidget::South</enum>
-      </property>
+     <widget class="QStackedWidget" name="southTab">
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <property name="documentMode">
-       <bool>false</bool>
-      </property>
-      <property name="tabBarAutoHide">
-       <bool>false</bool>
-      </property>
       <widget class="QWidget" name="slidePage">
-       <attribute name="title">
+       <property name="accessibleName">
         <string>Slide View</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_6">
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
          <widget class="QToolButton" name="slidePrevious">
           <property name="sizePolicy">
@@ -413,10 +404,10 @@
        </layout>
       </widget>
       <widget class="QWidget" name="ctrlPage">
-       <attribute name="title">
-        <string>Control</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_7">
+       <property name="accessibleName">
+        <string>Controller</string>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
          <widget class="QLabel" name="label">
           <property name="text">
