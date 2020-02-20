@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 
+#include <QButtonGroup>
 #include <QCheckBox>
 #include <QDir>
 #include <QFileDialog>
@@ -12,6 +13,7 @@
 #include <QMessageBox>
 #include <QStandardPaths>
 #include <QString>
+#include <QToolButton>
 
 #define MARK_EXT ".mark"
 
@@ -43,9 +45,65 @@ ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
     connect(this->ui->scaleRatio,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this->ui->markArea, &RBoxMarkWidget::set_scale_ratio);
+
+    // Setup south tab widget controller
+    this->setup_tab_controller();
 }
 
 ICALMark::~ICALMark() { delete ui; }
+
+void ICALMark::setup_tab_controller()
+{
+    // Hide tab bar
+    this->ui->southTab->tabBar()->hide();
+    this->ui->southTab->resize(minimumSize());
+
+    // Setup tab controll buttons
+    QButtonGroup* btnGroup = new QButtonGroup(this);
+    QTabBar* tabBar = this->ui->southTab->tabBar();
+    for (int i = 0; i < tabBar->count(); i++)
+    {
+        // Create and set new button
+        QToolButton* btn = new QToolButton(this);
+        btn->setCheckable(true);
+        btn->setText(tabBar->tabText(i));
+
+        // Add button to group and UI
+        btnGroup->addButton(btn, i);
+        this->ui->tabCtrl->addWidget(btn);
+    }
+
+    // Add spacer to button group
+    this->ui->tabCtrl->addStretch();
+
+    // Setup initial condition
+    this->ui->southTab->setCurrentIndex(0);
+    btnGroup->button(0)->setChecked(true);
+    btnGroup->setExclusive(true);
+
+    // Setup signal and slot
+    connect(btnGroup, QOverload<int>::of(&QButtonGroup::buttonClicked),
+            [=](int id) {
+                QTabWidget* tabWidget = this->ui->southTab;
+                int tabIndex = tabWidget->currentIndex();
+                if (tabIndex == id)
+                {
+                    // Hide or show tab widget
+                    bool visible = !tabWidget->isVisible();
+                    tabWidget->setVisible(visible);
+
+                    // Set button check state
+                    btnGroup->setExclusive(false);
+                    btnGroup->button(id)->setChecked(visible);
+                    btnGroup->setExclusive(true);
+                }
+                else
+                {
+                    tabWidget->setCurrentIndex(id);
+                    tabWidget->show();
+                }
+            });
+}
 
 void ICALMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
 {

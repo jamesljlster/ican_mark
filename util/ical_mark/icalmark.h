@@ -61,8 +61,11 @@ class ICALMark : public QMainWindow
     int moveStep = 1;
     int w = 0, a = 0, s = 0, d = 0;
 
+    void setup_tab_controller();
+
     void slideview_sliding(int step);
     void load_class_names(const QString& filePath);
+
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
 };
