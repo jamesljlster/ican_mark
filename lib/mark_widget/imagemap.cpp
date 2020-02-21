@@ -40,6 +40,8 @@ const QRectF ImageMap::get_select_region() { return this->selectRegion; }
 bool ImageMap::event(QEvent* event)
 {
     bool ret = false;
+    bool selRegionChanged = false;
+
     QEvent::Type eventType = event->type();
 
     // Run FSM of clicking action
@@ -67,10 +69,17 @@ bool ImageMap::event(QEvent* event)
             break;
 
         case ClickAction::State::PRESS:
-            this->selectRegion = this->find_image_region(
-                this->mapping_to_image(this->clickAction["move"]),
-                this->selectRegion.size());
-            emit selectRegionChanged(this->selectRegion);
+            do
+            {
+                QRectF newSelectRegion = this->find_image_region(
+                    this->mapping_to_image(this->clickAction["move"]),
+                    this->selectRegion.size());
+                if (this->selectRegion != newSelectRegion)
+                {
+                    this->selectRegion = newSelectRegion;
+                    selRegionChanged = true;
+                }
+            } while (0);
             break;
 
         case ClickAction::State::RELEASE:
@@ -81,6 +90,10 @@ bool ImageMap::event(QEvent* event)
     if (ret)
     {
         this->repaint();
+
+        // Raise signals
+        if (selRegionChanged) emit selectRegionChanged(this->selectRegion);
+
         return ret;
     }
     else
