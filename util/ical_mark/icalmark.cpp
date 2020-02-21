@@ -128,30 +128,33 @@ void ICALMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
     }
 
     // Save data
-    QString filePath =
-        QFileInfo(this->ui->dataDir->text(),
-                  this->ui->slideView->currentItem()->text() + MARK_EXT)
-            .filePath();
-
-    YAML::Node node;
-    node = annoList;
-
-    YAML::Emitter out;
-    out << node;
-
-    std::ofstream fWriter(filePath.toStdString());
-    if (!fWriter.is_open())
+    QListWidgetItem* curItem = this->ui->slideView->currentItem();
+    if (curItem)
     {
-        QMessageBox::warning(
-            this, QString(tr("Error")),
-            QString(tr("Failed to write file:")) + QString("\n") + filePath);
+        QString filePath =
+            QFileInfo(this->ui->dataDir->text(), curItem->text() + MARK_EXT)
+                .filePath();
+
+        YAML::Node node;
+        node = annoList;
+
+        YAML::Emitter out;
+        out << node;
+
+        std::ofstream fWriter(filePath.toStdString());
+        if (!fWriter.is_open())
+        {
+            QMessageBox::warning(this, QString(tr("Error")),
+                                 QString(tr("Failed to write file:")) +
+                                     QString("\n") + filePath);
+        }
+
+        fWriter << out.c_str();
+        fWriter.close();
+
+        // Change sample marked state
+        curItem->setCheckState(Qt::CheckState::Checked);
     }
-
-    fWriter << out.c_str();
-    fWriter.close();
-
-    // Change sample marked state
-    this->ui->slideView->currentItem()->setCheckState(Qt::CheckState::Checked);
 }
 
 void ICALMark::on_markArea_scaleRatioChanged(qreal ratio)
