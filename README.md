@@ -1,10 +1,13 @@
-# ical_mark
+# ICALMark
 
-### Format
+A utility for rotated bounding box annotating, currently.  
+Still under heavy developments.
+
+### Annotation File Format
 
 example:
 
-```yaml
+``` yaml
 # File name: sample.mark
 # File format: yaml
 - label: 0
