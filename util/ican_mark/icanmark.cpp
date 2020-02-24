@@ -108,12 +108,12 @@ void ICANMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
     for (size_t i = 0; i < annoList.size(); i++)
     {
         // Generate string representation of item
+        int instLabel = annoList[i].get_label();
         string itemStr = to_string((int)i + 1) + string(". ");
-        if (annoList[i].label < this->ui->nameList->count())
+        if (instLabel < this->ui->nameList->count())
         {
-            itemStr +=
-                this->ui->nameList->itemText(annoList[i].label).toStdString() +
-                string(" ");
+            itemStr += this->ui->nameList->itemText(instLabel).toStdString() +
+                       string(" ");
         }
 
         itemStr += string(annoList[i]);

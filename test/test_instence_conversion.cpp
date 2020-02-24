@@ -15,12 +15,12 @@ try
     YAML::Node node;
     Instance inst;
 
-    inst.label = 1;
-    inst.degree = 2.2;
-    inst.x = 3.3;
-    inst.y = 4.4;
-    inst.w = 5.5;
-    inst.h = 6.6;
+    inst.set_label(1);
+    inst.set_degree(2.2);
+    inst.set_x(3.3);
+    inst.set_y(4.4);
+    inst.set_w(5.5);
+    inst.set_h(6.6);
 
     node = inst;
     cout << "Yaml node:" << endl;

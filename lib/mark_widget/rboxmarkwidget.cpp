@@ -237,8 +237,9 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
     }
 
     // Draw aim crosshair
-    this->draw_aim_crosshair(this->mousePos, this->curInst.degree,
-                             this->style.crosshair);
+    double instDegree =
+        this->curInst.has_degree() ? this->curInst.get_degree() : 0;
+    this->draw_aim_crosshair(this->mousePos, instDegree, this->style.crosshair);
     if (static_cast<RBoxMark::State>(this->markAction.state()) ==
         RBoxMark::State::INIT)
     {
@@ -269,7 +270,7 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
     if (static_cast<RBoxMark::State>(this->markAction.state()) ==
         RBoxMark::State::DEGREE_FIN)
     {
-        if (this->curInst.valid())
+        if (this->inst_rbox_valid(this->curInst))
         {
             this->draw_rotated_bbox(this->curInst, this->style.rbox);
         }
@@ -290,7 +291,7 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
     QEvent::Type eventType = event->type();
 
     // Set label
-    this->curInst.label = this->label;
+    this->curInst.set_label(this->label);
 
     // Run FSM of marking action
     if (eventType == QEvent::MouseMove)
@@ -321,15 +322,15 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
                 TwiceClick::State::POS1_FIN)
             {
                 // Calculate and set degree
-                this->curInst.degree = this->find_degree(
+                this->curInst.set_degree(this->find_degree(
                     this->mapping_to_image(
                         this->markAction["degree"]["pos1"]["release"]),
-                    this->mapping_to_image(this->mousePos));
+                    this->mapping_to_image(this->mousePos)));
             }
             else
             {
                 // Reset degree
-                this->curInst.degree = 0;
+                this->curInst.clear_degree();
             }
 
             break;
@@ -350,7 +351,7 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
             else
             {
                 // Reset bounding box
-                this->curInst.reset_bbox();
+                this->inst_reset_bbox(this->curInst);
             }
 
             break;
@@ -361,7 +362,7 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
             this->annoList.push_back(this->curInst);
             instListChanged = true;
 
-            this->curInst.reset();
+            this->inst_reset(this->curInst);
             this->markAction.reset();
 
             break;
@@ -508,7 +509,7 @@ void RBoxMarkWidget::fill_bbox(Instance& inst, const QPointF& pos1,
                                const QPointF& pos2)
 {
     double w, h;
-    double degree = inst.degree;
+    double degree = inst.get_degree();
 
     QLineF line1, line2;
     QPointF crossPt1, crossPt2, center;
@@ -548,10 +549,10 @@ void RBoxMarkWidget::fill_bbox(Instance& inst, const QPointF& pos1,
     line1.intersects(line2, &center);
 #endif
 
-    inst.x = center.x();
-    inst.y = center.y();
-    inst.w = w;
-    inst.h = h;
+    inst.set_x(center.x());
+    inst.set_y(center.y());
+    inst.set_w(w);
+    inst.set_h(h);
 }
 
 void RBoxMarkWidget::draw_aim_crosshair(const QPointF& center, double degree,
@@ -594,19 +595,19 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
     painter.setPen(QPen(style.penColor, style.lineWidth));
 
     // Draw center point
-    QPointF center = this->mapping_to_view(QPointF(inst.x, inst.y));
+    QPointF center = this->mapping_to_view(QPointF(inst.get_x(), inst.get_y()));
     if (style.centerRad > 0)
     {
         painter.drawEllipse(center, style.centerRad, style.centerRad);
     }
 
     // Draw rotated bounding box
-    double halfWidth = inst.w / 2;
-    double halfHeight = inst.h / 2;
+    double halfWidth = inst.get_w() / 2;
+    double halfHeight = inst.get_h() / 2;
 
     QTransform transform;
     transform.translate(center.x(), center.y());
-    transform.rotate(-inst.degree);
+    transform.rotate(-inst.get_degree());
     painter.setTransform(transform);
 
     QRectF boxRect(this->scaling_to_view(QPointF(-halfWidth, -halfHeight)),
@@ -614,10 +615,11 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
     painter.drawRect(boxRect);
 
     // Draw label
-    string labelStr = to_string(inst.label);
-    if (inst.label < (int)this->classNames.size())
+    int instLabel = inst.get_label();
+    string labelStr = to_string(instLabel);
+    if (instLabel < (int)this->classNames.size())
     {
-        labelStr += string(": ") + this->classNames[inst.label];
+        labelStr += string(": ") + this->classNames[instLabel];
     }
 
     QRectF labelRect(
@@ -646,4 +648,24 @@ void RBoxMarkWidget::draw_anchor(const QPointF& pos, const StyleAnchor& style)
 
     // Draw anchor point
     painter.drawEllipse(pos, style.radius, style.radius);
+}
+
+bool RBoxMarkWidget::inst_rbox_valid(const Instance& inst)
+{
+    return inst.has_degree() && inst.has_x() && inst.has_y() && inst.has_w() &&
+           inst.has_h();
+}
+
+void RBoxMarkWidget::inst_reset_bbox(ican_mark::Instance& inst)
+{
+    inst.clear_x();
+    inst.clear_y();
+    inst.clear_w();
+    inst.clear_h();
+}
+
+void RBoxMarkWidget::inst_reset(ican_mark::Instance& inst)
+{
+    inst.clear_degree();
+    this->inst_reset_bbox(inst);
 }
