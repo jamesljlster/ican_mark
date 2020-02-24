@@ -15,35 +15,23 @@ void ClickAction::run(QInputEvent* event)
 {
     QEvent::Type eventType = event->type();
 
+    QPointF pos = static_cast<QMouseEvent*>(event)->localPos();
+    this->varMap["move"] = pos;
     switch (static_cast<State>(this->s))
     {
         case State::MOVE:
-            if (eventType == QEvent::MouseMove)
-            {
-                this->varMap["move"] =
-                    static_cast<QMouseEvent*>(event)->localPos();
-            }
-
             if (eventType == QEvent::MouseButtonPress)
             {
-                this->varMap["press"] =
-                    static_cast<QMouseEvent*>(event)->localPos();
+                this->varMap["press"] = pos;
                 this->s++;
             }
 
             break;
 
         case State::PRESS:
-            if (eventType == QEvent::MouseMove)
-            {
-                this->varMap["move"] =
-                    static_cast<QMouseEvent*>(event)->localPos();
-            }
-
             if (eventType == QEvent::MouseButtonRelease)
             {
-                this->varMap["release"] =
-                    static_cast<QMouseEvent*>(event)->localPos();
+                this->varMap["release"] = pos;
                 this->s++;
             }
 
