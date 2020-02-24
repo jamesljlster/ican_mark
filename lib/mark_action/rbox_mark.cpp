@@ -1,6 +1,6 @@
 #include "mark_action.hpp"
 
-namespace ical_mark
+namespace ican_mark
 {
 void RBoxMark::reset()
 {
@@ -89,4 +89,4 @@ const TwiceClick& RBoxMark::operator[](std::string key) const
     return it->second;
 }
 
-}  // namespace ical_mark
+}  // namespace ican_mark

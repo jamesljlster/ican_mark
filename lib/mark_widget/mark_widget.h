@@ -95,7 +95,7 @@ class ImageMap : public ImageView
 
    protected:
     /** Member variables */
-    ical_mark::ClickAction clickAction;
+    ican_mark::ClickAction clickAction;
     QRectF selectRegion;
 
     /** Event handler */
@@ -117,7 +117,7 @@ class RBoxMarkWidget : public ImageView
     /** Initialization and setup */
     void reset(const QImage& image);
     void reset(const QImage& image,
-               const std::vector<ical_mark::Instance>& instList);
+               const std::vector<ican_mark::Instance>& instList);
 
     /** Data handling */
     int get_mark_label();
@@ -126,7 +126,7 @@ class RBoxMarkWidget : public ImageView
     QRectF get_image_region();
     qreal get_scale_ratio();
 
-    const std::vector<ical_mark::Instance>& annotation_list();
+    const std::vector<ican_mark::Instance>& annotation_list();
     void delete_instances(const std::vector<size_t>& indList);
 
    public slots:
@@ -144,7 +144,7 @@ class RBoxMarkWidget : public ImageView
    signals:
     void markLabelChanged(int label);
     void hlInstanceIndexChanged(int index);
-    void instanceListChanged(const std::vector<ical_mark::Instance>& annoList);
+    void instanceListChanged(const std::vector<ican_mark::Instance>& annoList);
     void scaleRatioChanged(qreal ratio);
     void imageRegionChanged(const QRectF& imageRegion);
 
@@ -189,8 +189,8 @@ class RBoxMarkWidget : public ImageView
     };
 
     /** Member variables */
-    ical_mark::RBoxMark markAction;
-    ical_mark::ClickAction moveAction;
+    ican_mark::RBoxMark markAction;
+    ican_mark::ClickAction moveAction;
 
     QPointF mousePos;
     QPointF regionPosCache;
@@ -199,8 +199,8 @@ class RBoxMarkWidget : public ImageView
 
     int label = 0;                              // Current marking label
     int highlightInst = -1;                     // Index for highlighting
-    ical_mark::Instance curInst;                // Current marking instance
-    std::vector<ical_mark::Instance> annoList;  // Marked instances
+    ican_mark::Instance curInst;                // Current marking instance
+    std::vector<ican_mark::Instance> annoList;  // Marked instances
     std::vector<std::string> classNames;        // Class names
 
     Style style;  // Painting style
@@ -226,13 +226,13 @@ class RBoxMarkWidget : public ImageView
     /** Estimating functions */
     double find_distance(const QPointF& p1, const QPointF& p2);
     double find_degree(const QPointF& from, const QPointF& to);
-    void fill_bbox(ical_mark::Instance& inst, const QPointF& pos1,
+    void fill_bbox(ican_mark::Instance& inst, const QPointF& pos1,
                    const QPointF& pos2);
 
     /** Drawing functions */
     void draw_aim_crosshair(const QPointF& center, double degree,
                             const StyleCrosshair& style);
-    void draw_rotated_bbox(const ical_mark::Instance& inst,
+    void draw_rotated_bbox(const ican_mark::Instance& inst,
                            const StyleRBox& style);
     void draw_anchor(const QPointF& pos, const StyleAnchor& style);
 };

@@ -1,6 +1,6 @@
 #include "mark_action.hpp"
 
-namespace ical_mark
+namespace ican_mark
 {
 void TwiceClick::reset()
 {
@@ -78,4 +78,4 @@ const ClickAction& TwiceClick::operator[](std::string key) const
     return it->second;
 }
 
-}  // namespace ical_mark
+}  // namespace ican_mark

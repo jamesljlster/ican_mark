@@ -1,6 +1,6 @@
 #include "mark_action.hpp"
 
-namespace ical_mark
+namespace ican_mark
 {
 const QPointF operator*(const QPointF& point, const QPointF& factor)
 {
@@ -11,4 +11,4 @@ const QPointF operator/(const QPointF& point, const QPointF& divisor)
 {
     return QPointF(point.x() / divisor.x(), point.y() / divisor.y());
 }
-}  // namespace ical_mark
+}  // namespace ican_mark

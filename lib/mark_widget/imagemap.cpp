@@ -5,7 +5,7 @@
 #include <iostream>
 
 using namespace std;
-using namespace ical_mark;
+using namespace ican_mark;
 
 ImageMap::ImageMap(QWidget* parent) : ImageView(parent)
 {

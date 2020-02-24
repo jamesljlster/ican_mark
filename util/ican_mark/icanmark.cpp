@@ -1,5 +1,5 @@
-#include "icalmark.h"
-#include "./ui_icalmark.h"
+#include "icanmark.h"
+#include "./ui_icanmark.h"
 
 #include <fstream>
 #include <iostream>
@@ -18,16 +18,16 @@
 #define MARK_EXT ".mark"
 
 using namespace std;
-using namespace ical_mark;
+using namespace ican_mark;
 
-ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
+ICANMark::ICANMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICANMark)
 {
     ui->setupUi(this);
 
     // Setup timer
     this->ctrlTimer = new QTimer();
     connect(this->ctrlTimer, &QTimer::timeout, this,
-            &ICALMark::ctrl_timer_event);
+            &ICANMark::ctrl_timer_event);
     this->ctrlTimer->start(1000 / this->ui->moveSpeed->value());
 
     // Connect signals and slots
@@ -50,9 +50,9 @@ ICALMark::ICALMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICALMark)
     this->setup_tab_controller();
 }
 
-ICALMark::~ICALMark() { delete ui; }
+ICANMark::~ICANMark() { delete ui; }
 
-void ICALMark::setup_tab_controller()
+void ICANMark::setup_tab_controller()
 {
     // Setup tab controll buttons
     QButtonGroup* btnGroup = new QButtonGroup(this);
@@ -101,7 +101,7 @@ void ICALMark::setup_tab_controller()
             });
 }
 
-void ICALMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
+void ICANMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
 {
     // Refresh marked instances list
     this->ui->instList->clear();
@@ -157,7 +157,7 @@ void ICALMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
     }
 }
 
-void ICALMark::on_markArea_scaleRatioChanged(qreal ratio)
+void ICANMark::on_markArea_scaleRatioChanged(qreal ratio)
 {
     if (ratio > this->ui->scaleRatio->maximum())
     {
@@ -167,7 +167,7 @@ void ICALMark::on_markArea_scaleRatioChanged(qreal ratio)
     this->ui->scaleRatio->setValue(ratio);
 }
 
-void ICALMark::on_instDel_clicked()
+void ICANMark::on_instDel_clicked()
 {
     vector<size_t> indList;
     for (int i = 0; i < this->ui->instList->count(); i++)
@@ -181,7 +181,7 @@ void ICALMark::on_instDel_clicked()
     this->ui->markArea->delete_instances(indList);
 }
 
-void ICALMark::on_dataDir_clicked()
+void ICANMark::on_dataDir_clicked()
 {
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::Directory);
@@ -196,7 +196,7 @@ void ICALMark::on_dataDir_clicked()
     }
 }
 
-void ICALMark::on_dataRefresh_clicked()
+void ICANMark::on_dataRefresh_clicked()
 {
     // Set name filter
     QList<QByteArray> fmtList = QImageReader::supportedImageFormats();
@@ -250,7 +250,7 @@ void ICALMark::on_dataRefresh_clicked()
     }
 }
 
-void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
+void ICANMark::on_slideView_currentItemChanged(QListWidgetItem* current,
                                                QListWidgetItem* previous)
 {
     (void)previous;
@@ -300,7 +300,7 @@ void ICALMark::on_slideView_currentItemChanged(QListWidgetItem* current,
     }
 }
 
-void ICALMark::ctrl_timer_event()
+void ICANMark::ctrl_timer_event()
 {
     // Image region moving
     int dy = (this->s - this->w) * this->moveStep;
@@ -311,7 +311,7 @@ void ICALMark::ctrl_timer_event()
     }
 }
 
-void ICALMark::slideview_sliding(int step)
+void ICANMark::slideview_sliding(int step)
 {
     QModelIndex curInd = this->ui->slideView->currentIndex();
     QModelIndex nextInd = curInd.sibling(curInd.row() + step, 0);
@@ -323,7 +323,7 @@ void ICALMark::slideview_sliding(int step)
     }
 }
 
-void ICALMark::on_slideNext_clicked()
+void ICANMark::on_slideNext_clicked()
 {
     if (this->ui->slideView->currentIndex().isValid())
     {
@@ -336,7 +336,7 @@ void ICALMark::on_slideNext_clicked()
     }
 }
 
-void ICALMark::on_slidePrevious_clicked()
+void ICANMark::on_slidePrevious_clicked()
 {
     if (this->ui->slideView->currentIndex().isValid())
     {
@@ -350,7 +350,7 @@ void ICALMark::on_slidePrevious_clicked()
     }
 }
 
-void ICALMark::load_class_names(const QString& filePath)
+void ICANMark::load_class_names(const QString& filePath)
 {
     try
     {
@@ -377,7 +377,7 @@ void ICALMark::load_class_names(const QString& filePath)
     }
 }
 
-void ICALMark::on_nameFile_clicked()
+void ICANMark::on_nameFile_clicked()
 {
     QFileDialog dialog;
     dialog.setFileMode(QFileDialog::AnyFile);
@@ -388,7 +388,7 @@ void ICALMark::on_nameFile_clicked()
     }
 }
 
-void ICALMark::on_scaleRatio_valueChanged(double arg1)
+void ICANMark::on_scaleRatio_valueChanged(double arg1)
 {
     int val = arg1 * 10;
     if (val > this->ui->scaleRatioSlider->maximum())
@@ -399,12 +399,12 @@ void ICALMark::on_scaleRatio_valueChanged(double arg1)
     this->ui->scaleRatioSlider->setValue(val);
 }
 
-void ICALMark::on_scaleRatioSlider_valueChanged(int value)
+void ICANMark::on_scaleRatioSlider_valueChanged(int value)
 {
     this->ui->scaleRatio->setValue((double)value / 10);
 }
 
-void ICALMark::keyPressEvent(QKeyEvent* event)
+void ICANMark::keyPressEvent(QKeyEvent* event)
 {
     // Key shortcuts for moving image region
     if (this->ui->markStack->currentIndex() == 0)
@@ -479,7 +479,7 @@ void ICALMark::keyPressEvent(QKeyEvent* event)
     }
 }
 
-void ICALMark::keyReleaseEvent(QKeyEvent* event)
+void ICANMark::keyReleaseEvent(QKeyEvent* event)
 {
     // Key shortcuts for moving image region
     int key = event->key();
@@ -489,7 +489,7 @@ void ICALMark::keyReleaseEvent(QKeyEvent* event)
     this->d = (key == Qt::Key_D) ? 0 : this->d;
 }
 
-void ICALMark::on_moveSpeed_valueChanged(int arg1)
+void ICANMark::on_moveSpeed_valueChanged(int arg1)
 {
     this->ctrlTimer->start(1000 / arg1);
 }

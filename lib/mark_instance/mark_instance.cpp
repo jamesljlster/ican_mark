@@ -1,8 +1,9 @@
 #include "mark_instance.hpp"
 
 using namespace std;
-using namespace ical_mark;
 
+namespace ican_mark
+{
 bool Instance::valid() const { return (this->w > 0 && this->h > 0); }
 
 void Instance::reset()
@@ -32,3 +33,5 @@ Instance::operator string() const
 
     return out.c_str();
 }
+
+}  // namespace ican_mark
