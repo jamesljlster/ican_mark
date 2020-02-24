@@ -56,12 +56,15 @@ struct convert<ican_mark::Instance>
     {
         Node node;
 
-        if (rhs.has_label()) node["label"] = rhs.get_label();
-        if (rhs.has_degree()) node["degree"] = rhs.get_degree();
-        if (rhs.has_x()) node["x"] = rhs.get_x();
-        if (rhs.has_y()) node["y"] = rhs.get_y();
-        if (rhs.has_w()) node["w"] = rhs.get_w();
-        if (rhs.has_h()) node["h"] = rhs.get_h();
+#define __attr_encode(name) \
+    if (rhs.has_##name()) node[#name] = rhs.get_##name()
+
+        __attr_encode(label);
+        __attr_encode(degree);
+        __attr_encode(x);
+        __attr_encode(y);
+        __attr_encode(w);
+        __attr_encode(h);
 
         return node;
     }
@@ -73,12 +76,15 @@ struct convert<ican_mark::Instance>
             return false;
         }
 
-        rhs.set_label(node["label"].as<int>());
-        rhs.set_degree(node["degree"].as<double>());
-        rhs.set_x(node["x"].as<double>());
-        rhs.set_y(node["y"].as<double>());
-        rhs.set_w(node["w"].as<double>());
-        rhs.set_h(node["h"].as<double>());
+#define __attr_decode(type, name) \
+    if (node[#name]) rhs.set_##name(node[#name].as<type>())
+
+        __attr_decode(int, label);
+        __attr_decode(double, degree);
+        __attr_decode(double, x);
+        __attr_decode(double, y);
+        __attr_decode(double, w);
+        __attr_decode(double, h);
 
         return true;
     }
