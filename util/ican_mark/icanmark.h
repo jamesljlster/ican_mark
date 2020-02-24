@@ -1,5 +1,5 @@
-#ifndef ICALMARK_H
-#define ICALMARK_H
+#ifndef ICANMARK_H
+#define ICANMARK_H
 
 #include <mark_action.hpp>
 #include <mark_instance.hpp>
@@ -13,21 +13,21 @@
 QT_BEGIN_NAMESPACE
 namespace Ui
 {
-class ICALMark;
+class ICANMark;
 }
 QT_END_NAMESPACE
 
-class ICALMark : public QMainWindow
+class ICANMark : public QMainWindow
 {
     Q_OBJECT
 
    public:
-    ICALMark(QWidget* parent = nullptr);
-    ~ICALMark();
+    ICANMark(QWidget* parent = nullptr);
+    ~ICANMark();
 
    private slots:
     void on_markArea_instanceListChanged(
-        const std::vector<ical_mark::Instance>& annoList);
+        const std::vector<ican_mark::Instance>& annoList);
 
     void on_markArea_scaleRatioChanged(qreal ratio);
 
@@ -55,7 +55,7 @@ class ICALMark : public QMainWindow
     void on_moveSpeed_valueChanged(int arg1);
 
    private:
-    Ui::ICALMark* ui;
+    Ui::ICANMark* ui;
     QTimer* ctrlTimer;
 
     // For moving image region
@@ -70,4 +70,4 @@ class ICALMark : public QMainWindow
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;
 };
-#endif  // ICALMARK_H
+#endif  // ICANMARK_H

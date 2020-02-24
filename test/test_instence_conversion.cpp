@@ -7,7 +7,7 @@
 #include <mark_instance.hpp>
 
 using namespace std;
-using namespace ical_mark;
+using namespace ican_mark;
 
 int main()
 try

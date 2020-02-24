@@ -15,7 +15,7 @@
 #include <QtMath>
 
 using namespace std;
-using namespace ical_mark;
+using namespace ican_mark;
 
 RBoxMarkWidget::RBoxMarkWidget(QWidget* parent) : ImageView(parent)
 {

@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.5)
 
-project(ical_mark LANGUAGES CXX)
+project(ican_mark LANGUAGES CXX)
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -24,7 +24,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #    endif()
 #endif()
 
-set(TS_FILES ical_mark_en_US.ts)
+set(TS_FILES ican_mark_en_US.ts)
 file(GLOB PROJECT_SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/*.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/*.h
@@ -32,15 +32,15 @@ file(GLOB PROJECT_SRCS
     )
 
 if(ANDROID)
-  add_library(ical_mark SHARED ${PROJECT_SRCS} ${TS_FILES})
+  add_library(ican_mark SHARED ${PROJECT_SRCS} ${TS_FILES})
 else()
-  add_executable(ical_mark ${PROJECT_SRCS} ${TS_FILES})
+  add_executable(ican_mark ${PROJECT_SRCS} ${TS_FILES})
 endif()
 
-target_link_libraries(ical_mark PRIVATE ${PROJECT_DEPS})
+target_link_libraries(ican_mark PRIVATE ${PROJECT_DEPS})
 
 qt5_create_translation(QM_FILES ${CMAKE_CURRENT_SOURCE_DIR} ${TS_FILES})
 
-install(TARGETS ical_mark
+install(TARGETS ican_mark
     RUNTIME DESTINATION "${CMAKE_INSTALL_PREFIX}/bin"
     )

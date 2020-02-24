@@ -1,7 +1,7 @@
 #include "mark_widget.h"
 
 using namespace std;
-using namespace ical_mark;
+using namespace ican_mark;
 
 ImageView::ImageView(QWidget* parent) : QWidget(parent) {}
 

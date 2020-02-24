@@ -1,6 +1,6 @@
 #include "mark_action.hpp"
 
-namespace ical_mark
+namespace ican_mark
 {
 void ClickAction::reset()
 {
@@ -77,4 +77,4 @@ const QPointF& ClickAction::operator[](std::string key) const
     return it->second;
 }
 
-}  // namespace ical_mark
+}  // namespace ican_mark

@@ -8,7 +8,7 @@
 #include <QInputEvent>
 #include <QPointF>
 
-namespace ical_mark
+namespace ican_mark
 {
 const QPointF operator*(const QPointF& point, const QPointF& factor);
 const QPointF operator/(const QPointF& point, const QPointF& divisor);
@@ -148,6 +148,6 @@ class RBoxMark : public ActionBase<TwiceClick>
     int s = static_cast<int>(State::INIT);
 };
 
-}  // namespace ical_mark
+}  // namespace ican_mark
 
 #endif

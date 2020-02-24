@@ -8,7 +8,7 @@ if(" ${CMAKE_SOURCE_DIR}" STREQUAL " ${CMAKE_BINARY_DIR}")
 endif()
 
 # Set variables
-set(PROJECT_NAME ical_mark_project)
+set(PROJECT_NAME ican_mark_project)
 set(PROJECT_LANGUAGE CXX)
 
 # Environment variables
@@ -36,7 +36,7 @@ set(LIB_PATHS
 
 # Utility paths
 set(UTIL_PATHS
-    ${CMAKE_CURRENT_SOURCE_DIR}/util/ical_mark
+    ${CMAKE_CURRENT_SOURCE_DIR}/util/ican_mark
     )
 
 if(${BUILD_TEST})

@@ -5,7 +5,7 @@
 
 #include <yaml-cpp/yaml.h>
 
-namespace ical_mark
+namespace ican_mark
 {
 struct Instance
 {
@@ -23,15 +23,15 @@ struct Instance
 
     operator std::string() const;
 };
-}  // namespace ical_mark
+}  // namespace ican_mark
 
 /** Conversion functions for instances */
 namespace YAML
 {
 template <>
-struct convert<ical_mark::Instance>
+struct convert<ican_mark::Instance>
 {
-    static Node encode(const ical_mark::Instance& rhs)
+    static Node encode(const ican_mark::Instance& rhs)
     {
         Node node;
 
@@ -45,7 +45,7 @@ struct convert<ical_mark::Instance>
         return node;
     }
 
-    static bool decode(const Node& node, ical_mark::Instance& rhs)
+    static bool decode(const Node& node, ican_mark::Instance& rhs)
     {
         if (node.IsSequence())
         {
