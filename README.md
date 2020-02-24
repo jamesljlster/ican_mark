@@ -1,4 +1,4 @@
-# ICALMark
+# ICANMark
 
 A utility for rotated bounding box annotating, currently.  
 Still under heavy developments.
