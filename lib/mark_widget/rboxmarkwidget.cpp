@@ -270,7 +270,7 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
     if (static_cast<RBoxMark::State>(this->markAction.state()) ==
         RBoxMark::State::DEGREE_FIN)
     {
-        if (this->inst_rbox_valid(this->curInst))
+        if (this->inst_valid(this->curInst))
         {
             this->draw_rotated_bbox(this->curInst, this->style.rbox);
         }
@@ -602,12 +602,13 @@ void RBoxMarkWidget::draw_rotated_bbox(const Instance& inst,
     }
 
     // Draw rotated bounding box
+    double degree = inst.has_degree() ? inst.get_degree() : 0;
     double halfWidth = inst.get_w() / 2;
     double halfHeight = inst.get_h() / 2;
 
     QTransform transform;
     transform.translate(center.x(), center.y());
-    transform.rotate(-inst.get_degree());
+    transform.rotate(-degree);
     painter.setTransform(transform);
 
     QRectF boxRect(this->scaling_to_view(QPointF(-halfWidth, -halfHeight)),
@@ -650,10 +651,9 @@ void RBoxMarkWidget::draw_anchor(const QPointF& pos, const StyleAnchor& style)
     painter.drawEllipse(pos, style.radius, style.radius);
 }
 
-bool RBoxMarkWidget::inst_rbox_valid(const Instance& inst)
+bool RBoxMarkWidget::inst_valid(const Instance& inst)
 {
-    return inst.has_degree() && inst.has_x() && inst.has_y() && inst.has_w() &&
-           inst.has_h();
+    return inst.has_x() && inst.has_y() && inst.has_w() && inst.has_h();
 }
 
 void RBoxMarkWidget::inst_reset_bbox(ican_mark::Instance& inst)

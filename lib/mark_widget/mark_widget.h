@@ -237,7 +237,7 @@ class RBoxMarkWidget : public ImageView
     void draw_anchor(const QPointF& pos, const StyleAnchor& style);
 
     /** Instance handling */
-    bool inst_rbox_valid(const ican_mark::Instance& inst);
+    bool inst_valid(const ican_mark::Instance& inst);
     void inst_reset_bbox(ican_mark::Instance& inst);
     void inst_reset(ican_mark::Instance& inst);
 };
