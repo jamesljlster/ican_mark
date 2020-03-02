@@ -66,6 +66,7 @@ class ICANMark : public QMainWindow
 
     void slideview_sliding(int step);
     void load_class_names(const QString& filePath);
+    void label_switching(int step);
 
     void keyPressEvent(QKeyEvent* event) override;
     void keyReleaseEvent(QKeyEvent* event) override;

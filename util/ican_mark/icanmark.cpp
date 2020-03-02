@@ -377,6 +377,18 @@ void ICANMark::load_class_names(const QString& filePath)
     }
 }
 
+void ICANMark::label_switching(int step)
+{
+    QComboBox* nameList = this->ui->nameList;
+    int newLabelIndex = nameList->currentIndex() + step;
+    while (newLabelIndex < 0)
+    {
+        newLabelIndex += nameList->count();
+    }
+
+    nameList->setCurrentIndex(newLabelIndex % nameList->count());
+}
+
 void ICANMark::on_nameFile_clicked()
 {
     QFileDialog dialog;
@@ -443,25 +455,15 @@ void ICANMark::keyPressEvent(QKeyEvent* event)
     }
 
     // Key shortcuts for label switching
-    int newLabelIndex = this->ui->nameList->currentIndex();
     switch (event->key())
     {
         case Qt::Key_Up:
-            newLabelIndex = newLabelIndex - 1;
-            if (newLabelIndex >= 0)
-            {
-                this->ui->nameList->setCurrentIndex(newLabelIndex);
-            }
-
+            this->label_switching(-1);
             break;
 
         case Qt::Key_Down:
-            newLabelIndex = newLabelIndex + 1;
-            if (newLabelIndex < this->ui->nameList->count())
-            {
-                this->ui->nameList->setCurrentIndex(newLabelIndex);
-            }
-
+        case Qt::Key_Shift:
+            this->label_switching(1);
             break;
     }
 
