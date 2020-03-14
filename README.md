@@ -3,6 +3,22 @@
 A utility for rotated bounding box annotating, currently.  
 Still under heavy developments.
 
+### Feature
+
+Control:
+
+  - Mouse:
+      - Left click for annotation
+      - Middle drag for image region moving
+      - Middle wheeling for zooming
+  - Keyboard:
+      - WASD for image region moving
+      - ESC for focusing on annotation widget
+      - R for reverting annotation action
+      - Backspace for clearing current annotation action
+      - Up, Down, Shift for label switching
+      - Right, Left, Space for sample sliding
+
 ### Annotation File Format
 
 example:
