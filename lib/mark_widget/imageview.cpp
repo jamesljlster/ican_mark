@@ -158,13 +158,13 @@ void ImageView::draw_background(const QColor& bgColor)
 
         if (btmRight.x() > imWidth)
         {
-            padBtmRight.setX(imWidth - btmRight.x());
+            padBtmRight.setX(btmRight.x() - imWidth);
             btmRight.setX(imWidth);
         }
 
         if (btmRight.y() > imHeight)
         {
-            padBtmRight.setY(imHeight - btmRight.y());
+            padBtmRight.setY(btmRight.y() - imHeight);
             btmRight.setY(imHeight);
         }
 
