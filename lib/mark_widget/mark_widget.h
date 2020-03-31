@@ -76,6 +76,9 @@ class ImageView : public QWidget
         return this->scaling_to_image<T>(point - this->viewRegion.topLeft()) +
                this->imageRegion.topLeft();
     }
+
+    /** Default drawing functions */
+    void draw_background(const QColor& bgColor = QColor(0, 0, 0));
 };
 
 class ImageMap : public ImageView

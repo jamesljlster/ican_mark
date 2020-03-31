@@ -115,3 +115,67 @@ QRectF ImageView::mapping_to_image(const QRectF& rect)
 
     return QRectF(point, size);
 }
+
+void ImageView::draw_background(const QColor& bgColor)
+{
+    int width = this->width();
+    int height = this->height();
+
+    // Setup painter
+    QPainter painter(this);
+
+    // Paint solid background
+    painter.setBrush(QBrush(bgColor, Qt::SolidPattern));
+    painter.drawRect(0, 0, width, height);
+
+    // Paint image
+    if (!this->bgImage.isNull())
+    {
+        QRectF imReg = this->imageRegion;
+
+        // Get image size
+        int imWidth = this->bgImage.width();
+        int imHeight = this->bgImage.height();
+
+        // Limit image region to valid area and find padding size
+        QPointF padTopLeft = QPointF(0, 0);
+        QPointF topLeft = imReg.topLeft();
+
+        if (topLeft.x() < 0)
+        {
+            padTopLeft.setX(0 - topLeft.x());
+            topLeft.setX(0);
+        }
+
+        if (topLeft.y() < 0)
+        {
+            padTopLeft.setY(0 - topLeft.y());
+            topLeft.setY(0);
+        }
+
+        QPointF padBtmRight = QPointF(0, 0);
+        QPointF btmRight = imReg.bottomRight();
+
+        if (btmRight.x() > imWidth)
+        {
+            padBtmRight.setX(imWidth - btmRight.x());
+            btmRight.setX(imWidth);
+        }
+
+        if (btmRight.y() > imHeight)
+        {
+            padBtmRight.setY(imHeight - btmRight.y());
+            btmRight.setY(imHeight);
+        }
+
+        // Set new image region
+        imReg.setTopLeft(topLeft);
+        imReg.setBottomRight(btmRight);
+
+        // Paint image with padding
+        QRectF drawRegion =
+            QRectF(this->viewRegion.topLeft() + padTopLeft,
+                   this->viewRegion.bottomRight() - padBtmRight);
+        painter.drawImage(drawRegion, this->bgImage, imReg);
+    }
+}

@@ -104,22 +104,10 @@ bool ImageMap::event(QEvent* event)
 
 void ImageMap::paintEvent(QPaintEvent* paintEvent)
 {
-    int width = this->width();
-    int height = this->height();
-
     (void)paintEvent;
 
     // Paint background
-    QPainter painter(this);
-    painter.setRenderHint(QPainter::Antialiasing);
-
-    painter.setBrush(QBrush(QColor(0, 0, 0), Qt::SolidPattern));
-    painter.drawRect(0, 0, width, height);
-
-    if (!this->bgImage.isNull())
-    {
-        painter.drawImage(this->viewRegion, this->bgImage, this->imageRegion);
-    }
+    this->draw_background();
 
     // Draw selected region
     this->draw_select_region(this->mapping_to_view(this->selectRegion),
