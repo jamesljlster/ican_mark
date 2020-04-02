@@ -33,6 +33,9 @@ class ImageView : public QWidget
     QRectF viewRegion;   // View region on widget
     QRectF imageRegion;  // Image showing region on widget
 
+    QPointF viewCenter;      // Center point of view
+    double viewScale = 1.0;  // Scaling ratio of view
+
     /** Region handling functions */
     QRectF find_image_region(const QPointF& center, const QSizeF& size);
     QRectF find_view_region(const QSize& sizeHint, const QSize& widgetSize);

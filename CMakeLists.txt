@@ -40,7 +40,10 @@ set(UTIL_PATHS
     )
 
 if(${BUILD_TEST})
-    set(UTIL_PATHS ${UTIL_PATHS} ${CMAKE_CURRENT_SOURCE_DIR}/test)
+    set(UTIL_PATHS ${UTIL_PATHS}
+        ${CMAKE_CURRENT_SOURCE_DIR}/test
+        ${CMAKE_CURRENT_SOURCE_DIR}/test/test_imageview
+        )
 endif()
 
 # Set project

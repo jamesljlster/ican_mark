@@ -131,51 +131,12 @@ void ImageView::draw_background(const QColor& bgColor)
     // Paint image
     if (!this->bgImage.isNull())
     {
-        QRectF imReg = this->imageRegion;
-
-        // Get image size
-        int imWidth = this->bgImage.width();
-        int imHeight = this->bgImage.height();
-
-        // Limit image region to valid area and find padding size
-        QPointF padTopLeft = QPointF(0, 0);
-        QPointF topLeft = imReg.topLeft();
-
-        if (topLeft.x() < 0)
-        {
-            padTopLeft.setX(0 - topLeft.x());
-            topLeft.setX(0);
-        }
-
-        if (topLeft.y() < 0)
-        {
-            padTopLeft.setY(0 - topLeft.y());
-            topLeft.setY(0);
-        }
-
-        QPointF padBtmRight = QPointF(0, 0);
-        QPointF btmRight = imReg.bottomRight();
-
-        if (btmRight.x() > imWidth)
-        {
-            padBtmRight.setX(btmRight.x() - imWidth);
-            btmRight.setX(imWidth);
-        }
-
-        if (btmRight.y() > imHeight)
-        {
-            padBtmRight.setY(btmRight.y() - imHeight);
-            btmRight.setY(imHeight);
-        }
-
-        // Set new image region
-        imReg.setTopLeft(topLeft);
-        imReg.setBottomRight(btmRight);
-
-        // Paint image with padding
-        QRectF drawRegion =
-            QRectF(this->viewRegion.topLeft() + padTopLeft,
-                   this->viewRegion.bottomRight() - padBtmRight);
-        painter.drawImage(drawRegion, this->bgImage, imReg);
+        QImage scaledImg =
+            this->bgImage.scaled(this->bgImage.size() * this->viewScale);
+        QPointF drawPoint = this->viewCenter - QPointF(scaledImg.width() / 2,
+                                                       scaledImg.height() / 2);
+        // Paint image
+        painter.drawImage(drawPoint, scaledImg,
+                          QRect(QPoint(0, 0), scaledImg.size()));
     }
 }
