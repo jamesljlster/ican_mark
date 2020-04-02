@@ -415,11 +415,37 @@ bool RBoxMarkWidget::update_view_region(const QPointF& newCenter,
 
     // Update image region
     QPointF tmpCenter = newCenter;
-    if (tmpCenter.x() < 0) tmpCenter.setX(0);
-    if (tmpCenter.y() < 0) tmpCenter.setY(0);
+    if (newScaleRatio < 1.0)
+    {
+        if (tmpCenter.x() < 0) tmpCenter.setX(0);
+        if (tmpCenter.y() < 0) tmpCenter.setY(0);
 
-    if (tmpCenter.x() > this->width()) tmpCenter.setX(this->width());
-    if (tmpCenter.y() > this->height()) tmpCenter.setY(this->height());
+        if (tmpCenter.x() > this->width()) tmpCenter.setX(this->width());
+        if (tmpCenter.y() > this->height()) tmpCenter.setY(this->height());
+    }
+    else
+    {
+        int width = this->width();
+        int height = this->height();
+
+        QPointF halfImSize =
+            this->scaling_to_view(
+                QPointF(this->bgImage.width(), this->bgImage.height())) /
+            2.0;
+        int halfImWidth = halfImSize.x();
+        int halfImHeight = halfImSize.y();
+        int minRsvSize = min(width / 2, height / 2);  // Minimum reserved size
+
+        if (tmpCenter.x() + halfImWidth < minRsvSize)
+            tmpCenter.setX(minRsvSize - halfImWidth);
+        if (tmpCenter.y() + halfImHeight < minRsvSize)
+            tmpCenter.setY(minRsvSize - halfImHeight);
+
+        if (tmpCenter.x() > width + halfImWidth - minRsvSize)
+            tmpCenter.setX(width + halfImWidth - minRsvSize);
+        if (tmpCenter.y() > height + halfImHeight - minRsvSize)
+            tmpCenter.setY(height + halfImHeight - minRsvSize);
+    }
 
     this->viewCenter = tmpCenter;
     this->viewScale = newScaleRatio;
