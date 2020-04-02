@@ -27,16 +27,7 @@ class ImageViewTest : public ImageView
         this->draw_background();
     }
 
-    void resizeEvent(QResizeEvent* event)
-    {
-        (void)event;
-
-        QSizeF sizeHint = QSizeF(this->bgImage.size())
-                              .scaled(this->size(), Qt::KeepAspectRatio);
-        double ratio = (double)sizeHint.width() / (double)this->bgImage.width();
-        this->viewScale = ratio;
-        this->viewCenter = QPointF(this->width() / 2, this->height() / 2);
-    }
+    void resizeEvent(QResizeEvent* event) { this->zoom_to_fit(); }
 };
 
 #endif

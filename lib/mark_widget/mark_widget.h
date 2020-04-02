@@ -27,6 +27,8 @@ class ImageView : public QWidget
     explicit ImageView(QWidget* parent = nullptr);
     virtual void reset(const QImage& image);
 
+    virtual void zoom_to_fit();
+
    protected:
     /** Member variables */
     QImage bgImage;      // Background Image

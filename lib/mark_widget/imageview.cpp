@@ -7,6 +7,14 @@ ImageView::ImageView(QWidget* parent) : QWidget(parent) {}
 
 void ImageView::reset(const QImage& image) { this->bgImage = image; }
 
+void ImageView::zoom_to_fit()
+{
+    QSizeF viewSize =
+        QSizeF(this->bgImage.size()).scaled(this->size(), Qt::KeepAspectRatio);
+    this->viewScale = (double)viewSize.width() / (double)this->bgImage.width();
+    this->viewCenter = QPointF(this->width() / 2, this->height() / 2);
+}
+
 QRectF ImageView::find_image_region(const QPointF& center, const QSizeF& size)
 {
     qreal imgWidth = this->bgImage.width();
