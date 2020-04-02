@@ -283,11 +283,11 @@ void ICANMark::on_slideView_currentItemChanged(QListWidgetItem* current,
 
         // Load images and reset mark area
         QImage image = QImage(imgPath);
-        this->ui->imageMap->reset(image);
         this->ui->mapStack->setCurrentIndex(0);
+        this->ui->imageMap->reset(image);
 
-        this->ui->markArea->reset(image, instList);
         this->ui->markStack->setCurrentIndex(0);
+        this->ui->markArea->reset(image, instList);
     }
     else
     {
@@ -307,7 +307,7 @@ void ICANMark::ctrl_timer_event()
     int dx = (this->d - this->a) * this->moveStep;
     if (dx || dy)
     {
-        this->ui->markArea->move_image_region(dx, dy);
+        this->ui->markArea->move_view_region(dx, dy);
     }
 }
 

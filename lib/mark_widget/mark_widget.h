@@ -27,6 +27,7 @@ class ImageView : public QWidget
     explicit ImageView(QWidget* parent = nullptr);
     virtual void reset(const QImage& image);
 
+    /** Region handling functions */
     virtual void zoom_to_fit();
 
    protected:
@@ -34,10 +35,6 @@ class ImageView : public QWidget
     QImage bgImage;      // Background Image
     QPointF viewCenter;  // The center point of background image on view space
     double viewScale = 1.0;  // Scaling ratio of view
-
-    /** Region handling functions */
-    // QRectF find_image_region(const QPointF& center, const QSizeF& size);
-    // QRectF find_view_region(const QSize& sizeHint, const QSize& widgetSize);
 
     /** Point mapping functions */
     QPointF scaling_to_view(const QPointF& point);
@@ -125,7 +122,7 @@ class RBoxMarkWidget : public ImageView
     int get_mark_label();
     int get_hl_instance_index();
 
-    // QRectF get_image_region();
+    QRectF get_view_region();
     qreal get_scale_ratio();
 
     const std::vector<ican_mark::Instance>& annotation_list();
@@ -135,10 +132,10 @@ class RBoxMarkWidget : public ImageView
     void set_class_names(const std::vector<std::string>& classNames);
     void set_mark_label(int label);
     void set_hl_instance_index(int index);  // Highlighting selected instance
-    void set_image_region(const QRectF& imageRegion);
+    void set_view_center(const QPointF& viewCenter);
     void set_scale_ratio(qreal ratio);
 
-    void move_image_region(int dx, int dy);
+    void move_view_region(int dx, int dy);
 
     void marking_revert();
     void marking_reset();
@@ -148,7 +145,7 @@ class RBoxMarkWidget : public ImageView
     void hlInstanceIndexChanged(int index);
     void instanceListChanged(const std::vector<ican_mark::Instance>& annoList);
     void scaleRatioChanged(qreal ratio);
-    void imageRegionChanged(const QRectF& imageRegion);
+    void viewRegionChanged(const QRectF& viewRegion);
 
    protected:
     /** Style datatypes */
@@ -198,6 +195,7 @@ class RBoxMarkWidget : public ImageView
     QPointF regionPosCache;
     qreal scaleRatio = 1.0;
     qreal scaleStep = 0.1;
+    qreal scaleMin = 0.1;
 
     int label = 0;                              // Current marking label
     int highlightInst = -1;                     // Index for highlighting
@@ -217,11 +215,7 @@ class RBoxMarkWidget : public ImageView
     bool image_region_moving(QEvent* event, bool& imgRegionChanged);
 
     /** Region handling functions */
-    // using ImageView::find_image_region;
-    // QRectF find_image_region(const QPointF& center, const QSizeF& sizeHint,
-    //                         qreal scaleRatio);
-    bool update_regions(const QPointF& newCenter, qreal oldScaleRatio,
-                        qreal newScaleRatio);
+    bool update_view_region(const QPointF& newCenter, qreal newScaleRatio);
     bool update_scale_ratio(qreal newScaleRatio,
                             qreal* oldScaleRatioPtr = nullptr);
 
