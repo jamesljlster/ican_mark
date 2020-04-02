@@ -201,13 +201,14 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
     {
         // Find new center of image region
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
-        QPointF wheelPos = this->mapping_to_image(event->posF());
+        QPointF wheelPos = event->posF();
 #else
-        QPointF wheelPos = this->mapping_to_image(event->position());
+        QPointF wheelPos = event->position();
 #endif
+
         QPointF center = this->viewCenter;
         QPointF newCenter =
-            ((center - wheelPos) * oldScaleRatio) / newScaleRatio + wheelPos;
+            ((center - wheelPos) * newScaleRatio) / oldScaleRatio + wheelPos;
 
         // Update regions
         imgRegionChanged =
@@ -395,8 +396,7 @@ bool RBoxMarkWidget::image_region_moving(QEvent* event, bool& imgRegionChanged)
         case ClickAction::State::PRESS:
             imgRegionChanged = this->update_regions(
                 this->regionPosCache -
-                    this->scaling_to_image(this->moveAction["press"] -
-                                           this->moveAction["move"]),
+                    (this->moveAction["press"] - this->moveAction["move"]),
                 this->scaleRatio, this->scaleRatio);
             break;
 
