@@ -5,7 +5,11 @@ using namespace ican_mark;
 
 ImageView::ImageView(QWidget* parent) : QWidget(parent) {}
 
-void ImageView::reset(const QImage& image) { this->bgImage = image; }
+void ImageView::reset(const QImage& image)
+{
+    this->bgImage = image;
+    this->zoom_to_fit();
+}
 
 void ImageView::zoom_to_fit()
 {
@@ -15,6 +19,7 @@ void ImageView::zoom_to_fit()
     this->viewCenter = QPointF(this->width() / 2, this->height() / 2);
 }
 
+/*
 QRectF ImageView::find_image_region(const QPointF& center, const QSizeF& size)
 {
     qreal imgWidth = this->bgImage.width();
@@ -71,6 +76,7 @@ QRectF ImageView::find_view_region(const QSize& sizeHint,
                              (widgetSize.height() - markSize.height()) / 2);
     return QRectF(markBase, markSize);
 }
+*/
 
 QPointF ImageView::scaling_to_view(const QPointF& point)
 {
@@ -86,8 +92,7 @@ QSizeF ImageView::scaling_to_view(const QSizeF& size)
 
 QPointF ImageView::mapping_to_view(const QPointF& point)
 {
-    return this->scaling_to_view(point - this->imageRegion.topLeft()) +
-           this->viewRegion.topLeft();
+    return this->mapping_to_view<QPointF>(point);
 }
 
 QRectF ImageView::mapping_to_view(const QRectF& rect)
@@ -112,8 +117,7 @@ QSizeF ImageView::scaling_to_image(const QSizeF& size)
 
 QPointF ImageView::mapping_to_image(const QPointF& point)
 {
-    return this->scaling_to_image(point - this->viewRegion.topLeft()) +
-           this->imageRegion.topLeft();
+    return this->mapping_to_image<QPointF>(point);
 }
 
 QRectF ImageView::mapping_to_image(const QRectF& rect)

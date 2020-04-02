@@ -32,15 +32,12 @@ class ImageView : public QWidget
    protected:
     /** Member variables */
     QImage bgImage;      // Background Image
-    QRectF viewRegion;   // View region on widget
-    QRectF imageRegion;  // Image showing region on widget
-
-    QPointF viewCenter;      // Center point of view
+    QPointF viewCenter;  // The center point of background image on view space
     double viewScale = 1.0;  // Scaling ratio of view
 
     /** Region handling functions */
-    QRectF find_image_region(const QPointF& center, const QSizeF& size);
-    QRectF find_view_region(const QSize& sizeHint, const QSize& widgetSize);
+    // QRectF find_image_region(const QPointF& center, const QSizeF& size);
+    // QRectF find_view_region(const QSize& sizeHint, const QSize& widgetSize);
 
     /** Point mapping functions */
     QPointF scaling_to_view(const QPointF& point);
@@ -48,9 +45,7 @@ class ImageView : public QWidget
     template <typename T>
     T scaling_to_view(const T& data)
     {
-        QPointF factor(this->viewRegion.width() / this->imageRegion.width(),
-                       this->viewRegion.height() / this->imageRegion.height());
-        return data * factor;
+        return data * QPointF(this->viewScale, this->viewScale);
     }
 
     QPointF mapping_to_view(const QPointF& point);
@@ -58,8 +53,9 @@ class ImageView : public QWidget
     template <typename T>
     T mapping_to_view(const T& data)
     {
-        return this->scaling_to_view<T>(data - this->imageRegion.topLeft()) +
-               this->viewRegion.topLeft();
+        QPointF imgCtr =
+            QPointF(this->bgImage.width(), this->bgImage.height()) / 2;
+        return this->scaling_to_view<T>(data - imgCtr) + this->viewCenter;
     }
 
     QPointF scaling_to_image(const QPointF& point);
@@ -67,10 +63,7 @@ class ImageView : public QWidget
     template <typename T>
     T scaling_to_image(const T& data)
     {
-        QPointF factor(
-            this->imageRegion.width() / this->viewRegion.width(),
-            (this->imageRegion.height() / this->viewRegion.height()));
-        return data * factor;
+        return data / QPointF(this->viewScale, this->viewScale);
     }
 
     QPointF mapping_to_image(const QPointF& point);
@@ -78,8 +71,9 @@ class ImageView : public QWidget
     template <typename T>
     T mapping_to_image(const T& point)
     {
-        return this->scaling_to_image<T>(point - this->viewRegion.topLeft()) +
-               this->imageRegion.topLeft();
+        QPointF imgCtr =
+            QPointF(this->bgImage.width(), this->bgImage.height()) / 2;
+        return this->scaling_to_image<T>(point - this->viewCenter) + imgCtr;
     }
 
     /** Default drawing functions */
@@ -131,7 +125,7 @@ class RBoxMarkWidget : public ImageView
     int get_mark_label();
     int get_hl_instance_index();
 
-    QRectF get_image_region();
+    // QRectF get_image_region();
     qreal get_scale_ratio();
 
     const std::vector<ican_mark::Instance>& annotation_list();
@@ -223,9 +217,9 @@ class RBoxMarkWidget : public ImageView
     bool image_region_moving(QEvent* event, bool& imgRegionChanged);
 
     /** Region handling functions */
-    using ImageView::find_image_region;
-    QRectF find_image_region(const QPointF& center, const QSizeF& sizeHint,
-                             qreal scaleRatio);
+    // using ImageView::find_image_region;
+    // QRectF find_image_region(const QPointF& center, const QSizeF& sizeHint,
+    //                         qreal scaleRatio);
     bool update_regions(const QPointF& newCenter, qreal oldScaleRatio,
                         qreal newScaleRatio);
     bool update_scale_ratio(qreal newScaleRatio,

@@ -46,14 +46,14 @@ void RBoxMarkWidget::reset(const QImage& image,
     this->moveAction.reset();
 
     // Reset view and image region
-    imgRegionChanged = this->update_regions(
-        QPointF(this->bgImage.width() / 2, this->bgImage.height() / 2),
-        this->scaleRatio, this->scaleRatio);
+    // imgRegionChanged = this->update_regions(
+    //    QPointF(this->bgImage.width() / 2, this->bgImage.height() / 2),
+    //    this->scaleRatio, this->scaleRatio);
 
     // Repaint and raise signal
     this->repaint();
     emit instanceListChanged(this->annoList);
-    if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
+    // if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
 void RBoxMarkWidget::set_class_names(const std::vector<std::string>& classNames)
@@ -93,17 +93,17 @@ void RBoxMarkWidget::set_scale_ratio(qreal ratio)
     if (scaleChanged)
     {
         // Update regions
-        imgRegionChanged = this->update_regions(this->imageRegion.center(),
-                                                oldScaleRatio, ratio);
+        imgRegionChanged =
+            this->update_regions(this->viewCenter, oldScaleRatio, ratio);
     }
 
     // Repaint and raise signals
     this->repaint();
-    if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
+    // if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
     if (scaleChanged) emit scaleRatioChanged(this->scaleRatio);
 }
 
-QRectF RBoxMarkWidget::get_image_region() { return this->imageRegion; }
+// QRectF RBoxMarkWidget::get_image_region() { return this->imageRegion; }
 void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
 {
     bool imgRegionChanged = false;
@@ -111,14 +111,16 @@ void RBoxMarkWidget::set_image_region(const QRectF& imageRegion)
                                             this->scaleRatio, this->scaleRatio);
 
     this->repaint();
-    if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
+    // if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
 void RBoxMarkWidget::move_image_region(int dx, int dy)
 {
+    /*
     QRectF imgRegion = this->get_image_region();
     imgRegion.moveTo(imgRegion.topLeft() + QPoint(dx, dy));
     this->set_image_region(imgRegion);
+    */
 }
 
 void RBoxMarkWidget::marking_revert()
@@ -173,7 +175,7 @@ bool RBoxMarkWidget::event(QEvent* event)
         this->repaint();
 
         // Raise signals
-        if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
+        // if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
         if (instListChanged) emit instanceListChanged(this->annoList);
 
         return ret;
@@ -203,7 +205,7 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
 #else
         QPointF wheelPos = this->mapping_to_image(event->position());
 #endif
-        QPointF center = this->imageRegion.center();
+        QPointF center = this->viewCenter;
         QPointF newCenter =
             ((center - wheelPos) * oldScaleRatio) / newScaleRatio + wheelPos;
 
@@ -214,7 +216,7 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
 
     // Raise signal
     if (scaleChanged) emit scaleRatioChanged(this->scaleRatio);
-    if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
+    // if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
 void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
@@ -268,9 +270,9 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
 void RBoxMarkWidget::resizeEvent(QResizeEvent* event)
 {
     bool imgRegionChanged = false;
-    imgRegionChanged = this->update_regions(this->imageRegion.center(),
-                                            this->scaleRatio, this->scaleRatio);
-    if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
+    imgRegionChanged = this->update_regions(this->viewCenter, this->scaleRatio,
+                                            this->scaleRatio);
+    // if (imgRegionChanged) emit imageRegionChanged(this->imageRegion);
 }
 
 bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
@@ -387,12 +389,12 @@ bool RBoxMarkWidget::image_region_moving(QEvent* event, bool& imgRegionChanged)
     switch (static_cast<ClickAction::State>(this->moveAction.state()))
     {
         case ClickAction::State::MOVE:
-            this->regionPosCache = this->imageRegion.center();
+            this->regionPosCache = this->viewCenter;
             break;
 
         case ClickAction::State::PRESS:
             imgRegionChanged = this->update_regions(
-                this->regionPosCache +
+                this->regionPosCache -
                     this->scaling_to_image(this->moveAction["press"] -
                                            this->moveAction["move"]),
                 this->scaleRatio, this->scaleRatio);
@@ -406,6 +408,7 @@ bool RBoxMarkWidget::image_region_moving(QEvent* event, bool& imgRegionChanged)
     return ret;
 }
 
+/*
 QRectF RBoxMarkWidget::find_image_region(const QPointF& center,
                                          const QSizeF& sizeHint,
                                          qreal scaleRatio)
@@ -415,6 +418,7 @@ QRectF RBoxMarkWidget::find_image_region(const QPointF& center,
         scaleRatio;
     return this->find_image_region(center, size);
 }
+*/
 
 bool RBoxMarkWidget::update_regions(const QPointF& newCenter,
                                     qreal oldScaleRatio, qreal newScaleRatio)
@@ -425,18 +429,8 @@ bool RBoxMarkWidget::update_regions(const QPointF& newCenter,
     RBoxMark imgMark = this->mapping_to_image<RBoxMark>(this->markAction);
 
     // Update image region
-    QRectF newImageRegion =
-        this->find_image_region(newCenter, this->size(), newScaleRatio);
-    if (this->imageRegion != newImageRegion)
-    {
-        // Assign new image region
-        this->imageRegion = newImageRegion;
-        imgRegionChanged = true;
-    }
-
-    // Update view region
-    this->viewRegion =
-        this->find_view_region(this->imageRegion.size().toSize(), this->size());
+    this->viewCenter = newCenter;
+    this->viewScale = newScaleRatio;
 
     // Mapping mark points back to view space
     this->markAction = this->mapping_to_view<RBoxMark>(imgMark);
