@@ -436,15 +436,19 @@ bool RBoxMarkWidget::update_view_region(const QPointF& newCenter,
         int halfImHeight = halfImSize.y();
         int minRsvSize = min(width / 2, height / 2);  // Minimum reserved size
 
-        if (tmpCenter.x() + halfImWidth < minRsvSize)
-            tmpCenter.setX(minRsvSize - halfImWidth);
-        if (tmpCenter.y() + halfImHeight < minRsvSize)
-            tmpCenter.setY(minRsvSize - halfImHeight);
+        int tmpSize;
 
-        if (tmpCenter.x() > width + halfImWidth - minRsvSize)
-            tmpCenter.setX(width + halfImWidth - minRsvSize);
-        if (tmpCenter.y() > height + halfImHeight - minRsvSize)
-            tmpCenter.setY(height + halfImHeight - minRsvSize);
+        tmpSize = minRsvSize - halfImWidth;
+        if (tmpCenter.x() < tmpSize) tmpCenter.setX(tmpSize);
+
+        tmpSize = minRsvSize - halfImHeight;
+        if (tmpCenter.y() < tmpSize) tmpCenter.setY(tmpSize);
+
+        tmpSize = width + halfImWidth - minRsvSize;
+        if (tmpCenter.x() > tmpSize) tmpCenter.setX(tmpSize);
+
+        tmpSize = height + halfImHeight - minRsvSize;
+        if (tmpCenter.y() > tmpSize) tmpCenter.setY(tmpSize);
     }
 
     this->viewCenter = tmpCenter;
