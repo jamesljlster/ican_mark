@@ -27,7 +27,7 @@ class ImageView : public QWidget
     explicit ImageView(QWidget* parent = nullptr);
     virtual void reset(const QImage& image);
 
-    /** Region handling functions */
+    /** View handling functions */
     virtual void zoom_to_fit();
 
    protected:
@@ -35,6 +35,10 @@ class ImageView : public QWidget
     QImage bgImage;      // Background Image
     QPointF viewCenter;  // The center point of background image on view space
     double viewScale = 1.0;  // Scaling ratio of view
+
+    /** View handling functions */
+    double find_fit_scale_ratio() const;
+    QPointF find_centered_point() const;
 
     /** Point mapping functions */
     QPointF scaling_to_view(const QPointF& point);
@@ -122,7 +126,6 @@ class RBoxMarkWidget : public ImageView
     int get_mark_label();
     int get_hl_instance_index();
 
-    QRectF get_view_region();
     qreal get_scale_ratio();
 
     const std::vector<ican_mark::Instance>& annotation_list();
@@ -146,6 +149,7 @@ class RBoxMarkWidget : public ImageView
     void instanceListChanged(const std::vector<ican_mark::Instance>& annoList);
     void scaleRatioChanged(qreal ratio);
     void viewRegionChanged(const QRectF& viewRegion);
+    void viewCenterChanged(const QPointF& viewCenter);
 
    protected:
     /** Style datatypes */
@@ -193,7 +197,7 @@ class RBoxMarkWidget : public ImageView
 
     QPointF mousePos;
     QPointF regionPosCache;
-    qreal scaleRatio = 1.0;
+
     qreal scaleStep = 0.1;
     qreal scaleMin = 0.1;
 
@@ -212,10 +216,10 @@ class RBoxMarkWidget : public ImageView
     void resizeEvent(QResizeEvent* event);
 
     bool instance_marking(QEvent* event, bool& instListChanged);
-    bool image_region_moving(QEvent* event, bool& imgRegionChanged);
+    bool image_region_moving(QEvent* event, bool& viewCtrChanged);
 
-    /** Region handling functions */
-    bool update_view_region(const QPointF& newCenter, qreal newScaleRatio);
+    /** View handling functions */
+    bool update_view_center(const QPointF& newCenter);
     bool update_scale_ratio(qreal newScaleRatio,
                             qreal* oldScaleRatioPtr = nullptr);
 

@@ -13,10 +13,20 @@ void ImageView::reset(const QImage& image)
 
 void ImageView::zoom_to_fit()
 {
+    this->viewScale = this->find_fit_scale_ratio();
+    this->viewCenter = this->find_centered_point();
+}
+
+double ImageView::find_fit_scale_ratio() const
+{
     QSizeF viewSize =
         QSizeF(this->bgImage.size()).scaled(this->size(), Qt::KeepAspectRatio);
-    this->viewScale = (double)viewSize.width() / (double)this->bgImage.width();
-    this->viewCenter = QPointF(this->width() / 2, this->height() / 2);
+    return (double)viewSize.width() / (double)this->bgImage.width();
+}
+
+QPointF ImageView::find_centered_point() const
+{
+    return QPointF(this->width(), this->height()) / 2.0;
 }
 
 QPointF ImageView::scaling_to_view(const QPointF& point)
