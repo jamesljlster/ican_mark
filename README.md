@@ -9,10 +9,10 @@ Control:
 
   - Mouse:
       - Left click for annotation
-      - Middle drag for image region moving
-      - Middle wheeling for zooming
+      - Middle drag for view region moving
+      - Middle wheel for zooming
   - Keyboard:
-      - WASD for image region moving
+      - WASD for view region moving
       - ESC for focusing on annotation widget
       - R for reverting annotation action
       - Backspace for clearing current annotation action
