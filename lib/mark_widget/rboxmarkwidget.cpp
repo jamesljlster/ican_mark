@@ -117,11 +117,10 @@ void RBoxMarkWidget::set_view_center(const QPointF& viewCenter)
 
 void RBoxMarkWidget::set_select_center(const QPointF& selCenter)
 {
-    QPointF tmpCenter =
+    this->set_view_center(this->mapping_to_view(
         (QPointF(this->bgImage.width(), this->bgImage.height()) / 2) -
         selCenter +
-        this->mapping_to_image(QPointF(this->width(), this->height()) / 2);
-    this->set_view_center(this->mapping_to_view(tmpCenter));
+        this->mapping_to_image(QPointF(this->width(), this->height()) / 2)));
 }
 
 void RBoxMarkWidget::move_view_region(int dx, int dy)
