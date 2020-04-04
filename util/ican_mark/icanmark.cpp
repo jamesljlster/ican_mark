@@ -31,10 +31,10 @@ ICANMark::ICANMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICANMark)
     this->ctrlTimer->start(1000 / this->ui->moveSpeed->value());
 
     // Connect signals and slots
-    // connect(this->ui->markArea, &RBoxMarkWidget::imageRegionChanged,
-    //        this->ui->imageMap, &ImageMap::set_select_region);
-    // connect(this->ui->imageMap, &ImageMap::selectRegionChanged,
-    //        this->ui->markArea, &RBoxMarkWidget::set_image_region);
+    connect(this->ui->markArea, &RBoxMarkWidget::selectRegionChanged,
+            this->ui->imageMap, &ImageMap::set_select_region);
+    connect(this->ui->imageMap, &ImageMap::selectCenterChanged,
+            this->ui->markArea, &RBoxMarkWidget::set_select_center);
 
     connect(this->ui->nameList,
             QOverload<int>::of(&QComboBox::currentIndexChanged),

@@ -17,13 +17,6 @@ void ImageMap::reset(const QImage& image)
     // Call parent reset function
     ImageView::reset(image);
 
-    // Set regions
-    /*
-    this->imageRegion = QRectF(QPoint(0, 0), this->bgImage.size());
-    this->viewRegion =
-        this->find_view_region(this->imageRegion.size().toSize(), this->size());
-    */
-
     this->repaint();
 }
 
@@ -31,18 +24,21 @@ void ImageMap::set_select_region(const QRectF& selectRegion)
 {
     if (this->selectRegion != selectRegion)
     {
+        bool selCtrChanged =
+            (this->selectRegion.center() != selectRegion.center());
+
         this->selectRegion = selectRegion;
         this->repaint();
-        emit this->selectRegionChanged(this->selectRegion);
+
+        if (selCtrChanged)
+            emit this->selectCenterChanged(this->selectRegion.center());
     }
 }
-
-const QRectF ImageMap::get_select_region() { return this->selectRegion; }
 
 bool ImageMap::event(QEvent* event)
 {
     bool ret = false;
-    bool selRegionChanged = false;
+    bool selCtrChanged = false;
 
     QEvent::Type eventType = event->type();
 
@@ -73,16 +69,14 @@ bool ImageMap::event(QEvent* event)
         case ClickAction::State::PRESS:
             do
             {
-                /*
-                QRectF newSelectRegion = this->find_image_region(
-                    this->mapping_to_image(this->clickAction["move"]),
-                    this->selectRegion.size());
-                if (this->selectRegion != newSelectRegion)
+                QPointF curPos =
+                    this->mapping_to_image(this->clickAction["move"]);
+                QPointF selCenter = this->selectRegion.center();
+                if (curPos != selCenter)
                 {
-                    this->selectRegion = newSelectRegion;
-                    selRegionChanged = true;
+                    this->selectRegion.moveCenter(curPos);
+                    selCtrChanged = true;
                 }
-                */
             } while (0);
             break;
 
@@ -96,7 +90,8 @@ bool ImageMap::event(QEvent* event)
         this->repaint();
 
         // Raise signals
-        if (selRegionChanged) emit selectRegionChanged(this->selectRegion);
+        if (selCtrChanged)
+            emit selectCenterChanged(this->selectRegion.center());
 
         return ret;
     }
@@ -114,19 +109,12 @@ void ImageMap::paintEvent(QPaintEvent* paintEvent)
     this->draw_background();
 
     // Draw selected region
-    // this->draw_select_region(this->mapping_to_view(this->selectRegion),
-    //                         this->viewRegion);
+    this->draw_select_region();
 }
 
-void ImageMap::resizeEvent(QResizeEvent* event)
-{
-    // this->viewRegion =
-    // this->find_view_region(this->imageRegion.size().toSize(),
-    //                                          event->size());
-}
+void ImageMap::resizeEvent(QResizeEvent* event) { this->zoom_to_fit(); }
 
-void ImageMap::draw_select_region(const QRectF& selRegion,
-                                  const QRectF& viewRegion)
+void ImageMap::draw_select_region()
 {
     // Setup painter and drawing style
     QPainter painter(this);
@@ -136,8 +124,8 @@ void ImageMap::draw_select_region(const QRectF& selRegion,
 
     // Draw select region
     QPainterPath path;
-    path.addRect(viewRegion);
-    path.addRect(selRegion);
+    path.addRect(QRectF(0, 0, this->width(), this->height()));
+    path.addRect(this->mapping_to_view(selectRegion));
 
     painter.drawPath(path);
 }
