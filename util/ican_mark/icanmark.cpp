@@ -26,9 +26,7 @@ ICANMark::ICANMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICANMark)
 
     // Setup timer
     this->ctrlTimer = new QTimer();
-    connect(this->ctrlTimer, &QTimer::timeout, this,
-            &ICANMark::ctrl_timer_event);
-    this->ctrlTimer->start(1000 / this->ui->moveSpeed->value());
+    this->setup_move_timer(this->ui->fps->value());
 
     // Connect signals and slots
     connect(this->ui->markArea, &RBoxMarkWidget::selectRegionChanged,
@@ -48,11 +46,22 @@ ICANMark::ICANMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICANMark)
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this->ui->markArea, &RBoxMarkWidget::set_scale_ratio);
 
+    connect(this->ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this,
+            &ICANMark::setup_move_timer);
+    connect(this->ctrlTimer, &QTimer::timeout, this,
+            &ICANMark::ctrl_timer_event);
+
     // Setup south tab widget controller
     this->setup_tab_controller();
 }
 
 ICANMark::~ICANMark() { delete ui; }
+
+void ICANMark::setup_move_timer(int fps)
+{
+    this->updateInterval = 1000 / fps;
+    this->ctrlTimer->start(this->updateInterval);
+}
 
 void ICANMark::setup_tab_controller()
 {
@@ -294,9 +303,11 @@ void ICANMark::on_slideView_currentItemChanged(QListWidgetItem* current,
 
 void ICANMark::ctrl_timer_event()
 {
+    double step = this->ui->moveSpeed->value() * this->updateInterval;
+
     // Image region moving
-    int dy = (this->s - this->w) * this->moveStep;
-    int dx = (this->d - this->a) * this->moveStep;
+    int dy = (this->s - this->w) * step;
+    int dx = (this->d - this->a) * step;
     if (dx || dy)
     {
         this->ui->markArea->move_view_region(dx, dy);
@@ -473,11 +484,6 @@ void ICANMark::keyReleaseEvent(QKeyEvent* event)
     this->a = (key == Qt::Key_A) ? 0 : this->a;
     this->s = (key == Qt::Key_S) ? 0 : this->s;
     this->d = (key == Qt::Key_D) ? 0 : this->d;
-}
-
-void ICANMark::on_moveSpeed_valueChanged(int arg1)
-{
-    this->ctrlTimer->start(1000 / arg1);
 }
 
 void ICANMark::on_scaleToFit_clicked() { this->ui->markArea->zoom_to_fit(); }

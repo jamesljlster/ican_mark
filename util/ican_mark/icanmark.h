@@ -26,6 +26,9 @@ class ICANMark : public QMainWindow
     ~ICANMark();
 
    private slots:
+    void ctrl_timer_event();
+    void setup_move_timer(int fps);
+
     void on_markArea_instanceListChanged(
         const std::vector<ican_mark::Instance>& annoList);
 
@@ -44,10 +47,6 @@ class ICANMark : public QMainWindow
 
     void on_nameFile_clicked();
 
-    void ctrl_timer_event();
-
-    void on_moveSpeed_valueChanged(int arg1);
-
     void on_scaleToFit_clicked();
 
    private:
@@ -55,6 +54,7 @@ class ICANMark : public QMainWindow
     QTimer* ctrlTimer;
 
     // For moving image region
+    int updateInterval;
     int moveStep = 1;
     int w = 0, a = 0, s = 0, d = 0;
 

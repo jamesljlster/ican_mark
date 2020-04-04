@@ -421,7 +421,7 @@
           </property>
           <layout class="QGridLayout" name="gridLayout_8">
            <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_6">
+            <layout class="QHBoxLayout" name="horizontalLayout_7">
              <item>
               <widget class="QLabel" name="label_4">
                <property name="text">
@@ -436,6 +436,13 @@
                </property>
                <property name="maximum">
                 <double>10.000000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
                </property>
               </widget>
              </item>
@@ -456,9 +463,9 @@
           <property name="title">
            <string>Move</string>
           </property>
-          <layout class="QGridLayout" name="gridLayout_9">
+          <layout class="QGridLayout" name="gridLayout">
            <item row="0" column="0">
-            <layout class="QHBoxLayout" name="horizontalLayout_7">
+            <layout class="QHBoxLayout" name="horizontalLayout_2">
              <item>
               <widget class="QLabel" name="label_5">
                <property name="text">
@@ -467,12 +474,45 @@
               </widget>
              </item>
              <item>
-              <widget class="QSpinBox" name="moveSpeed">
-               <property name="minimum">
+              <widget class="QDoubleSpinBox" name="moveSpeed">
+               <property name="decimals">
                 <number>1</number>
                </property>
+               <property name="minimum">
+                <double>0.100000000000000</double>
+               </property>
                <property name="maximum">
-                <number>360</number>
+                <double>10.000000000000000</double>
+               </property>
+               <property name="singleStep">
+                <double>0.100000000000000</double>
+               </property>
+               <property name="value">
+                <double>0.700000000000000</double>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="Line" name="line_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="label">
+               <property name="text">
+                <string>FPS</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="fps">
+               <property name="minimum">
+                <number>5</number>
+               </property>
+               <property name="maximum">
+                <number>300</number>
                </property>
                <property name="value">
                 <number>60</number>
