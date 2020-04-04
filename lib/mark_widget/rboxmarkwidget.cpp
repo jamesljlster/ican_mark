@@ -55,6 +55,15 @@ void RBoxMarkWidget::reset(const QImage& image,
     emit selectRegionChanged(this->selRegion);
 }
 
+void RBoxMarkWidget::zoom_to_fit()
+{
+    ImageView::zoom_to_fit();
+
+    emit scaleRatioChanged(this->viewScale);
+    emit viewCenterChanged(this->viewCenter);
+    emit selectRegionChanged(this->selRegion);
+}
+
 void RBoxMarkWidget::set_class_names(const std::vector<std::string>& classNames)
 {
     this->classNames = classNames;

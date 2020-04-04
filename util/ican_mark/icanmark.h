@@ -29,8 +29,6 @@ class ICANMark : public QMainWindow
     void on_markArea_instanceListChanged(
         const std::vector<ican_mark::Instance>& annoList);
 
-    void on_markArea_scaleRatioChanged(qreal ratio);
-
     void on_instDel_clicked();
 
     void on_dataDir_clicked();
@@ -46,13 +44,11 @@ class ICANMark : public QMainWindow
 
     void on_nameFile_clicked();
 
-    void on_scaleRatio_valueChanged(double arg1);
-
-    void on_scaleRatioSlider_valueChanged(int value);
-
     void ctrl_timer_event();
 
     void on_moveSpeed_valueChanged(int arg1);
+
+    void on_scaleToFit_clicked();
 
    private:
     Ui::ICANMark* ui;

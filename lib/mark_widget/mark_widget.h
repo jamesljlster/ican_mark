@@ -121,6 +121,9 @@ class RBoxMarkWidget : public ImageView
     void reset(const QImage& image,
                const std::vector<ican_mark::Instance>& instList);
 
+    /** View handling functions */
+    void zoom_to_fit();
+
     /** Data handling */
     int get_mark_label();
     int get_hl_instance_index();

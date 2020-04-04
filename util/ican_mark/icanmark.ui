@@ -316,7 +316,7 @@
     <item>
      <widget class="QStackedWidget" name="southTab">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="slidePage">
        <property name="accessibleName">
@@ -412,7 +412,7 @@
          <widget class="QGroupBox" name="groupBox">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-            <horstretch>1</horstretch>
+            <horstretch>0</horstretch>
             <verstretch>0</verstretch>
            </sizepolicy>
           </property>
@@ -430,28 +430,19 @@
               </widget>
              </item>
              <item>
-              <widget class="QSlider" name="scaleRatioSlider">
-               <property name="focusPolicy">
-                <enum>Qt::NoFocus</enum>
-               </property>
+              <widget class="QDoubleSpinBox" name="scaleRatio">
                <property name="minimum">
-                <number>10</number>
+                <double>0.100000000000000</double>
                </property>
                <property name="maximum">
-                <number>100</number>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
+                <double>10.000000000000000</double>
                </property>
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="scaleRatio">
-               <property name="minimum">
-                <double>1.000000000000000</double>
-               </property>
-               <property name="maximum">
-                <double>10.000000000000000</double>
+              <widget class="QToolButton" name="scaleToFit">
+               <property name="text">
+                <string>Zoom to fit</string>
                </property>
               </widget>
              </item>
@@ -492,6 +483,19 @@
            </item>
           </layout>
          </widget>
+        </item>
+        <item>
+         <spacer name="horizontalSpacer">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>40</width>
+            <height>20</height>
+           </size>
+          </property>
+         </spacer>
         </item>
        </layout>
       </widget>

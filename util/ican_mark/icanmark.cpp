@@ -42,6 +42,8 @@ ICANMark::ICANMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICANMark)
     connect(this->ui->instList, &QListWidget::currentRowChanged,
             this->ui->markArea, &RBoxMarkWidget::set_hl_instance_index);
 
+    connect(this->ui->markArea, &RBoxMarkWidget::scaleRatioChanged,
+            this->ui->scaleRatio, &QDoubleSpinBox::setValue);
     connect(this->ui->scaleRatio,
             QOverload<double>::of(&QDoubleSpinBox::valueChanged),
             this->ui->markArea, &RBoxMarkWidget::set_scale_ratio);
@@ -155,16 +157,6 @@ void ICANMark::on_markArea_instanceListChanged(const vector<Instance>& annoList)
         // Change sample marked state
         curItem->setCheckState(Qt::CheckState::Checked);
     }
-}
-
-void ICANMark::on_markArea_scaleRatioChanged(qreal ratio)
-{
-    if (ratio > this->ui->scaleRatio->maximum())
-    {
-        this->ui->scaleRatio->setMaximum(ratio);
-    }
-
-    this->ui->scaleRatio->setValue(ratio);
 }
 
 void ICANMark::on_instDel_clicked()
@@ -400,22 +392,6 @@ void ICANMark::on_nameFile_clicked()
     }
 }
 
-void ICANMark::on_scaleRatio_valueChanged(double arg1)
-{
-    int val = arg1 * 10;
-    if (val > this->ui->scaleRatioSlider->maximum())
-    {
-        this->ui->scaleRatioSlider->setMaximum(val);
-    }
-
-    this->ui->scaleRatioSlider->setValue(val);
-}
-
-void ICANMark::on_scaleRatioSlider_valueChanged(int value)
-{
-    this->ui->scaleRatio->setValue((double)value / 10);
-}
-
 void ICANMark::keyPressEvent(QKeyEvent* event)
 {
     // Key shortcuts for moving image region
@@ -479,6 +455,14 @@ void ICANMark::keyPressEvent(QKeyEvent* event)
             this->ui->slidePrevious->animateClick();
             break;
     }
+
+    // Key shortcuts for view handling
+    switch (event->key())
+    {
+        case Qt::Key_Z:
+            this->ui->scaleToFit->animateClick();
+            break;
+    }
 }
 
 void ICANMark::keyReleaseEvent(QKeyEvent* event)
@@ -495,3 +479,5 @@ void ICANMark::on_moveSpeed_valueChanged(int arg1)
 {
     this->ctrlTimer->start(1000 / arg1);
 }
+
+void ICANMark::on_scaleToFit_clicked() { this->ui->markArea->zoom_to_fit(); }
