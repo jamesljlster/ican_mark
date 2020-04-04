@@ -58,6 +58,7 @@ void RBoxMarkWidget::reset(const QImage& image,
 void RBoxMarkWidget::zoom_to_fit()
 {
     ImageView::zoom_to_fit();
+    this->repaint();
 
     emit scaleRatioChanged(this->viewScale);
     emit viewCenterChanged(this->viewCenter);

@@ -8,6 +8,7 @@
 #include <QListWidgetItem>
 #include <QMainWindow>
 #include <QModelIndex>
+#include <QPointer>
 #include <QTimer>
 
 QT_BEGIN_NAMESPACE
@@ -51,7 +52,7 @@ class ICANMark : public QMainWindow
 
    private:
     Ui::ICANMark* ui;
-    QTimer* ctrlTimer;
+    QPointer<QTimer> ctrlTimer;
 
     // For moving image region
     int updateInterval;

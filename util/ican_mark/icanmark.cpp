@@ -14,6 +14,7 @@
 #include <QStandardPaths>
 #include <QString>
 #include <QToolButton>
+#include <QtMath>
 
 #define MARK_EXT ".mark"
 
@@ -303,14 +304,15 @@ void ICANMark::on_slideView_currentItemChanged(QListWidgetItem* current,
 
 void ICANMark::ctrl_timer_event()
 {
-    double step = this->ui->moveSpeed->value() * this->updateInterval;
+    double r = this->ui->moveSpeed->value() * this->updateInterval;
 
     // Image region moving
-    int dy = (this->s - this->w) * step;
-    int dx = (this->d - this->a) * step;
+    int dy = this->w - this->s;
+    int dx = this->a - this->d;
     if (dx || dy)
     {
-        this->ui->markArea->move_view_region(dx, dy);
+        double rad = qAtan2(dy, dx);
+        this->ui->markArea->move_view_region(r * cos(rad), r * sin(rad));
     }
 }
 
