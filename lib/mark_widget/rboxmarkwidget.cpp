@@ -209,6 +209,9 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
     bool viewCtrChanged = false;
     bool selRegionChanged = false;
 
+    // Mapping mark points to image space
+    RBoxMark imgMark = this->mapping_to_image<RBoxMark>(this->markAction);
+
     // Find new scale ratio
     qreal newScaleRatio = this->viewScale + (event->angleDelta().y() /
                                              abs(event->angleDelta().y())) *
@@ -216,9 +219,14 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
 
     qreal oldScaleRatio;
     bool scaleChanged = this->update_scale_ratio(newScaleRatio, &oldScaleRatio);
+
+    // Mapping mark points back to view space
+    this->markAction = this->mapping_to_view<RBoxMark>(imgMark);
+
+    // Update view region
     if (scaleChanged)
     {
-        // Find new center of image region
+        // Find new center of view region
 #if QT_VERSION < QT_VERSION_CHECK(5, 14, 0)
         QPointF wheelPos = event->posF();
 #else
