@@ -71,6 +71,17 @@ bool ImageMap::event(QEvent* event)
             {
                 QPointF curPos =
                     this->mapping_to_image(this->clickAction["move"]);
+
+                // Limit selected center point position
+                if (curPos.x() < 0) curPos.setX(0);
+                if (curPos.x() > this->bgImage.width())
+                    curPos.setX(this->bgImage.width());
+
+                if (curPos.y() < 0) curPos.setY(0);
+                if (curPos.y() > this->bgImage.height())
+                    curPos.setY(this->bgImage.height());
+
+                // Update selected center point
                 QPointF selCenter = this->selectRegion.center();
                 if (curPos != selCenter)
                 {
