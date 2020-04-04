@@ -18,6 +18,7 @@ Control:
       - Backspace for clearing current annotation action
       - Up, Down, Shift for label switching
       - Right, Left, Space for sample sliding
+      - Z for zooming to fit
 
 ### Annotation File Format
 
