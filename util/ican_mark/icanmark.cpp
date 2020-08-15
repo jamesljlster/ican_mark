@@ -90,7 +90,14 @@ void ICANMark::setup_tab_controller()
     btnGroup->setExclusive(true);
 
     // Setup signal and slot
-    connect(btnGroup, QOverload<int>::of(&QButtonGroup::idClicked),
+    connect(btnGroup,
+            QOverload<int>::of(
+#if QT_VERSION < QT_VERSION_CHECK(5, 15, 0)
+                &QButtonGroup::buttonClicked
+#else
+                &QButtonGroup::idClicked
+#endif
+                ),
             [=](int id) {
                 QStackedWidget* root = this->ui->southTab;
                 int tabIndex = root->currentIndex();
