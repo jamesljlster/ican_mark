@@ -6,8 +6,8 @@ CMakeFiles
 # Temp file
 *.swp
 
-# Generated ycm config file
-.ycm_extra_conf.py
+# Exported compile commands
+compile_commands.json
 
 # Generated Qt files
 *.user
