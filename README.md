@@ -1,30 +1,30 @@
 # ICANMark
 
 A utility for rotated bounding box annotating, currently.  
-Still under heavy developments.
+Still need heavy developments.
 
 ### Feature
 
 Control:
 
-  - Mouse:
-      - Left click for annotation
-      - Middle drag for view region moving
-      - Middle wheel for zooming
-  - Keyboard:
-      - WASD for view region moving
-      - ESC for focusing on annotation widget
-      - R for reverting annotation action
-      - Backspace for clearing current annotation action
-      - Up, Down, Shift for label switching
-      - Right, Left, Space for sample sliding
-      - Z for zooming to fit
+-   Mouse:
+    -   Left click for annotation
+    -   Middle drag for view region moving
+    -   Middle wheel for zooming
+-   Keyboard:
+    -   WASD for view region moving
+    -   ESC for focusing on annotation widget
+    -   R for reverting annotation action
+    -   Backspace for clearing current annotation action
+    -   Up, Down, Shift for label switching
+    -   Right, Left, Space for sample sliding
+    -   Z for zooming to fit
 
 ### Annotation File Format
 
 example:
 
-``` yaml
+```yaml
 # File name: sample.mark
 # File format: yaml
 - label: 0
