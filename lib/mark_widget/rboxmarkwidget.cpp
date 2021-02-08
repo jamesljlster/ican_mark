@@ -463,41 +463,30 @@ bool RBoxMarkWidget::update_view_center(const QPointF& newCenter)
 
     // Update view center
     QPointF tmpCenter = newCenter;
-    if (this->viewScale < 1.0)
-    {
-        if (tmpCenter.x() < 0) tmpCenter.setX(0);
-        if (tmpCenter.y() < 0) tmpCenter.setY(0);
 
-        if (tmpCenter.x() > this->width()) tmpCenter.setX(this->width());
-        if (tmpCenter.y() > this->height()) tmpCenter.setY(this->height());
-    }
-    else
-    {
-        int width = this->width();
-        int height = this->height();
+    int width = this->width();
+    int height = this->height();
 
-        QPointF halfImSize =
-            this->scaling_to_view(
-                QPointF(this->bgImage.width(), this->bgImage.height())) /
-            2.0;
-        int halfImWidth = halfImSize.x();
-        int halfImHeight = halfImSize.y();
-        int minRsvSize = min(width / 2, height / 2);  // Minimum reserved size
+    QPointF halfImSize = this->scaling_to_view(QPointF(
+                             this->bgImage.width(), this->bgImage.height())) /
+                         2.0;
+    int halfImWidth = halfImSize.x();
+    int halfImHeight = halfImSize.y();
+    int minRsvSize = min(width / 2, height / 2);  // Minimum reserved size
 
-        int tmpSize;
+    int tmpSize;
 
-        tmpSize = minRsvSize - halfImWidth;
-        if (tmpCenter.x() < tmpSize) tmpCenter.setX(tmpSize);
+    tmpSize = minRsvSize - halfImWidth;
+    if (tmpCenter.x() < tmpSize) tmpCenter.setX(tmpSize);
 
-        tmpSize = minRsvSize - halfImHeight;
-        if (tmpCenter.y() < tmpSize) tmpCenter.setY(tmpSize);
+    tmpSize = minRsvSize - halfImHeight;
+    if (tmpCenter.y() < tmpSize) tmpCenter.setY(tmpSize);
 
-        tmpSize = width + halfImWidth - minRsvSize;
-        if (tmpCenter.x() > tmpSize) tmpCenter.setX(tmpSize);
+    tmpSize = width + halfImWidth - minRsvSize;
+    if (tmpCenter.x() > tmpSize) tmpCenter.setX(tmpSize);
 
-        tmpSize = height + halfImHeight - minRsvSize;
-        if (tmpCenter.y() > tmpSize) tmpCenter.setY(tmpSize);
-    }
+    tmpSize = height + halfImHeight - minRsvSize;
+    if (tmpCenter.y() > tmpSize) tmpCenter.setY(tmpSize);
 
     if (this->viewCenter != tmpCenter)
     {

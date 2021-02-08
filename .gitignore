@@ -6,7 +6,8 @@ CMakeFiles
 # Temp file
 *.swp
 
-# Exported compile commands
+# Files for YouCompleteMe
+.cache
 compile_commands.json
 
 # Generated Qt files
