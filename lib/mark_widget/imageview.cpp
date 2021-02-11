@@ -8,6 +8,7 @@ ImageView::ImageView(QWidget* parent) : QWidget(parent) {}
 void ImageView::reset(const QImage& image)
 {
     this->bgImage = image;
+    this->currentScale = -1;
     this->zoom_to_fit();
 }
 
