@@ -210,9 +210,6 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
     bool viewCtrChanged = false;
     bool selRegionChanged = false;
 
-    // Mapping mark points to image space
-    RBoxMark imgMark = this->mapping_to_image<RBoxMark>(this->markAction);
-
     // Find new scale ratio
     qreal newScaleRatio = this->viewScale + (event->angleDelta().y() /
                                              abs(event->angleDelta().y())) *
@@ -220,9 +217,6 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
 
     qreal oldScaleRatio;
     bool scaleChanged = this->update_scale_ratio(newScaleRatio, &oldScaleRatio);
-
-    // Mapping mark points back to view space
-    this->markAction = this->mapping_to_view<RBoxMark>(imgMark);
 
     // Update view region
     if (scaleChanged)
@@ -267,8 +261,10 @@ void RBoxMarkWidget::paintEvent(QPaintEvent* paintEvent)
                 this->markAction["degree"].state()) ==
             TwiceClick::State::POS1_FIN)
         {
-            this->draw_anchor(this->markAction["degree"]["pos1"]["release"],
-                              this->style.anchor);
+            this->draw_anchor(
+                this->mapping_to_view(
+                    this->markAction["degree"]["pos1"]["release"]),
+                this->style.anchor);
         }
     }
 
@@ -316,18 +312,21 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
     // Run FSM of marking action
     if (eventType == QEvent::MouseMove)
     {
-        QMouseEvent* me = static_cast<QMouseEvent*>(event);
-        this->mousePos = me->pos();
-        this->markAction.run(me);
+        QMouseEvent me = *(static_cast<QMouseEvent*>(event));
+        this->mousePos = me.pos();
+
+        me.setLocalPos(this->mapping_to_image(me.localPos()));
+        this->markAction.run(&me);
         ret = true;
     }
     else if (eventType == QEvent::MouseButtonPress ||
              eventType == QEvent::MouseButtonRelease)
     {
-        QMouseEvent* me = static_cast<QMouseEvent*>(event);
-        if (me->button() == Qt::MouseButton::LeftButton)
+        QMouseEvent me = *(static_cast<QMouseEvent*>(event));
+        if (me.button() == Qt::MouseButton::LeftButton)
         {
-            this->markAction.run(me);
+            me.setLocalPos(this->mapping_to_image(me.localPos()));
+            this->markAction.run(&me);
             ret = true;
         }
     }
@@ -343,8 +342,7 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
             {
                 // Calculate and set degree
                 this->curInst.set_degree(this->find_degree(
-                    this->mapping_to_image(
-                        this->markAction["degree"]["pos1"]["release"]),
+                    this->markAction["degree"]["pos1"]["release"],
                     this->mapping_to_image(this->mousePos)));
             }
             else
@@ -362,11 +360,9 @@ bool RBoxMarkWidget::instance_marking(QEvent* event, bool& instListChanged)
                 TwiceClick::State::POS1_FIN)
             {
                 // Fill bounding box
-                this->fill_bbox(
-                    this->curInst,
-                    this->mapping_to_image(
-                        this->markAction["bbox"]["pos1"]["release"]),
-                    this->mapping_to_image(this->mousePos));
+                this->fill_bbox(this->curInst,
+                                this->markAction["bbox"]["pos1"]["release"],
+                                this->mapping_to_image(this->mousePos));
             }
             else
             {
@@ -458,9 +454,6 @@ bool RBoxMarkWidget::update_view_center(const QPointF& newCenter)
 {
     bool viewCtrChanged = false;
 
-    // Mapping mark points to image space
-    RBoxMark imgMark = this->mapping_to_image<RBoxMark>(this->markAction);
-
     // Update view center
     QPointF tmpCenter = newCenter;
 
@@ -493,9 +486,6 @@ bool RBoxMarkWidget::update_view_center(const QPointF& newCenter)
         viewCtrChanged = true;
         this->viewCenter = tmpCenter;
     }
-
-    // Mapping mark points back to view space
-    this->markAction = this->mapping_to_view<RBoxMark>(imgMark);
 
     return viewCtrChanged;
 }
