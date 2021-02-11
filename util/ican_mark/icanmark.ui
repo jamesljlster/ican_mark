@@ -430,12 +430,15 @@
               </widget>
              </item>
              <item>
-              <widget class="QDoubleSpinBox" name="scaleRatio">
-               <property name="minimum">
-                <double>0.100000000000000</double>
+              <widget class="QLineEdit" name="scaleRatio">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
                </property>
-               <property name="maximum">
-                <double>10.000000000000000</double>
+               <property name="placeholderText">
+                <string/>
                </property>
               </widget>
              </item>

@@ -50,6 +50,10 @@ class ICANMark : public QMainWindow
 
     void on_scaleToFit_clicked();
 
+    void on_markArea_scaleRatioChanged(qreal ratio);
+
+    void on_scaleRatio_editingFinished();
+
    private:
     Ui::ICANMark* ui;
     QPointer<QTimer> ctrlTimer;

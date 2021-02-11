@@ -8,6 +8,7 @@
 #include <QButtonGroup>
 #include <QCheckBox>
 #include <QDir>
+#include <QDoubleValidator>
 #include <QFileDialog>
 #include <QImageReader>
 #include <QMessageBox>
@@ -29,6 +30,9 @@ ICANMark::ICANMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICANMark)
     this->ctrlTimer = new QTimer();
     this->setup_move_timer(this->ui->fps->value());
 
+    // Setup scale ratio input validator
+    this->ui->scaleRatio->setValidator(new QDoubleValidator(this));
+
     // Connect signals and slots
     connect(this->ui->markArea, &RBoxMarkWidget::selectRegionChanged,
             this->ui->imageMap, &ImageMap::set_select_region);
@@ -40,12 +44,6 @@ ICANMark::ICANMark(QWidget* parent) : QMainWindow(parent), ui(new Ui::ICANMark)
             this->ui->markArea, &RBoxMarkWidget::set_mark_label);
     connect(this->ui->instList, &QListWidget::currentRowChanged,
             this->ui->markArea, &RBoxMarkWidget::set_hl_instance_index);
-
-    connect(this->ui->markArea, &RBoxMarkWidget::scaleRatioChanged,
-            this->ui->scaleRatio, &QDoubleSpinBox::setValue);
-    connect(this->ui->scaleRatio,
-            QOverload<double>::of(&QDoubleSpinBox::valueChanged),
-            this->ui->markArea, &RBoxMarkWidget::set_scale_ratio);
 
     connect(this->ui->fps, QOverload<int>::of(&QSpinBox::valueChanged), this,
             &ICANMark::setup_move_timer);
@@ -496,3 +494,14 @@ void ICANMark::keyReleaseEvent(QKeyEvent* event)
 }
 
 void ICANMark::on_scaleToFit_clicked() { this->ui->markArea->zoom_to_fit(); }
+
+void ICANMark::on_markArea_scaleRatioChanged(qreal ratio)
+{
+    this->ui->scaleRatio->setText(QString::number(ratio * 100));
+}
+
+void ICANMark::on_scaleRatio_editingFinished()
+{
+    this->ui->markArea->set_scale_ratio(
+        this->ui->scaleRatio->text().toDouble() / 100);
+}
