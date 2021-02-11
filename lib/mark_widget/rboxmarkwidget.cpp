@@ -211,9 +211,10 @@ void RBoxMarkWidget::wheelEvent(QWheelEvent* event)
     bool selRegionChanged = false;
 
     // Find new scale ratio
-    qreal newScaleRatio = this->viewScale + (event->angleDelta().y() /
-                                             abs(event->angleDelta().y())) *
-                                                this->scaleStep;
+    qreal newScaleRatio =
+        this->viewScale *
+        (1.0 + ((float)event->angleDelta().y() / abs(event->angleDelta().y())) *
+                   this->scaleStep);
 
     qreal oldScaleRatio;
     bool scaleChanged = this->update_scale_ratio(newScaleRatio, &oldScaleRatio);

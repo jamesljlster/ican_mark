@@ -206,7 +206,7 @@ class RBoxMarkWidget : public ImageView
     QRectF selRegion;  // Select region on image space
 
     qreal scaleStep = 0.1;
-    qreal scaleMin = 0.1;
+    qreal scaleMin = 1e-4;
 
     int label = 0;                              // Current marking label
     int highlightInst = -1;                     // Index for highlighting
