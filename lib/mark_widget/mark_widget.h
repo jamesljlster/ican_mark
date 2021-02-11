@@ -32,9 +32,12 @@ class ImageView : public QWidget
 
    protected:
     /** Member variables */
-    QImage bgImage;      // Background Image
+    QImage bgImage;      // Background image
     QPointF viewCenter;  // The center point of background image on view space
     double viewScale = 1.0;  // Scaling ratio of view
+
+    QImage scaledImg;          // Scaled background image
+    double currentScale = -1;  // Scale ratio corresponding to scaledImg
 
     /** View handling functions */
     double find_fit_scale_ratio() const;

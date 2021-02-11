@@ -94,12 +94,19 @@ void ImageView::draw_background(const QColor& bgColor)
     // Paint image
     if (!this->bgImage.isNull())
     {
-        QImage scaledImg =
-            this->bgImage.scaled(this->bgImage.size() * this->viewScale);
-        QPointF drawPoint = this->viewCenter - QPointF(scaledImg.width() / 2,
-                                                       scaledImg.height() / 2);
+        if (this->viewScale != this->currentScale)
+        {
+            this->currentScale = this->viewScale;
+            this->scaledImg =
+                this->bgImage.scaled(this->bgImage.size() * this->viewScale);
+        }
+
+        QPointF drawPoint =
+            this->viewCenter - QPointF(this->scaledImg.width() / 2.0,
+                                       this->scaledImg.height() / 2.0);
+
         // Paint image
-        painter.drawImage(drawPoint, scaledImg,
-                          QRect(QPoint(0, 0), scaledImg.size()));
+        painter.drawImage(drawPoint, this->scaledImg,
+                          QRect(QPoint(0, 0), this->scaledImg.size()));
     }
 }
