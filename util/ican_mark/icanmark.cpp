@@ -96,7 +96,8 @@ void ICANMark::setup_tab_controller()
                 &QButtonGroup::idClicked
 #endif
                 ),
-            [=](int id) {
+            [=](int id)
+            {
                 QStackedWidget* root = this->ui->southTab;
                 int tabIndex = root->currentIndex();
                 if (tabIndex == id)
