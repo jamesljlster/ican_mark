@@ -1,4 +1,5 @@
 #include "icanmark.h"
+#include <qnamespace.h>
 #include "./ui_icanmark.h"
 
 #include <fstream>
@@ -12,6 +13,7 @@
 #include <QFileDialog>
 #include <QImageReader>
 #include <QMessageBox>
+#include <QPixmap>
 #include <QStandardPaths>
 #include <QString>
 #include <QToolButton>
@@ -223,8 +225,10 @@ void ICANMark::on_dataRefresh_clicked()
     this->ui->slideView->clear();
     for (const QFileInfo& fileInfo : fileList)
     {
-        QListWidgetItem* item = new QListWidgetItem(
-            QIcon(fileInfo.absoluteFilePath()), fileInfo.fileName());
+        QIcon icon = QIcon(QPixmap(fileInfo.absoluteFilePath())
+                               .scaled(this->ui->slideView->iconSize(),
+                                       Qt::AspectRatioMode::KeepAspectRatio));
+        QListWidgetItem* item = new QListWidgetItem(icon, fileInfo.fileName());
         item->setFlags(item->flags() &= ~Qt::ItemIsUserCheckable);
         if (QFileInfo::exists(fileInfo.absoluteFilePath() + MARK_EXT))
         {
