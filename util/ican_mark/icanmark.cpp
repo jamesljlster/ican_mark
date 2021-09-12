@@ -1,5 +1,4 @@
 #include "icanmark.h"
-#include <qnamespace.h>
 #include "./ui_icanmark.h"
 
 #include <fstream>
