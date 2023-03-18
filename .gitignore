@@ -13,3 +13,9 @@ compile_commands.json
 # Generated Qt files
 *.user
 *.ts
+
+# Local vimrc
+.vimrc
+
+# Local binaries
+.bin

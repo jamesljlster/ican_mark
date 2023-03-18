@@ -49,7 +49,7 @@ class ImageView : public QWidget
     template <typename T>
     T scaling_to_view(const T& data)
     {
-        return data * QPointF(this->viewScale, this->viewScale);
+        return data * this->viewScale;
     }
 
     QPointF mapping_to_view(const QPointF& point);
@@ -67,7 +67,7 @@ class ImageView : public QWidget
     template <typename T>
     T scaling_to_image(const T& data)
     {
-        return data / QPointF(this->viewScale, this->viewScale);
+        return data / this->viewScale;
     }
 
     QPointF mapping_to_image(const QPointF& point);
